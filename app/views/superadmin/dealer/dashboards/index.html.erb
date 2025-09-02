@@ -1,0 +1,145 @@
+<div class="mt-6 pl-8 p-4">
+  <div class="flex justify-between pr-10">
+    <h1 class="text-3xl font-bold text-gray-700">Dealer</h1>
+    <a href="<%=new_admin_retailer_path%>" class="flex items-center justify-center w-12 h-12 rounded-full bg-green-500 text-white shadow-md hover:bg-green-600 cursor-pointer">
+      <i class='bx bx-user-plus text-2xl text-center'>+</i>
+    </a>
+  </div>
+  <div class="w-[1477px] relative overflow-x-auto shadow-md sm:rounded-lg pr-5 mt-8">
+    <table class="text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3">
+            Id
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Full Name
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Username
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Email
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Phone number
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Alternative number
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Aadhaar number
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Pan Card
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Scheme
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Date of birth
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Gender
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Business name
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Business owner type
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Business nature type
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Business registration number
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Gst number
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Full Address
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Pincode
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Bank name
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Account number
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Account holder name
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @retailers.each_with_index do |retailer, index| %>
+        <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
+          <!-- Serial Number -->
+          <th scope="row" class="px-6 py-4"><%= index + 1 %></th>
+          <!-- User details -->
+          <td class="px-6 py-4">
+            <%= "#{retailer.first_name} #{retailer.last_name}" %>
+          </td>
+          <td class="px-6 py-4"><%= retailer.username %></td>
+          <td class="px-6 py-4"><%= retailer.email %></td>
+          <td class="px-6 py-4"><%= retailer.phone_number %></td>
+          <td class="px-6 py-4"><%= retailer.alternative_number %></td>
+          <td class="px-6 py-4"><%= retailer.aadhaar_number %></td>
+          <td class="px-6 py-4"><%= retailer.pan_card %></td>
+          <td class="px-6 py-4"><%= retailer.scheme %></td>
+          <td class="px-6 py-4"><%= retailer.date_of_birth %></td>
+          <td class="px-6 py-4"><%= retailer.gender %></td>
+          <td class="px-6 py-4"><%= retailer.business_name %></td>
+          <td class="px-6 py-4"><%= retailer.business_owner_type %></td>
+          <td class="px-6 py-4"><%= retailer.business_nature_type %></td>
+          <td class="px-6 py-4"><%= retailer.business_registration_number %></td>
+          <td class="px-6 py-4"><%= retailer.gst_number %></td>
+          <td class="px-6 py-4">
+            <%= "#{retailer.address} #{retailer.state}" %>
+          </td>
+          <td class="px-6 py-4"><%= retailer.pincode %></td>
+          <td class="px-6 py-4"><%= retailer.bank_name %></td>
+          <td class="px-6 py-4"><%= retailer.account_number %></td>
+          <td class="px-6 py-4"><%= retailer.account_holder_name %></td>
+          <!-- Actions -->
+          <td class="flex gap-3 px-6 py-4">
+            <!-- Status Badge -->
+          <% if retailer.status %>
+            <%= link_to admin_retailer_update_status_path(id: retailer.id),
+                        onclick: "return confirm('Are you sure you want to deactivate this retailer?');" do %>
+              <p class="font-medium text-white font-bold hover:underline bg-green-500 py-1 px-2 rounded-lg cursor-pointer">
+                Active
+              </p>
+            <% end %>
+          <% else %>
+            <%= link_to admin_retailer_update_status_path(id: retailer.id),
+                        onclick: "return confirm('Are you sure you want to activate this retailer?');" do %>
+              <p class="font-medium text-white font-bold hover:underline bg-blue-500 py-1 px-2 rounded-lg cursor-pointer">
+                Inactive
+              </p>
+            <% end %>
+          <% end %>
+            <!-- Edit Link -->
+            <%= link_to "Edit", edit_admin_retailer_path(retailer),
+                class: "font-medium text-blue-600 hover:underline bg-yellow-400 py-1 px-2 rounded-lg" %>
+
+            <!-- Delete Button -->
+            <%= button_to "Delete", admin_retailer_path(retailer),
+                method: :delete,
+                data: { turbo_confirm: "Are you sure?" },
+                class: "font-medium text-white bg-red-400 py-1 px-2 rounded-lg hover:bg-red-500 cursor-pointer" %>
+
+          </td>
+
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

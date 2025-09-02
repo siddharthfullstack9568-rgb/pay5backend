@@ -1,0 +1,210 @@
+<div class="container mx-auto w-[1450px] bg-white rounded-xl shadow p-6 mt-5" data-controller="modal">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-xl font-semibold text-gray-800">Scheme Management</h1>
+      <p class="text-sm text-gray-500">Manage commission schemes and rates for various services</p>
+    </div>
+    <button data-action="click->modal#open" class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">
+    <i class="fa fa-plus"></i> Add New Scheme
+    </button>
+  </div>
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white border rounded-xl p-4 shadow text-center">
+      <i class="fa fa-building text-blue-500 text-2xl"></i>
+      <p class="text-gray-600 mt-2">Total Schemes</p>
+      <h2 class="text-xl font-bold"><%=Scheme.all.count%></h2>
+    </div>
+    <div class="bg-white border rounded-xl p-4 shadow text-center">
+      <i class="fa fa-check-circle text-green-500 text-2xl"></i>
+      <p class="text-gray-600 mt-2">Active Schemes</p>
+      <h2 class="text-xl font-bold">3<%#=Scheme.where(status: false).count%></h2>
+    </div>
+    <div class="bg-white border rounded-xl p-4 shadow text-center">
+      <i class="fa fa-users text-purple-500 text-2xl"></i>
+      <p class="text-gray-600 mt-2">Participants</p>
+      <h2 class="text-xl font-bold">4,053</h2>
+    </div>
+    <div class="bg-white border rounded-xl p-4 shadow text-center">
+      <i class="fa fa-wallet text-yellow-500 text-2xl"></i>
+      <p class="text-gray-600 mt-2">Total Earnings</p>
+      <h2 class="text-xl font-bold">₹296,300</h2>
+    </div>
+  </div>
+  <!-- Search + Filter -->
+  <div class="flex justify-between items-center mb-4">
+    <input type="text" placeholder="Search by scheme name or category..."
+    class="w-1/2 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-300 focus:outline-none text-sm" />
+    <select class="px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-300 text-sm">
+      <option>All Status</option>
+      <option>Active</option>
+      <option>Inactive</option>
+    </select>
+  </div>
+  <!-- Table -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white border rounded-xl overflow-hidden">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Scheme Name</th>
+          <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Category Type</th>
+          <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Commission Rate</th>
+          <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Amount Range</th>
+          <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Participants</th>
+          <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Status</th>
+          <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%@schemes.each do |scheme|%>
+        <tr class="border-t">
+          <td class="px-4 py-2"><%=scheme.scheme_name%></td>
+          <td class="px-4 py-2"><%=scheme.scheme_type%></td>
+          <td class="px-4 py-2"><%=scheme.commision_rate%></td>
+          <td class="px-4 py-2">₹0 - ₹10,000</td>
+          <td class="px-4 py-2">1,405</td>
+          <td class="px-4 py-2"><span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">Active</span></td>
+          <td class="px-4 py-2 flex gap-2">
+            <%#= link_to "Edit", edit_superadmin_admin_path(user),
+                class: "font-medium text-blue-600 hover:underline bg-yellow-400 py-1 px-2 rounded-lg" %>
+           <button data-action="click->modal#editModal" class="font-medium text-blue-600 hover:underline bg-yellow-400 py-1 px-2 rounded-lg"
+            data-id="<%=scheme.id%>"
+            data-scheme-name="<%= scheme.scheme_name %>"
+            data-scheme-type="<%= scheme.scheme_type %>"
+            data-commision-rate="<%= scheme.commision_rate %>"
+            >
+            Edit
+           </button>
+            <%= button_to "Delete", superadmin_scheme_path(scheme),
+                method: :delete,
+                data: { turbo_confirm: "Are you sure?" },
+                class: "px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition" %>
+          </td>
+        </tr>
+        <%end%>
+      </tbody>
+    </table>
+  </div>
+
+  <div
+    data-modal-target="container"
+    data-action="click->modal#backdrop"
+    class="hidden fixed inset-0 flex items-center justify-center z-50"
+    style="backdrop-filter: brightness(0.5);"
+  >
+    <div class="bg-white rounded-2xl shadow-xl w-[688px] p-6 relative mb-12">
+      <!-- Close button -->
+      <button data-action="click->modal#close"
+        class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
+        ✕
+      </button>
+
+      <!-- Modal content -->
+      <h2 class="text-xl font-bold text-gray-800 mb-4">New Scheme</h2>
+
+        <%= form_with model: @scheme, url: superadmin_scheme_create_path, local: true, class: "space-y-4" do |form| %>
+        <!-- Scheme Name -->
+        <div>
+          <label for="scheme_name" class="block text-sm font-medium text-gray-700">Scheme Name</label>
+          <input type="text" id="scheme_name" name="scheme[scheme_name]"
+            class="mt-1 block w-full border rounded-md shadow-sm px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+        </div>
+
+        <div>
+          <label for="scheme_type" class="block text-sm font-medium text-gray-700">Scheme Type</label>
+          <select id="scheme_type" name="scheme[scheme_type]"
+            class="mt-1 block w-full border rounded-md shadow-sm px-3 py-3 focus:ring-indigo-500 focus:border-indigo-500" required>
+            <option value="">Select Type</option>
+            <option value="Flat">Flat</option>
+            <option value="Percentage">Percentage</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="commision_rate" class="block text-sm font-medium text-gray-700">Commission Rate (%)</label>
+          <input type="number" step="0.01" id="commision_rate" name="scheme[commision_rate]"
+            class="mt-1 block w-full border rounded-md shadow-sm px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+        </div>
+
+       <div class="mt-4">
+        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+        <textarea id="description" name="scheme[description]" rows="4"
+          class="mt-1 block w-full border rounded-md shadow-sm px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="Write details about the scheme..."></textarea>
+        <p class="mt-1 text-xs text-gray-500">Provide additional details about this scheme.</p>
+      </div>
+
+
+        <!-- Buttons -->
+        <div class="flex justify-end gap-3 pt-4">
+          <button type="button" data-action="click->modal#close"
+            class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">
+            Cancel
+          </button>
+          <button type="submit"
+            class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+            Save Scheme
+          </button>
+        </div>
+      <%end%>
+    </div>
+  </div>
+
+
+
+ 
+
+  <!-- Modal Container -->
+<div 
+  data-controller="modal" 
+  data-modal-target="container" 
+  data-action="click->editModal#backdrop"
+  class="hidden fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+
+  <!-- Modal Content -->
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+    <!-- Close button -->
+    <button 
+      data-action="click->modal#close"
+      class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
+      ✕
+    </button>
+
+    <!-- Modal Header -->
+    <h2 class="text-lg font-bold mb-4">Edit Scheme</h2>
+
+    <!-- Modal Form -->
+    <%= form_with model: @scheme, url: superadmin_scheme_create_path, local: true, class: "space-y-4" do |f| %>      <div class="mb-4">
+        <%= f.label :scheme_name, "Scheme Name", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :scheme_name, class: "mt-1 block w-full border border-gray-300 rounded-lg p-2" %>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :rate, "Rate", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.number_field :rate, step: 0.01, class: "mt-1 block w-full border border-gray-300 rounded-lg p-2" %>
+      </div>
+
+       <div class="mb-4">
+        <%= f.label :description, "Description", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_area :description, rows: 4, class: "mt-1 block w-full border border-gray-300 rounded-lg p-2" %>
+      </div>
+
+
+      <div class="flex justify-end gap-2">
+        <button 
+          type="button"
+          data-action="click->modal#close"
+          class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+          Cancel
+        </button>
+        <%= f.submit "Save Changes", class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+
+
+</div>

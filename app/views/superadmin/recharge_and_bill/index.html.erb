@@ -1,0 +1,197 @@
+
+  <!-- Header -->
+  <div class="bg-white p-4 rounded shadow">
+    <h1 class="text-lg font-semibold">Recharge & Bill Payment Commission Setup</h1>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white p-4 rounded shadow flex flex-col md:flex-row items-start md:items-center gap-4">
+    <select id="scheme" class="border rounded px-3 py-2">
+      <option value="">-- Select Scheme --</option>
+      <option value="MASTER">PLATINUM</option>
+      <option value="DEALER">GOLD</option>
+      <option value="RETAILER">SILVER</option>
+    </select>
+
+    <select id="planType" class="border rounded px-3 py-2">
+      <option value="">-- Select Type --</option>
+      <option value="ALL">All</option>
+      <option value="Prepaid">Prepaid</option>
+      <option value="Postpaid">Postpaid</option>
+    </select>
+
+    <button id="submitFilter" disabled class="px-4 py-2 rounded text-white bg-gray-400 cursor-not-allowed">
+      Submit
+    </button>
+  </div>
+
+  <!-- Commission Tables -->
+  <div id="tablesContainer" class="space-y-6"></div>
+
+  <script>
+    const data = [
+      { id: 1, service: "Mobile Recharge Prepaid", company: "AIRTEL" },
+      { id: 2, service: "Mobile Recharge Postpaid", company: "BSNL STV" },
+      { id: 3, service: "Mobile Recharge Postpaid", company: "BSNL TOPUP" },
+      { id: 4, service: "Mobile Recharge Prepaid", company: "JIO" },
+      { id: 5, service: "DTH Recharge Prepaid", company: "Tata Play" },
+      { id: 6, service: "DTH Recharge Prepaid", company: "Dish TV" },
+      { id: 7, service: "DTH Recharge Postpaid", company: "Airtel Digital TV" },
+      { id: 8, service: "DTH Recharge Postpaid", company: "Sun Direct" },
+      { id: 9, service: "Electricity Bill", company: "BSES Rajdhani" },
+      { id: 10, service: "Gas Bill", company: "Indraprastha Gas" },
+      { id: 11, service: "Broadband Bill", company: "ACT Fibernet" },
+      { id: 12, service: "Water Bill", company: "Delhi Jal Board" }
+    ];
+
+    const schemeSelect = document.getElementById("scheme");
+    const planTypeSelect = document.getElementById("planType");
+    const submitFilter = document.getElementById("submitFilter");
+    const tablesContainer = document.getElementById("tablesContainer");
+
+    let selectedScheme = "";
+    let selectedPlanType = "";
+
+    // Enable Submit button only if both are selected
+    function updateSubmitButton() {
+      if (schemeSelect.value && planTypeSelect.value) {
+        submitFilter.disabled = false;
+        submitFilter.className = "px-4 py-2 rounded text-white bg-blue-600 hover:bg-blue-700";
+      } else {
+        submitFilter.disabled = true;
+        submitFilter.className = "px-4 py-2 rounded text-white bg-gray-400 cursor-not-allowed";
+      }
+    }
+
+    schemeSelect.addEventListener("change", updateSubmitButton);
+    planTypeSelect.addEventListener("change", updateSubmitButton);
+
+    // Filter function
+    function getFilteredData(keyword) {
+      return data.filter((row) => row.service.toLowerCase().includes(keyword.toLowerCase()));
+    }
+
+    // Render Table
+    function renderTable(title, rows) {
+      if (rows.length === 0) return "";
+
+      let tableHTML = `
+      <div class="bg-white rounded shadow overflow-x-auto mb-6">
+        <h2 class="text-md font-semibold p-3">${title}</h2>
+        <table class="w-full text-sm border">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="border px-4 py-2 text-left">Service Name</th>
+              <th class="border px-4 py-2 text-left">Company Name</th>
+              <th class="border px-4 py-2 text-left">Type</th>
+              <th class="border px-4 py-2 text-left">Admin Commission</th>
+              <th class="border px-4 py-2 text-left">Master Commission</th>
+              <th class="border px-4 py-2 text-left">Dealer Commission</th>
+              <th class="border px-4 py-2 text-left">Retailer Commission</th>
+              <th class="border px-4 py-2 text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      rows.forEach((row) => {
+        tableHTML += `
+          <tr class="hover:bg-gray-50">
+            <td class="border px-4 py-2">${row.service}</td>
+            <td class="border px-4 py-2">${row.company}</td>
+            <td class="border px-4 py-2">
+              <select class="border rounded px-2 py-1 type-select" data-id="${row.id}">
+                <option value="">-- Select --</option>
+                <option value="Percentage">Percentage</option>
+                <option value="Flat">Flat</option>
+              </select>
+            </td>
+            <td class="border px-4 py-2"><input type="number" class="border rounded px-2 py-1 w-24 admin" data-id="${row.id}" placeholder="%" disabled></td>
+            <td class="border px-4 py-2"><input type="number" class="border rounded px-2 py-1 w-24 master" data-id="${row.id}" placeholder="%" disabled></td>
+            <td class="border px-4 py-2"><input type="number" class="border rounded px-2 py-1 w-24 dealer" data-id="${row.id}" placeholder="%" disabled></td>
+            <td class="border px-4 py-2"><input type="number" class="border rounded px-2 py-1 w-24 retailer" data-id="${row.id}" placeholder="%" disabled></td>
+            <td class="border px-4 py-2 text-center">
+              <button class="submitRow px-3 py-1 rounded text-white bg-gray-400 cursor-not-allowed" data-id="${row.id}" disabled>
+                Submit
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tableHTML += `</tbody></table></div>`;
+      return tableHTML;
+    }
+
+    // Handle Submit Filter
+    submitFilter.addEventListener("click", () => {
+      selectedScheme = schemeSelect.value;
+      selectedPlanType = planTypeSelect.value;
+      tablesContainer.innerHTML = "";
+
+      if (selectedPlanType === "ALL" || selectedPlanType === "Prepaid") {
+        tablesContainer.innerHTML += renderTable("Mobile Recharge Prepaid", getFilteredData("Mobile Recharge Prepaid"));
+        tablesContainer.innerHTML += renderTable("DTH Recharge Prepaid", getFilteredData("DTH Recharge Prepaid"));
+      }
+      if (selectedPlanType === "ALL" || selectedPlanType === "Postpaid") {
+        tablesContainer.innerHTML += renderTable("Mobile Recharge Postpaid", getFilteredData("Mobile Recharge Postpaid"));
+        tablesContainer.innerHTML += renderTable("DTH Recharge Postpaid", getFilteredData("DTH Recharge Postpaid"));
+      }
+      if (selectedPlanType === "ALL") {
+        tablesContainer.innerHTML += renderTable("Electricity Bill", getFilteredData("Electricity Bill"));
+        tablesContainer.innerHTML += renderTable("Gas Bill", getFilteredData("Gas Bill"));
+        tablesContainer.innerHTML += renderTable("Broadband Bill", getFilteredData("Broadband Bill"));
+        tablesContainer.innerHTML += renderTable("Water Bill", getFilteredData("Water Bill"));
+      }
+
+      attachEvents();
+    });
+
+    // Attach Events to inputs dynamically
+    function attachEvents() {
+      document.querySelectorAll(".type-select").forEach((select) => {
+        select.addEventListener("change", (e) => {
+          const id = e.target.dataset.id;
+          const value = e.target.value;
+          const row = e.target.closest("tr");
+
+          // Enable inputs if type selected
+          row.querySelectorAll("input").forEach((input) => {
+            input.disabled = !value;
+            input.placeholder = value === "Percentage" ? "%" : "₹";
+          });
+
+          validateRow(row);
+        });
+      });
+
+      document.querySelectorAll("input").forEach((input) => {
+        input.addEventListener("input", (e) => {
+          const row = e.target.closest("tr");
+          validateRow(row);
+        });
+      });
+    }
+
+    // Validate row inputs
+    function validateRow(row) {
+      const type = row.querySelector(".type-select").value;
+      const inputs = row.querySelectorAll("input");
+      const submitBtn = row.querySelector(".submitRow");
+
+      const allFilled = Array.from(inputs).every((i) => i.value.trim() !== "");
+
+      if (type && allFilled) {
+        submitBtn.disabled = false;
+        submitBtn.className = "submitRow px-3 py-1 rounded text-white bg-blue-600 hover:bg-blue-700";
+        submitBtn.onclick = () => {
+          alert(
+            `Commission Saved!\nService: ${row.children[0].textContent}\nCompany: ${row.children[1].textContent}\nType: ${type}\nAdmin: ${row.querySelector(".admin").value} ${type === "Percentage" ? "%" : "₹"}\nMaster: ${row.querySelector(".master").value} ${type === "Percentage" ? "%" : "₹"}\nDealer: ${row.querySelector(".dealer").value} ${type === "Percentage" ? "%" : "₹"}\nRetailer: ${row.querySelector(".retailer").value} ${type === "Percentage" ? "%" : "₹"}`
+          );
+        };
+      } else {
+        submitBtn.disabled = true;
+        submitBtn.className = "submitRow px-3 py-1 rounded text-white bg-gray-400 cursor-not-allowed";
+      }
+    }
+  </script>

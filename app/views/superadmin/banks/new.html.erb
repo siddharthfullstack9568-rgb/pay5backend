@@ -1,0 +1,73 @@
+<div class="p-6">
+  <!-- Breadcrumb -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white border rounded-lg p-4 mb-6 shadow-sm gap-4">
+    <div class="flex flex-col gap-3">
+      <div>
+        <span class="font-semibold">Super Admin</span> >
+        <a href="<%=superadmin_banks_path%>" class="text-blue-600 hover:underline">Bank</a>
+      </div>
+      <p class="text-gray-500">
+        Enter bank account details to link a new account for transactions and settlements.
+      </p>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="bg-white rounded-lg shadow-md p-8 max-w-3xl mx-auto">
+    <h2 class="text-2xl font-semibold text-center mb-6">Bank Account Information Form</h2>
+
+    <%= form_with model: [:superadmin, @bank], local: true, class: "grid grid-cols-1 md:grid-cols-2 gap-6" do |form| %>
+
+      <!-- First Name -->
+      <div>
+        <%= form.label :first_name, "Account Holder Name", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :first_name, placeholder: "Account Holder name", class: "w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+  
+
+      <!-- Bank Name -->
+      <div>
+        <%= form.label :bank_name, "Bank Name", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :bank_name, placeholder: "Enter bank name", class: "w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <!-- IFSC Code -->
+      <div>
+        <%= form.label :ifsc_code, "IFSC Code", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :ifsc_code, placeholder: "Enter IFSC code", class: "w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <!-- Account Number -->
+      <div>
+        <%= form.label :account_number, "Account Number", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :account_number, placeholder: "Enter account number", class: "w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <!-- Confirm Account Number (Virtual Attribute) -->
+      <div>
+        <%= form.label :account_number_confirmation, "Confirm Account Number", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :account_number_confirmation, placeholder: "Re-enter account number", class: "w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <!-- Account Type -->
+      <div>
+        <%= form.label :account_type, "Account Type", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.select :account_type, [["Savings", "savings"], ["Current", "current"]], { prompt: "Select account type" }, class: "w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <!-- Initial Balance -->
+      <div>
+        <%= form.label :initial_balance, "Branch Name", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :initial_balance, step: 0.01, placeholder: "Enter Branch Name", class: "w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="col-span-2 flex items-center justify-between mt-6">
+        <%= link_to "Reset form ?", new_superadmin_bank_path, class: "text-sm text-blue-600 hover:underline" %>
+        <%= form.submit "Submit", class: "px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer" %>
+      </div>
+
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,2 @@
+module Dealer::DashboardsHelper
+end

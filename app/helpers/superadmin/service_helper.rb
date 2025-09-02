@@ -1,0 +1,2 @@
+module Superadmin::ServiceHelper
+end

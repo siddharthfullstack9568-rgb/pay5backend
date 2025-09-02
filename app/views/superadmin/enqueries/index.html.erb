@@ -1,0 +1,43 @@
+<div class="mt-6 px-8">
+  <div class="flex justify-between items-center mb-6">
+        <div>
+          <h1 class="text-2xl font-bold">Enquiry List</h1>
+        </div>
+      </div>
+
+  <!-- Table Container -->
+  <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+    <table class="w-full text-sm text-left text-gray-600">
+      <thead class="text-xs uppercase bg-gray-100 text-gray-700">
+        <tr>
+          <th scope="col" class="px-6 py-3">ID</th>
+          <th scope="col" class="px-6 py-3">First Name</th>
+          <th scope="col" class="px-6 py-3">Last Name</th>
+          <th scope="col" class="px-6 py-3">Email</th>
+          <th scope="col" class="px-6 py-3">Phone Number</th>
+          <th scope="col" class="px-6 py-3">Aadhaar Number</th>
+          <th scope="col" class="px-6 py-3">PAN Card</th>
+          <th scope="col" class="px-6 py-3 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%@enquires.each do |enquiry|%>
+        <tr class="bg-white border-b hover:bg-gray-50">
+          <td class="px-6 py-4 font-medium text-gray-900"><%=enquiry.id%></td>
+          <td class="px-6 py-4"><%=enquiry.first_name%></td>
+          <td class="px-6 py-4"><%=enquiry.last_name%></td>
+          <td class="px-6 py-4"><%=enquiry.email%></td>
+          <td class="px-6 py-4"><%=enquiry.phone_number%></td>
+          <td class="px-6 py-4"><%=enquiry.aadhaar_number%></td>
+          <td class="px-6 py-4"><%= enquiry.pan_card.presence || "N/A" %></td>
+          <td class="px-6 py-4 text-center">
+            <button class="px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition">
+              Delete
+            </button>
+          </td>
+        </tr>
+        <%end%>
+      </tbody>
+    </table>
+  </div>
+</div>

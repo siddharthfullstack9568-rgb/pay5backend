@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  scheme_name: MyString
+  scheme_type: MyString
+  commision_rate: 9.99
+
+two:
+  scheme_name: MyString
+  scheme_type: MyString
+  commision_rate: 9.99
