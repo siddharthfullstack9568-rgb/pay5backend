@@ -1,58 +1,90 @@
-class Superadmin::AdminsController < ApplicationController
+class Admin::UserServicesController < Admin::BaseController
+  layout "admin"
+  before_action :require_admin_login
 
   def index
-    @users = User.joins(:role).where(roles:{title: "admin"}).order(updated_at: :desc, created_at: :desc)
+    p "================="
+    p current_admin_user
+    # @users = User.joins(:role).where(roles: { title: ["retailer"] })
+    assignee_ids = UserService.where(assigner_id: current_admin_user.id).distinct.pluck(:assignee_id)
+    @users = User.where(id: assignee_ids).order(created_at: :desc)
+
+    p "=============@usersss @usersss@usersss======"
+    p assignee_ids
+
+  end
+
+  def show
   end
 
   def new
+    @user = User.new
   end
 
   def create
-    @admin = User.new(user_params) # assignee (new user)
+    role_id = params[:user][:role_id]
+    p "==========="
+    p role_id
+    @user = User.new(user_params.merge(role_id: role_id))
 
-    if @admin.save
-      service_ids = params[:user][:service_ids] || [] # checkboxes se array milega
-      assigner = User.find(136)                        # jo logged-in hai
+    if @user.save
+      service_ids = Array(params[:user][:service_ids]).map(&:to_i)
+      assigner = current_admin_user
 
       service_ids.each do |sid|
         UserService.find_or_create_by!(
           assigner: assigner,
-          assignee: @admin,
+          assignee: @user,
           service_id: sid
         )
       end
 
-      redirect_to superadmin_admins_path, notice: "Admin created and services assigned successfully."
+      redirect_to admin_user_services_index_path, notice: "Admin created and services assigned successfully."
     else
       render :new, status: :unprocessable_entity
     end
   end
 
-
   def edit
-    @admin = User.find(params[:id])
   end
 
   def update
-    @admin = User.find(params[:id])
-    @admin.update(user_params)
-    redirect_to superadmin_admins_path, notice: "Admin created successfully."
+    if @user.update(user_params)
+      redirect_to admin_user_services_index_path, notice: "Retailer updated successfully."
+    else
+      render :edit, status: :unprocessable_entity
+    end
   end
 
-  def admin_update_stauts
-    @admin = User.find(params[:id])
-    p "============"
-    p @admin
-    @admin.update!(status: !@admin.status)
+  def update_status
+    @user = User.find(params[:id])
+    @enquiry = Enquiry.find_by(email: @user.email)
+    if @enquiry.present?
+      @enquiry.update!(status: true)
+    end
+    @user.update!(status: !@user.status)
 
     # Send mail only if the account is active now
-    # if @retailer.status
-    #   UserMailer.status_updated(@retailer).deliver_later
+    # if @user.status
+    #   UserMailer.status_updated(@user).deliver_later
     # end
-    redirect_to superadmin_admins_path, notice: "Admin status updated successfully."
+
+    redirect_to admin_user_services_index_path, notice: "Retailer status updated successfully."
+  end
+
+
+
+  def destroy
+    @user = User.find(params[:id])
+    @user.destroy
+    redirect_to admin_user_services_index_path, notice: "Retailer deleted successfully."
   end
 
   private
+
+  def set_retailer
+    @user = User.find(params[:id])
+  end
 
   def user_params
     params.require(:user).permit(:first_name,
@@ -99,7 +131,12 @@ class Superadmin::AdminsController < ApplicationController
                                  :scheme_id,
                                  :domain_name,
                                  :cin_number,
-                                 :service_id)
+                                 :service_id,
+                                 :address_proof_photo,
+                                 :store_shop_photo,
+                                 :passport_photo,
+                                 :aadhaar_image,
+                                 :pan_card_image)
   end
 
 

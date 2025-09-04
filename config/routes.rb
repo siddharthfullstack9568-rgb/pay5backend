@@ -21,6 +21,17 @@ Rails.application.routes.draw do
     delete "sessions/destroy"
     get "dashboards/index"
     get "scheme/index"
+
+    get "user_services/index"
+    get "user_services/new"
+
+    resources :user_services, only: [:destroy]
+    get "recharges_and_bills/index"
+    get "recharges_and_bills/transaction"
+
+
+    post "user_services/create", to: "user_services#create", as: :user_services_create
+    # resources :user_services
   end
 
   namespace :api do
@@ -36,6 +47,13 @@ Rails.application.routes.draw do
         post "sessions/create"
         get "sessions/role"
         post "enquires/create"
+
+        get "user_services/index"
+        post "user_services/service_category"
+
+        post "recharges/recharge"
+        get "recharges/recharge_list"
+
         resources :reatailer_profiles, only: [:index]
       end
 
@@ -49,6 +67,7 @@ Rails.application.routes.draw do
     get "blance/index"
     get "categories/index"
     get "recharge_and_bill/index"
+    get "recharge_and_bill/transaction"
     get "service/index"
     get "enqueries/index"
 
@@ -56,12 +75,15 @@ Rails.application.routes.draw do
     get "scheme/index"
     post "scheme/create", to: "scheme#create", as: :scheme_create
     resources :scheme, only: [:destroy]
-    
+
     post "admins/create", to: "admins#create", as: :admins_create
     post "admins/:id/admin_update_stauts", to: "admins#admin_update_stauts", as: :admin_update_status
-    resources :admins
 
+    resources :admins
     resources :banks
+    resources :services
+    resources :categories
+    resources :service_products
 
     namespace :dealer do
       get "dashboards/index"

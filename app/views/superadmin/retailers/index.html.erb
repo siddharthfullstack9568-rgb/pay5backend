@@ -139,10 +139,11 @@
 					      class: "font-medium text-blue-600 hover:underline bg-yellow-400 py-1 px-2 rounded-lg" %>
 
 					  <!-- Delete Button -->
-					  <%= button_to "Delete", superadmin_retailers_path(retailer),
-					      method: :delete,
-					      data: { turbo_confirm: "Are you sure?" },
-					      class: "px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition" %>
+					  <%= button_to "Delete", 
+            superadmin_retailer_path(retailer), 
+            method: :delete, 
+            data: { turbo_confirm: "Are you sure?" }, 
+            class: "px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition" %>
 
 					</td>
 

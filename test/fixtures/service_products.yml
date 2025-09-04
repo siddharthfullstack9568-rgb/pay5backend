@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  company_name: MyString
+  service_type: MyString
+  admin_commission: 9.99
+  master_commission: 9.99
+  dealer_commission: 9.99
+  retailer_commission: 9.99
+
+two:
+  company_name: MyString
+  service_type: MyString
+  admin_commission: 9.99
+  master_commission: 9.99
+  dealer_commission: 9.99
+  retailer_commission: 9.99

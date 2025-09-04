@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  tx_id: MyString
+  transaction_type: MyString
+  operator: MyString
+  account_or_mobile: MyString
+  amount: 9.99
+  status: MyString
+  transaction_date: 2025-09-03 17:00:45
+  user: one
+  service_product: one
+
+two:
+  tx_id: MyString
+  transaction_type: MyString
+  operator: MyString
+  account_or_mobile: MyString
+  amount: 9.99
+  status: MyString
+  transaction_date: 2025-09-03 17:00:45
+  user: two
+  service_product: two
