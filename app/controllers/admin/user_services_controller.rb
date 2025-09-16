@@ -3,14 +3,15 @@ class Admin::UserServicesController < Admin::BaseController
   before_action :require_admin_login
 
   def index
-    p "================="
-    p current_admin_user
-    # @users = User.joins(:role).where(roles: { title: ["retailer"] })
-    assignee_ids = UserService.where(assigner_id: current_admin_user.id).distinct.pluck(:assignee_id)
-    @users = User.where(id: assignee_ids).order(created_at: :desc)
-
-    p "=============@usersss @usersss@usersss======"
-    p assignee_ids
+    @users = User.where(parent_id: current_admin_user.id).order(created_at: :desc)
+    # p "================="
+    # p current_admin_user
+    # # @users = User.joins(:role).where(roles: { title: ["retailer"] })
+    # assignee_ids = UserService.where(assigner_id: current_admin_user.id).distinct.pluck(:assignee_id)
+    # @users = User.where(id: assignee_ids).order(created_at: :desc)
+    #  p @users
+    # p "=============@usersss @usersss@usersss======"
+    # p assignee_ids
 
   end
 
@@ -25,7 +26,7 @@ class Admin::UserServicesController < Admin::BaseController
     role_id = params[:user][:role_id]
     p "==========="
     p role_id
-    @user = User.new(user_params.merge(role_id: role_id))
+    @user = User.new(user_params.merge(role_id: role_id, parent_id: current_admin_user.id))
 
     if @user.save
       service_ids = Array(params[:user][:service_ids]).map(&:to_i)
@@ -72,13 +73,38 @@ class Admin::UserServicesController < Admin::BaseController
     redirect_to admin_user_services_index_path, notice: "Retailer status updated successfully."
   end
 
-
+  def view_blance
+    # Wallet.where(user_id: )
+  end
 
   def destroy
     @user = User.find(params[:id])
     @user.destroy
     redirect_to admin_user_services_index_path, notice: "Retailer deleted successfully."
   end
+
+  def set_pin
+
+  end
+
+  def set_pin_update
+    if params[:set_pin].present? && params[:confirm_pin].present?
+      if params[:set_pin] == params[:confirm_pin]
+        if current_admin_user.update(set_pin: params[:set_pin])
+          flash[:notice] = "PIN set successfully"
+        else
+          flash[:alert] = current_admin_user.errors.full_messages.to_sentence
+        end
+      else
+        flash[:alert] = "PIN and Confirm PIN do not match"
+      end
+    else
+      flash[:alert] = "Both PIN fields are required"
+    end
+
+    redirect_to admin_user_services_set_pin_path
+  end
+
 
   private
 
@@ -136,7 +162,8 @@ class Admin::UserServicesController < Admin::BaseController
                                  :store_shop_photo,
                                  :passport_photo,
                                  :aadhaar_image,
-                                 :pan_card_image)
+                                 :pan_card_image,
+                                 :parent_id)
   end
 
 

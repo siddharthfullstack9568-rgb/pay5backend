@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Transaction Details Modal</title>
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen ">
+  <!-- Overlay -->
+  <div class="fixed inset-0 flex items-center justify-center bg-black-50 backdrop-blur-sm p-4">
+    <!-- Card -->
+    <div
+      class="w-[720px] max-w-full rounded-2xl shadow-2xl"
+      style="background:#f6e0d4;"
+    >
+      <div class="p-6 sm:p-8">
+        <h2 class="text-2xl font-semibold tracking-wide text-black/80 mb-6">
+          Transaction Details
+        </h2>
+
+        <div class="space-y-3 text-[17px] leading-7 text-black/80">
+          <p>
+            <span class="font-semibold">ID:</span>
+            <span class="ml-2">TX1001</span>
+          </p>
+          <p>
+            <span class="font-semibold">Sender:</span>
+            <span class="ml-2">Rahul Sharma</span>
+          </p>
+          <p>
+            <span class="font-semibold">Recipient:</span>
+            <span class="ml-2">Priya Patel</span>
+          </p>
+          <p>
+            <span class="font-semibold">Amount:</span>
+            <span class="ml-2">₹12,500</span>
+          </p>
+          <p>
+            <span class="font-semibold">Date:</span>
+            <span class="ml-2">15/5/2023, 10:30:00 am</span>
+          </p>
+          <p>
+            <span class="font-semibold">Status:</span>
+            <span class="ml-2">Completed</span>
+          </p>
+          <p>
+            <span class="font-semibold">Method:</span>
+            <span class="ml-2">Bank Transfer</span>
+          </p>
+        </div>
+
+        <div class="mt-8">
+          <a href="<%=superadmin_recharge_and_bill_transaction_path%>" 
+            id="closeBtn"
+            class="px-6 py-2.5 rounded-xl bg-[#e74e4e] text-white font-semibold shadow hover:opacity-90 focus:outline-none"
+          >
+            Close
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- (Optional) Close button hides the card -->
+  <script>
+    document.getElementById('closeBtn').addEventListener('click', () => {
+      document.body.innerHTML = '';
+      document.body.className = 'bg-[#0b0f14]';
+    });
+  </script>
+</body>
+</html>

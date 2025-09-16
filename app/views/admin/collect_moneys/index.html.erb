@@ -1,0 +1,56 @@
+<!-- Table -->
+<div class="bg-white p-6 rounded-lg shadow-md w-full max-w-8xl">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-lg font-bold text-gray-700">📋 Payment Requests</h2>
+    <input
+      type="date"
+      name="filter_date"
+      class="px-3 py-2 mb-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <table class="w-full border border-gray-200">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="border px-3 py-2 text-left">SR</th>
+        <th class="border px-3 py-2 text-left">Deposit Bank</th>
+        <th class="border px-3 py-2 text-left">Your Bank</th>
+        <th class="border px-3 py-2 text-left">Payment Mode</th>
+        <th class="border px-3 py-2 text-left">Bank Reference</th>
+        <th class="border px-3 py-2 text-left">Amount (₹)</th>
+        <th class="border px-3 py-2 text-left">Remark</th>
+        <th class="border px-3 py-2 text-left">File</th>
+        <th class="border px-3 py-2 text-left">Status</th>
+        <th class="border px-3 py-2 text-left">Date & Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @fund_requests.any? %>
+        <% @fund_requests.each_with_index do |fund, index| %>
+          <tr class="hover:bg-gray-50">
+            <td class="border px-3 py-2"><%= index + 1 %></td>
+            <td class="border px-3 py-2"><%= fund.deposit_bank %></td>
+            <td class="border px-3 py-2"><%= fund.your_bank %></td>
+            <td class="border px-3 py-2"><%= fund.transaction_type %></td>
+            <td class="border px-3 py-2"><%= fund.bank_reference_no%></td>
+            <td class="border px-3 py-2"><%= number_to_currency(fund.amount, unit: "₹") %></td>
+            <td class="border px-3 py-2"><%= fund.remark.presence || "-" %></td>
+            <td class="border px-3 py-2"><%= fund.image || "N/A"  %></td>
+            <td class="border px-3 py-2 text-yellow-700 font-bold"><%= fund.status || "N/A"  %></td>
+            
+            <td class="border px-3 py-2">
+              <%= fund.created_at.strftime("%d/%m/%Y %H:%M") %>
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+      <%# superadmin_payments_approved %>
+        <tr>
+          <td colspan="10" class="text-center py-4 text-gray-500">
+            No payment requests found
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

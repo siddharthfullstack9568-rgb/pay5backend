@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  service: one
+  company: one
+  commission_type: one
+  from_role: MyString
+  to_role: MyString
+  value: 9.99
+
+two:
+  service: two
+  company: two
+  commission_type: two
+  from_role: MyString
+  to_role: MyString
+  value: 9.99

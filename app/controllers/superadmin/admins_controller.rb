@@ -8,11 +8,12 @@ class Superadmin::AdminsController < ApplicationController
   end
 
   def create
-    @admin = User.new(user_params) # assignee (new user)
+    assigner = User.find(136)                  # jo logged-in hai
+
+    @admin = User.new(user_params.merge(parent_id: assigner.id)) # assignee (new user)
 
     if @admin.save
       service_ids = params[:user][:service_ids] || [] # checkboxes se array milega
-      assigner = User.find(136)                        # jo logged-in hai
 
       service_ids.each do |sid|
         UserService.find_or_create_by!(
@@ -99,7 +100,14 @@ class Superadmin::AdminsController < ApplicationController
                                  :scheme_id,
                                  :domain_name,
                                  :cin_number,
-                                 :service_id)
+                                 :service_id,
+                                 :parent_id,
+                                 :address_proof_photo,
+                                 :store_shop_photo,
+                                 :passport_photo,
+                                 :aadhaar_image,
+                                 :pan_card_image,
+                                 )
   end
 
 

@@ -16,6 +16,19 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
+    get "accounts/index"
+    get "accounts/new"
+    post "accounts/add_credit"
+    get "accounts/debit_index"
+    post "accounts/add_debit"
+
+    get "reports/index"
+    get "reports/report_filter"
+
+    get "payments/index"
+    post "payments/approved"
+    get "payments/verify_pin"
+
     get "sessions/login"
     post "sessions/create"
     delete "sessions/destroy"
@@ -24,11 +37,19 @@ Rails.application.routes.draw do
 
     get "user_services/index"
     get "user_services/new"
+    get "user_services/view_blance"
+    get "user_services/set_pin"
+    post "user_services/set_pin_update"
 
     resources :user_services, only: [:destroy]
+
+    get "collect_moneys/index"
+    get "collect_moneys/new"
+    post "collect_moneys/create"
+
+
     get "recharges_and_bills/index"
     get "recharges_and_bills/transaction"
-
 
     post "user_services/create", to: "user_services#create", as: :user_services_create
     # resources :user_services
@@ -50,11 +71,21 @@ Rails.application.routes.draw do
 
         get "user_services/index"
         post "user_services/service_category"
+        post "user_services/service_product"
 
         post "recharges/recharge"
         get "recharges/recharge_list"
+        post "recharges/verify_pin"
+
+        get "wallets/balance"
+        post "wallets/create"
+
+        post "filters/category_filter"
+        post "filters/service_category_filter"
+        post "filters/service_product"
 
         resources :reatailer_profiles, only: [:index]
+        post "reatailer_profiles/set_pin"
       end
 
     end
@@ -64,16 +95,36 @@ Rails.application.routes.draw do
   root "superadmin/dashboards#index"
 
   namespace :superadmin do
+    get "commissions/index"
+    post "commissions/commission_set"
+
+    get "accounts/index"
+    get "accounts/new"
+    post "accounts/add_credit"
+    get "accounts/debit_index"
+    post "accounts/add_debit"
+
+    post "payments/approved"
+    get "payments/index"
+    get "payments/set_pin"
+    post "payments/set_pin_update"
+
     get "blance/index"
     get "categories/index"
     get "recharge_and_bill/index"
     get "recharge_and_bill/transaction"
+    get "recharge_and_bill/view"
+    post "recharge_and_bill/commission_set"
+
+
     get "service/index"
     get "enqueries/index"
 
 
     get "scheme/index"
     post "scheme/create", to: "scheme#create", as: :scheme_create
+    post "scheme/update", to: "scheme#update", as: :scheme_update
+
     resources :scheme, only: [:destroy]
 
     post "admins/create", to: "admins#create", as: :admins_create
@@ -83,7 +134,12 @@ Rails.application.routes.draw do
     resources :banks
     resources :services
     resources :categories
-    resources :service_products
+    resources :service_products do
+      member do
+        get :view_product_item
+      end
+    end
+
 
     namespace :dealer do
       get "dashboards/index"
@@ -92,6 +148,7 @@ Rails.application.routes.draw do
     namespace :master do
       get "dashboards/index"
     end
+
 
 
     get "dashboards/index"

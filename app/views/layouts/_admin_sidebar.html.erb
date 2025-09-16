@@ -7,8 +7,31 @@
     <a href="/admin/dashboards/index" class="flex text-lg font-medium items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-600"><i class="fa fa-home"></i> Home</a>
     <a href="/admin/dashboards/index" class="flex text-lg font-medium items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-600"><i class="fa fa-envelope-open"></i>Admin</a>
     <a href="/admin/user_services/index" class="flex text-lg font-medium items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-600"><i class="fa-solid fa-bars"></i>Master/Dealer/Retailer</a>
-    <a href="#" class="flex items-center gap-3 px-3 text-lg font-medium py-2 rounded-lg hover:bg-indigo-600"><i class="fa fa-credit-card"></i> Payment</a>
-    <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-wallet"></i> Account</a>
+    <div class="w-full relative" data-action="click@document->superadmindropdown#hide">
+      <button 
+        class="flex items-center gap-3 text-lg font-medium px-3 py-2 rounded-lg hover:bg-indigo-600 w-full"
+        data-action="click->superadmindropdown#paymenttoggle">
+        <i class="fa fa-credit-card"></i>
+        <span>Payment</span>
+        <i class="fa fa-caret-down ml-36"></i>
+      </button>
+
+      <div data-superadmindropdown-target="payment" class="mt-1 space-y-1 pl-8 hidden">
+        <a href="/superadmin/admins/new" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
+          Set Commission
+        </a>
+        <a href="/superadmin/payments/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
+          Create
+        </a>
+        <a href="/admin/payments/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
+          List
+        </a>
+        <a href="/superadmin/payments/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
+          Gateway
+        </a>
+      </div>
+    </div>
+
     <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-exchange-alt"></i> Money Transfer</a>
     <div class="w-full relative" data-action="click@document->superadmindropdown#bankhide">
       <button 
@@ -28,8 +51,51 @@
         </a>
        </div>
       </div>
-    <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-hand-holding-usd"></i> Collect Money</a>
+
+
+      <div class="w-full relative" data-action="click@document->superadmindropdown#hide">
+      <button 
+        class="flex items-center gap-3 text-lg font-medium px-3 py-2 rounded-lg hover:bg-indigo-600 w-full"
+        data-action="click->superadmindropdown#collectmoneytoggle">
+        <i class="fa fa-bolt"></i>
+        <span>Collect Money</span>
+        <i class="fa fa-caret-down ml-20"></i>
+      </button>
+
+       <div data-superadmindropdown-target="collectmoney" class="mt-1 space-y-1 pl-8 hidden">
+        <a href="/admin/collect_moneys/new" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
+          New Request
+        </a>
+        <a href="/admin/collect_moneys/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
+          Collect Money Histroy
+        </a>
+       </div>
+      </div>
+
+    <div class="w-full relative" data-action="click@document->superadmindropdown#hide">
+      <button 
+        class="flex items-center gap-3 text-lg font-medium px-3 py-2 rounded-lg hover:bg-indigo-600 w-full"
+        data-action="click->superadmindropdown#accounttoggle">
+        <i class="fa fa-credit-card"></i>
+        <span>Account</span>
+        <i class="fa fa-caret-down ml-36"></i>
+      </button>
+
+      <div data-superadmindropdown-target="account" class="mt-1 space-y-1 pl-8 hidden">
+        <a href="/admin/accounts/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
+          Credit Note
+        </a>
+        <a href="/admin/accounts/debit_index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
+          Debit Note
+        </a>
+        <a href="#" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
+          Administrator
+        </a>
+      </div>
+    </div>
+
     <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-landmark"></i> Financial Services</a>
+     <a href="/admin/reports/index" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-landmark"></i>Report</a>
     <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-plane"></i> Travel Services</a>
     <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-cogs"></i> Payment Services</a>
   </nav>

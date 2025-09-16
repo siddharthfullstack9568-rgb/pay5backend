@@ -1,6 +1,17 @@
 class User < ApplicationRecord
+  belongs_to :parent, class_name: "User", optional: true
+  has_many :children, class_name: "User", foreign_key: "parent_id"
+
   belongs_to :role
   has_secure_password validations: false
   # belongs_to :scheme
   has_many :transactions, dependent: :destroy
+
+  def all_descendant_ids
+    children.flat_map { |child| [child.id] + child.all_descendant_ids }
+  end
+
+  has_one :wallet, dependent: :destroy
+
+
 end

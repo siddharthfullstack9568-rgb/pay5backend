@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  txn_id: MyString
+  amount: 9.99
+  reason: MyString
+  user_code: MyString
+  mobile: MyString
+  txn_type: MyString
+  user_type: MyString
+  user_name: MyString
+  user: one
+  wallet: one
+
+two:
+  txn_id: MyString
+  amount: 9.99
+  reason: MyString
+  user_code: MyString
+  mobile: MyString
+  txn_type: MyString
+  user_type: MyString
+  user_name: MyString
+  user: two
+  wallet: two

@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["menu", "bankmenu", "rechargemenu"]
+  static targets = ["menu", "bankmenu", "rechargemenu", "collectmoney", "payment", "account"]
 
   connect() {
     console.log("dropdown connected")
@@ -29,6 +29,18 @@ export default class extends Controller {
     }
   }
 
+  paymenttoggle(event) {
+    event.stopPropagation()
+    this.paymentTarget.classList.toggle("hidden") // bank dropdown भी toggle करेगा
+  }
+
+  hide(event) {
+    if (!this.element.contains(event.target)) {
+      this.menuTarget.classList.add("hidden")
+      this.paymentTarget.classList.add("hidden")
+    }
+  }
+
   rechargetoggle(event) {
     event.stopPropagation()
     this.rechargemenuTarget.classList.toggle("hidden") // bank dropdown भी toggle करेगा
@@ -38,6 +50,30 @@ export default class extends Controller {
     if (!this.element.contains(event.target)) {
       this.menuTarget.classList.add("hidden")
       this.rechargemenuTarget.classList.add("hidden")
+    }
+  }
+
+  collectmoneytoggle(event) {
+    event.stopPropagation()
+    this.collectmoneyTarget.classList.toggle("hidden") // bank dropdown भी toggle करेगा
+  }
+
+  hide(event) {
+    if (!this.element.contains(event.target)) {
+      this.menuTarget.classList.add("hidden")
+      this.collectmoneyTarget.classList.add("hidden")
+    }
+  }
+
+  accounttoggle(event) {
+    event.stopPropagation()
+    this.accountTarget.classList.toggle("hidden") // bank dropdown भी toggle करेगा
+  }
+
+  hide(event) {
+    if (!this.element.contains(event.target)) {
+      this.menuTarget.classList.add("hidden")
+      this.accountTarget.classList.add("hidden")
     }
   }
 

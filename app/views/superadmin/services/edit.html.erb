@@ -20,6 +20,11 @@
         <%= form.text_field :title, placeholder: "Service name", class: "w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" %>
       </div>
 
+      <div>
+        <%= form.label :position, "Position", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :position, placeholder: "Service name", class: "w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
       <!-- Submit Button -->
       <div class="col-span-2 flex items-center justify-between mt-6">
         <%= link_to "Back to", superadmin_services_path, class: "text-sm text-blue-600 hover:underline" %>

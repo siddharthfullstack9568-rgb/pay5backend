@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  requested_by: 1
+  amount: 9.99
+  status: MyString
+  approved_by: 1
+  approved_at: 2025-09-06 11:11:17
+
+two:
+  user: two
+  requested_by: 1
+  amount: 9.99
+  status: MyString
+  approved_by: 1
+  approved_at: 2025-09-06 11:11:17

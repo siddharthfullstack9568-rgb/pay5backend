@@ -25,6 +25,10 @@
           <td class="px-6 py-4"><%=procuts.company_name%></td>
           <td class="px-6 py-4"><%#=procuts.category%></td>
           <td class="flex px-6 py-4 justify-center gap-2">
+            <a href="<%= view_product_item_superadmin_service_product_path(id: 11) %>" 
+                 class="px-3 py-1 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 transition">
+                View Service Product items
+              </a>
             <a href="<%= edit_superadmin_service_product_path(id: procuts, service_id: @service_id) %>" 
                  class="px-3 py-1 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition">
                 Edit

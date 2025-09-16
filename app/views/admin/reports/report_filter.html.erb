@@ -1,0 +1,93 @@
+<%= turbo_frame_tag "transactions_table" do %>
+  <div class="w-[95%] max-w-8xl p-2 bg-white rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.4)] ml-[35px] mt-7">
+    <!-- Filters -->
+    <div class="flex flex-wrap items-center gap-4 mb-6">
+      <%= form_with url: admin_reports_report_filter_path, method: :get, local: false, data: { turbo_frame: "transactions_table" } do %>
+        <input type="hidden" value="<%=@service_id%>" name="id">
+        <!-- Category Filter -->
+        <select name="category_id" class="border rounded-lg px-4 py-2 text-sm focus:ring focus:ring-blue-200" onchange="this.form.requestSubmit()">
+          <option value="">Select Options</option>
+          <% @categories.each do |cat| %>
+            <option value="<%= cat.id %>" <%= "selected" if params[:category_id].to_s == cat.id.to_s %>>
+              <%= cat.title %>
+            </option>
+          <% end %>
+        </select>
+
+        <!-- Service Product Filter -->
+        <select name="service_product_id" class="border rounded-lg px-4 py-2 text-sm focus:ring focus:ring-blue-200" onchange="this.form.requestSubmit()">
+          <option value="">Select Options</option>
+          <% @service_products.each do |service_product| %>
+            <option value="<%= service_product.id %>" <%= "selected" if params[:service_product_id].to_s == service_product.id.to_s %>>
+              <%= service_product.company_name %>
+            </option>
+          <% end %>
+        </select>
+
+        <!-- Date Range -->
+        <input type="date" name="start_date" value="<%= params[:start_date] %>" class="border rounded-lg px-4 py-2 text-sm focus:ring focus:ring-blue-200" onchange="this.form.requestSubmit()">
+        <span class="text-gray-500">→</span>
+        <input type="date" name="end_date" value="<%= params[:end_date] %>" class="border rounded-lg px-4 py-2 text-sm focus:ring focus:ring-blue-200" onchange="this.form.requestSubmit()">
+
+        <!-- Status -->
+        <select name="status" class="border rounded-lg px-4 py-2 text-sm focus:ring focus:ring-blue-200 ml-3" onchange="this.form.requestSubmit()">
+          <option value="">Status</option>
+          <option value="SUCCESS" <%= "selected" if params[:status] == "SUCCESS" %>>Success</option>
+          <option value="pending" <%= "selected" if params[:status] == "pending" %>>Pending</option>
+          <option value="failed" <%= "selected" if params[:status] == "failed" %>>Failed</option>
+        </select>
+
+        <!-- Export Button -->
+        <button type="submit" name="export" value="true" class="border rounded-lg px-4 py-2 text-sm focus:ring py-2 px-4 ml-3">
+          Export 
+          
+          </svg>
+        </button>
+
+      <% end %>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse border rounded-lg overflow-hidden">
+        <thead>
+          <tr class="bg-purple-100 text-gray-700 text-sm">
+            <th class="px-4 py-3 text-left">Date & Time</th>
+            <th class="px-4 py-3 text-left">Transaction ID</th>
+            <th class="px-4 py-3 text-left">User Type</th>
+            <th class="px-4 py-3 text-left">Mobile No</th>
+            <th class="px-4 py-3 text-left">Service Type</th>
+            <th class="px-4 py-3 text-left">Sub-Service</th>
+            <th class="px-4 py-3 text-left">Status</th>
+            <th class="px-4 py-3 text-left">UserName/Name</th>
+            <th class="px-4 py-3 text-left">View</th>
+
+          </tr>
+        </thead>
+        <tbody class="text-sm text-gray-600">
+          <% @transactions.each do |trn| %>
+            <tr class="border-b">
+              <td class="px-4 py-3"><%= trn.created_at.strftime("%d-%m-%Y %H:%M") %></td>
+              <td class="px-4 py-3"><%= trn.tx_id %></td>
+              <td class="px-4 py-3"><%= trn.user.role.title %></td>
+              <td class="px-4 py-3"><%= trn.account_or_mobile %></td>
+              <td class="px-4 py-3"><%= trn.service_product.category.title %></td>
+              <td class="px-4 py-3"><%= trn.service_product.company_name %></td>
+              <td class="px-4 py-3 text-yellow-600 font-bold"><%= trn.status %></td>
+              <td class="px-4 py-3"><%= trn.user.username %></td>
+              <td class="px-4 py-3"> <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" 
+               class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+			        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+			              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+			        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+			              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 
+			              4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+			   </svg>
+			  </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

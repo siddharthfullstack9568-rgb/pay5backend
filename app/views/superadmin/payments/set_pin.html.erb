@@ -1,0 +1,66 @@
+<div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-2xl m-auto mt-20">
+  <!-- Title -->
+  <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">
+    Set Your 6-Digit PIN
+  </h2>
+
+  <!-- Form -->
+  <%= form_with url: superadmin_payments_set_pin_update_path, method: :post, local: true, class: "space-y-5" do %>
+    <!-- New PIN -->
+    <div>
+      <label for="new-pin" class="block text-gray-700 font-medium mb-2">Enter New PIN</label>
+      <input type="password" name="set_pin" id="new-pin" placeholder="Enter 6-digit PIN"
+        class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="6" required>
+    </div>
+
+    <!-- Confirm PIN -->
+    <div>
+      <label for="confirm-pin" class="block text-gray-700 font-medium mb-2">Confirm PIN</label>
+      <input type="password" name="confirm_pin" id="confirm-pin" placeholder="Confirm 6-digit PIN"
+        class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="6" required>
+    </div>
+
+    <!-- Button -->
+    <button type="submit"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg shadow-md transition duration-200">
+      Set PIN
+    </button>
+  <% end %>
+</div>
+
+<!-- Popup Flash Messages -->
+<div id="flash-container" class="fixed top-5 right-5 space-y-3 z-50">
+  <% flash.each do |key, message| %>
+    <% if message.present? %>
+      <% if key == "notice" %>
+        <div class="flash-message bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg">
+          ✅ <%= message %>
+        </div>
+      <% elsif key == "alert" %>
+        <div class="flash-message bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg">
+          ⚠️ <%= message %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+
+<!-- Auto-hide flash -->
+<script>
+  setTimeout(() => {
+    document.querySelectorAll(".flash-message").forEach(el => {
+      el.style.transition = "opacity 0.5s, transform 0.5s";
+      el.style.opacity = "0";
+      el.style.transform = "translateX(100%)";
+      setTimeout(() => el.remove(), 500);
+    });
+  }, 3000);
+</script>
+<script>
+  document.getElementById("new-pin").addEventListener("input", function(e) {
+    this.value = this.value.replace(/[^0-9]/g, ""); // सिर्फ digits रहने दो
+  });
+   document.getElementById("confirm-pin").addEventListener("input", function(e) {
+    this.value = this.value.replace(/[^0-9]/g, ""); // सिर्फ digits रहने दो
+  });
+</script>

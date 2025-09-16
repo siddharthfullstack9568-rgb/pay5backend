@@ -10,9 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_03_113045) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_15_105112) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "account_transactions", force: :cascade do |t|
+    t.string "txn_id"
+    t.decimal "amount"
+    t.string "reason"
+    t.string "user_code"
+    t.string "mobile"
+    t.string "txn_type"
+    t.string "user_type"
+    t.string "user_name"
+    t.string "status"
+    t.integer "parent_id"
+    t.bigint "user_id", null: false
+    t.bigint "wallet_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parent_id"], name: "index_account_transactions_on_parent_id"
+    t.index ["user_id"], name: "index_account_transactions_on_user_id"
+    t.index ["wallet_id"], name: "index_account_transactions_on_wallet_id"
+  end
 
   create_table "banks", force: :cascade do |t|
     t.string "bank_name"
@@ -37,6 +57,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_03_113045) do
     t.index ["service_id"], name: "index_categories_on_service_id"
   end
 
+  create_table "commissions", force: :cascade do |t|
+    t.string "commission_type"
+    t.string "from_role"
+    t.string "to_role"
+    t.decimal "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "service_product_item_id", null: false
+    t.index ["service_product_item_id"], name: "index_commissions_on_service_product_item_id"
+  end
+
   create_table "enquiries", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -51,6 +82,26 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_03_113045) do
     t.index ["role_id"], name: "index_enquiries_on_role_id"
   end
 
+  create_table "fund_requests", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "requested_by"
+    t.decimal "amount"
+    t.string "status"
+    t.integer "approved_by"
+    t.datetime "approved_at"
+    t.string "remark"
+    t.string "image"
+    t.string "transaction_type"
+    t.string "mode"
+    t.string "bank_reference_no"
+    t.string "payment_mode"
+    t.string "deposit_bank"
+    t.string "your_bank"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_fund_requests_on_user_id"
+  end
+
   create_table "roles", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at", null: false
@@ -63,6 +114,16 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_03_113045) do
     t.decimal "commision_rate"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "service_product_items", force: :cascade do |t|
+    t.bigint "service_product_id", null: false
+    t.string "name"
+    t.string "oprator_type"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_product_id"], name: "index_service_product_items_on_service_product_id"
   end
 
   create_table "service_products", force: :cascade do |t|
@@ -96,6 +157,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_03_113045) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "service_product_id"
+    t.index ["service_product_id"], name: "index_transactions_on_service_product_id"
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end
 
@@ -165,15 +228,48 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_03_113045) do
     t.string "passport_photo"
     t.string "store_shop_photo"
     t.string "address_proof_photo"
+    t.integer "parent_id"
+    t.string "set_pin"
+    t.string "confirm_pin"
     t.index ["email"], name: "index_users_on_email"
+    t.index ["parent_id"], name: "index_users_on_parent_id"
     t.index ["role_id"], name: "index_users_on_role_id"
     t.index ["scheme_id"], name: "index_users_on_scheme_id"
     t.index ["service_id"], name: "index_users_on_service_id"
   end
 
+  create_table "wallet_transactions", force: :cascade do |t|
+    t.bigint "wallet_id", null: false
+    t.string "tx_id", limit: 50, null: false
+    t.string "mode", null: false
+    t.string "transaction_type", null: false
+    t.decimal "amount", precision: 12, scale: 2, null: false
+    t.string "status", default: "pending"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "fund_request_id", null: false
+    t.index ["fund_request_id"], name: "index_wallet_transactions_on_fund_request_id"
+    t.index ["wallet_id"], name: "index_wallet_transactions_on_wallet_id"
+  end
+
+  create_table "wallets", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.decimal "balance"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_wallets_on_user_id"
+  end
+
+  add_foreign_key "account_transactions", "users"
+  add_foreign_key "account_transactions", "wallets"
   add_foreign_key "categories", "services"
+  add_foreign_key "commissions", "service_product_items"
   add_foreign_key "enquiries", "roles"
+  add_foreign_key "fund_requests", "users"
+  add_foreign_key "service_product_items", "service_products"
   add_foreign_key "service_products", "categories"
+  add_foreign_key "transactions", "service_products"
   add_foreign_key "transactions", "users"
   add_foreign_key "user_services", "services"
   add_foreign_key "user_services", "users", column: "assignee_id"
@@ -181,4 +277,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_03_113045) do
   add_foreign_key "users", "roles"
   add_foreign_key "users", "schemes"
   add_foreign_key "users", "services"
+  add_foreign_key "wallet_transactions", "fund_requests"
+  add_foreign_key "wallet_transactions", "wallets"
+  add_foreign_key "wallets", "users"
 end

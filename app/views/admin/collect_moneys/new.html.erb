@@ -1,0 +1,129 @@
+<div class="flex flex-col items-center p-6 md:p-10 min-h-screen">
+  <!-- Form -->
+  
+  <%= form_with model: @fund_request, 
+              url: admin_collect_moneys_create_path, 
+              local: true, 
+              class: "p-6 md:p-8 rounded-lg shadow-md w-full max-w-3xl mb-10 bg-white" do |form| %>
+    <h2 class="text-xl font-bold text-gray-700 mb-6">💰 Payment Request</h2>
+
+    <!-- Deposit Bank & Your Bank -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-gray-800 font-medium mb-1">
+          Deposit Bank <span class="text-red-500">*</span>
+        </label>
+        <select
+          name="fund_request[deposit_bank]"
+          class="w-full px-3 py-2 mb-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+          required
+        >
+          <option value="">-- Select Bank --</option>
+          <option value="SBI">State Bank of India</option>
+          <option value="HDFC">HDFC Bank</option>
+          <option value="ICICI">ICICI Bank</option>
+          <option value="AXIS">Axis Bank</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-gray-800 font-medium mb-1">
+          Your Bank <span class="text-red-500">*</span>
+        </label>
+        <select
+          name="fund_request[your_bank]"
+          class="w-full px-3 py-2 mb-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+          required
+        >
+          <option value="">-- Select Your Bank --</option>
+          <option value="SBI">State Bank of India</option>
+          <option value="HDFC">HDFC Bank</option>
+          <option value="ICICI">ICICI Bank</option>
+          <option value="AXIS">Axis Bank</option>
+          <option value="PNB">Punjab National Bank</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Payment Mode -->
+    <label class="block text-gray-800 font-medium mb-1">
+      Payment Mode <span class="text-red-500">*</span>
+    </label>
+    <select
+      name="fund_request[transaction_type]"
+      class="w-full px-3 py-2 mb-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+      required
+    >
+      <option value="">-- Select Payment Mode --</option>
+      <option value="IMPS">IMPS</option>
+      <option value="NEFT">NEFT</option>
+      <option value="UPI">UPI</option>
+      <option value="CashInBank">CashInBank</option>
+      <option value="Netbanking">Netbanking</option>
+      <option value="Cash">Cash</option>
+      <option value="Cheque">Cheque</option>
+      <option value="FT">FT</option>
+    </select>
+
+    <!-- Reference -->
+    <label class="block text-gray-800 font-medium mb-1">
+      Bank Reference No <span class="text-red-500">*</span>
+    </label>
+    <input
+      type="text"
+      name="fund_request[bank_reference_no]"
+      placeholder="Enter reference number"
+      class="w-full px-3 py-2 mb-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+      required
+    />
+
+    <!-- Amount -->
+    <label class="block text-gray-800 font-medium mb-1">
+      Amount (₹) <span class="text-red-500">*</span>
+    </label>
+    <input
+      type="number"
+      name="fund_request[amount]"
+      min="1"
+      placeholder="Enter amount"
+      class="w-full px-3 py-2 mb-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+      required
+    />
+
+    <!-- Remark -->
+    <label class="block text-gray-800 font-medium mb-1">Remark</label>
+    <textarea
+      name="fund_request[remark]"
+      placeholder="Enter remark..."
+      class="w-full px-3 py-2 mb-6 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+    ></textarea>
+
+    <!-- File Upload -->
+    <label class="block text-gray-800 font-medium mb-1">
+      Upload File (Receipt/Proof)
+    </label>
+    <input
+      type="file"
+      name="fund_request[image]"
+      accept="image/*,.pdf"
+      class="w-full px-3 py-2 mb-6 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+    />
+
+    <!-- Buttons -->
+    <div class="flex gap-4">
+      <button
+        type="reset"
+        class="flex-1 py-2 bg-gray-400 hover:bg-gray-500 text-white font-semibold rounded-md transition"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition"
+      >
+        Submit
+      </button>
+    </div>
+  <%end%>
+
+</div>

@@ -6,7 +6,7 @@ class Superadmin::ServiceProductsController < ApplicationController
     @cat_id = params[:category_id]
     p "============="
     p @cat_id
-    @service_products = ServiceProduct.all
+    @service_products = ServiceProduct.where(category_id: @cat_id)
   end
 
   def show
@@ -45,6 +45,10 @@ class Superadmin::ServiceProductsController < ApplicationController
   def destroy
     @service_product.destroy
     redirect_to superadmin_service_productss_path, notice: "Service product deleted successfully."
+  end
+
+  def view_product_item
+    @service_products_items = ServiceProductItem.where(service_product_id: 11)
   end
 
   private

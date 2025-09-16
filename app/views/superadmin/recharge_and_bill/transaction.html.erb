@@ -55,20 +55,25 @@
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <%@transcations.each do |trn|%>
+            <%#@transactions.each do |trn|%>
+              <% @transcations.each do |trn| %>
+
              <tr class="hover:bg-gray-50">
               <td class="px-4 py-3 font-medium text-gray-900"><%=trn.tx_id%></td>
               <td class="px-4 py-3 text-gray-600"><%=trn.transaction_type%></td>
               <td class="px-4 py-3 text-gray-600"><%=trn.operator%></td>
               <td class="px-4 py-3 text-gray-600"><%=trn.account_or_mobile%></td>
               <td class="px-4 py-3 font-semibold text-gray-900">₹<%=trn.amount%></td>
+              <td class="px-4 py-3 text-gray-600"><%= trn.created_at.strftime("%d/%m/%Y") %></td>
               <td class="px-4 py-3">
                 <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Success</span>
               </td>
-              <td class="px-4 py-3 text-gray-600"><%= trn.created_at.strftime("%d/%m/%Y") %></td>
 
               <td class="px-4 py-3">
-                <button class="text-green-600 hover:text-green-900 text-sm">View</button>
+                <a href="<%= superadmin_recharge_and_bill_view_path(id: trn.id) %>" 
+                 class="px-3 py-1 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 transition">
+                View
+              </a>
               </td>
             </tr>
             <%end%>
