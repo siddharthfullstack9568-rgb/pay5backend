@@ -33,8 +33,6 @@ class Api::V1::Agent::UserServicesController < Api::V1::Agent::BaseController
   end
 
 
-
-
   def service_category
     service_id = params[:id]
     if service_id.present?
@@ -53,6 +51,15 @@ class Api::V1::Agent::UserServicesController < Api::V1::Agent::BaseController
     else
       render json: {code: 200, message: "Service not Found"}
     end
+  end
+
+  def earn_commission
+    p "===================current_user"
+    p current_user.id
+    commission =   TransactionCommission.where(user_id: current_user.id).pluck(:commission_amount).compact.sum.to_f
+    p "=================commission"
+    p commission
+    render json: { code: 200, message: "Successfully commission show", earn_commission: commission }
   end
 
 

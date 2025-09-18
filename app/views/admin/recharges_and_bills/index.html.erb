@@ -1,4 +1,110 @@
-<div>
-  <h1 class="font-bold text-4xl">Admin::RechargeAndBills#index</h1>
-  <p>Find me in app/views/admin/recharge_and_bills/index.html.erb</p>
+
+  <!-- Header -->
+  <div class="bg-white p-4 rounded shadow">
+    <h1 class="text-lg font-semibold">Recharge & Bill Payment Commission Setup</h1>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white p-4 rounded shadow flex flex-col md:flex-row items-start md:items-center gap-4">
+ <%= form_with url: admin_recharges_and_bills_amdmin_commission_set_path, method: :post, local: true, data: { turbo: false } do %>
+
+   <%= select_tag :scheme, options_from_collection_for_select(Scheme.all, :id, :scheme_name), prompt: "Select Scheme", required: true, class:"border rounded px-3 py-2" %>
+
+
+    <select id="planType" class="border rounded px-3 py-2">
+      <option value="">-- Select Type --</option>
+      <option value="ALL">All</option>
+      <option value="Prepaid">Prepaid</option>
+      <option value="Postpaid">Postpaid</option>
+    </select>
+
+    <button id="submitFilter" disabled class="px-2 py-2 rounded-xl text-white bg-blue-600 cursor-pointer">
+      Submit
+    </button>
+  </div>
+
+ <div class="bg-white p-6 rounded-lg shadow-md">
+  <h2 class="text-lg font-semibold mb-4">Mobile Recharge Prepaid</h2>
+
+  <div class="overflow-x-auto">
+    <table class="w-full border-collapse">
+      <thead>
+        <tr class="bg-gray-100 text-left text-sm font-medium text-gray-700">
+          <th class="px-4 py-2 border">Service Name</th>
+          <th class="px-4 py-2 border">Company Name</th>
+          <th class="px-4 py-2 border">Type</th>
+          <th class="px-4 py-2 border">Admin Commission</th>
+          <th class="px-4 py-2 border">Master Commission</th>
+          <th class="px-4 py-2 border">Dealer Commission</th>
+          <th class="px-4 py-2 border">Retailer Commission</th>
+          <th class="px-4 py-2 border text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody class="text-sm text-gray-700">
+        <%@service_product_items.each do |item|%>
+        <tr>
+          <td class="px-4 py-2 border"><%=item.service_product.company_name%></td>
+          <td class="px-4 py-2 border"><%=item.name%></td>
+          <td class="px-4 py-2 border">
+            <select name="commission_type" class="border rounded px-2 py-1 w-full text-sm">
+              <option value="commission">Commision</option>
+              <option value="flat">Flat</option>
+            </select>
+          </td>
+          <td class="px-4 py-2 border">
+           <%= text_field_tag "commissions[#{item.id}][admin_commission]", 
+            Commission.find_by(service_product_item_id: item.id, to_role: "admin")&.value, 
+            placeholder: "%", 
+            class: "w-full border rounded px-2 py-1 text-sm cursor-not-allowed bg-gray-300", 
+            disabled: true %>
+          </td>
+
+          <td class="px-4 py-2 border">
+            <%= text_field_tag "commissions[#{item.id}][master_commission]", 
+              Commission.find_by(service_product_item_id: item.id, to_role: "master")&.value, 
+              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+          </td>
+
+          <td class="px-4 py-2 border">
+            <%= text_field_tag "commissions[#{item.id}][dealer_commission]", 
+              Commission.find_by(service_product_item_id: item.id, to_role: "dealer")&.value, 
+              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+          </td>
+
+          <td class="px-4 py-2 border">
+            <%= text_field_tag "commissions[#{item.id}][retailer_commission]", 
+              Commission.find_by(service_product_item_id: item.id, to_role: "retailer")&.value, 
+              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+          </td>
+         <td class="px-4 py-2 border text-center">
+          <%= submit_tag "Submit", class: "bg-blue-600 text-white px-3 py-2 rounded cursor-pointer" %>
+        </td>
+      <% end %>
+        </tr>
+        <%end%>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+
+<% if flash.any? %>
+  <div id="flashModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6 relative">
+      <!-- Close Button -->
+      <% flash.each do |key, message| %>
+        <div class="mb-4 p-4 rounded-lg 
+                    <%= key == 'notice' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' %>">
+          <%= message %>
+        </div>
+      <% end %>
+
+      <div class="flex justify-center">
+        <button onclick="document.getElementById('flashModal').remove()" 
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+<% end %>

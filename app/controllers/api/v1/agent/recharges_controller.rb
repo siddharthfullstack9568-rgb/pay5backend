@@ -1,18 +1,17 @@
 class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
   protect_from_forgery with: :null_session
 
-  # Verify PIN before recharge
   def verify_pin
-  if params[:pin].blank?
-    return render json: { success: false, message: "PIN is required" }, status: :bad_request
-  end
+    if params[:pin].blank?
+      return render json: { success: false, message: "PIN is required" }, status: :bad_request
+    end
 
-  if current_user.set_pin == params[:pin]
-    render json: { code: "200", message: "PIN verified successfully", pin: current_user.set_pin }, status: :ok
-  else
-    render json: { success: false, message: "Invalid PIN" }
+    if current_user.set_pin == params[:pin]
+      render json: { code: "200", message: "PIN verified successfully", pin: current_user.set_pin }, status: :ok
+    else
+      render json: { success: false, message: "Invalid PIN" }
+    end
   end
-end
 
 
   def recharge_list
@@ -21,6 +20,8 @@ end
   end
 
   def recharge
+    hierarchy = current_user.find_hierarchy
+
     required = %i[transaction_type recharge_type mobile_number state operator amount service_product_id]
     missing = required.select { |p| params[p].blank? }
 
@@ -30,6 +31,7 @@ end
 
     amount = params[:amount].to_f
     wallet = Wallet.find_by(user_id: current_user.id)
+    parent_wallet = Wallet.find_by(user_id: current_user.parent_id)
 
     unless wallet
       return render json: { success: false, message: "Wallet not found" }, status: :not_found
@@ -42,9 +44,11 @@ end
     txn_id = "TXN#{rand(100000..999999)}"
 
     ActiveRecord::Base.transaction do
+      # Deduct amount from user's wallet
       wallet.update!(balance: wallet.balance - amount)
 
-      Transaction.create!(
+      # Create recharge transaction
+      recharge_transaction = Transaction.create!(
         tx_id: txn_id,
         operator: params[:operator],
         account_or_mobile: params[:mobile_number],
@@ -52,8 +56,102 @@ end
         transaction_type: params[:transaction_type],
         user_id: current_user.id,
         status: "SUCCESS",
-        service_product_id: params[:service_product_id],
+        service_product_id: params[:service_product_id]
       )
+
+      # ==== Commission for hierarchy users (admin & superadmin) ====
+      hierarchy.each do |user|
+        Rails.logger.info "Hierarchy user: #{user.id} (#{user.role.title})"
+
+        # Get admin commission %
+
+        admin_commission = Commission.where(scheme_id: current_user.scheme_id)
+        .joins(:service_product_item).where( service_product_item: { name: "Airtel" }, to_role: "admin").pluck(:value).last.to_f
+
+
+        scheme = Scheme.where(id: current_user.scheme_id)
+        
+
+        scheme_commission = scheme.last.commision_rate.to_f
+        p "===========scheme_commission"
+        p scheme_commission
+
+
+        superadmin_commission = scheme_commission - admin_commission
+        p "=========superadmin_admin_first=========="
+        p superadmin_commission
+  
+
+        retailer_commission = Commission.where(scheme_id: current_user.scheme_id)
+        .joins(:service_product_item).where( service_product_item: { name: "Airtel" }, to_role: "retailer").pluck(:value).last.to_f
+
+        p "=======retailer_commission_for_schemeretailer_commission_for_scheme====="
+        p retailer_commission
+     
+        admin_commission_first = admin_commission - retailer_commission
+        p "============admin_commission_first==========="
+        p admin_commission_first
+
+
+
+        admin_commission_result = (admin_commission_first / 100) * amount
+        superadmin_commission_result = (superadmin_commission / 100) * amount
+
+        p "------------===========-superadmin_commission result------------------"
+        p superadmin_commission_result
+        p "============admin_commission_resultadmin_commission_result================"
+        p admin_commission_result
+
+        # ==== Admin Commission ====
+        if user.role.title == "admin"
+          TransactionCommission.create!(
+            transaction_id: recharge_transaction.id,
+            user_id: user.id,
+            commission_amount: admin_commission_result,
+            role: "admin"
+          )
+
+          # Update admin wallet (only if direct parent)
+          if user.id == current_user.parent_id
+            parent_wallet.update!(balance: parent_wallet.balance + admin_commission_result)
+          end
+        end
+
+        # ==== Superadmin Commission (static) ====
+        if user.role.title == "superadmin"
+          TransactionCommission.create!(
+            transaction_id: recharge_transaction.id,
+            user_id: user.id,
+            commission_amount: superadmin_commission_result,
+            role: "superadmin"
+          )
+
+          # Update superadmin wallet (agar chaiye to)
+          superadmin_wallet = Wallet.find_by(user_id: user.id)
+          superadmin_wallet.update!(balance: superadmin_wallet.balance + superadmin_commission_result) if superadmin_wallet
+        end
+      end
+
+      # ==== Retailer Commission for current user ====
+      retailer_commission = Commission.where(scheme_id: current_user.scheme_id)
+      .joins(:service_product_item)
+      .where(service_product_item: { name: params[:operator] }, to_role: "retailer")
+      .pluck(:value)
+      .last.to_f
+
+      retailer_commission_result = (retailer_commission / 100) * amount
+      p "==============retailer_commissionretailer_commission==============="
+      p retailer_commission_result
+
+      transaction_commission = TransactionCommission.create!(
+        transaction_id: recharge_transaction.id,
+        user_id: current_user.id,
+        commission_amount: retailer_commission_result,
+        role: "retailer"
+      )
+
+      # Add retailer commission to current user's wallet
+      wallet.update!(balance: wallet.balance + transaction_commission.commission_amount)
     end
 
     render json: {
@@ -72,4 +170,19 @@ end
       }
     }, status: :ok
   end
+
+
+  # private
+
+  # def calculate_commission(user, amount)
+  #   case user.role
+  #   when "superadmin"
+  #     amount * 2
+  #   when "admin"
+  #     amount * 2
+  #   else
+  #     0
+  #   end
+  # end
+
 end

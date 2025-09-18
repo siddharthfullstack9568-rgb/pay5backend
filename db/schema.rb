@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_15_105112) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_17_051630) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -65,6 +65,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_15_105112) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "service_product_item_id", null: false
+    t.bigint "scheme_id"
+    t.index ["scheme_id"], name: "index_commissions_on_scheme_id"
     t.index ["service_product_item_id"], name: "index_commissions_on_service_product_item_id"
   end
 
@@ -145,6 +147,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_15_105112) do
     t.datetime "updated_at", null: false
     t.string "logo"
     t.integer "position"
+  end
+
+  create_table "transaction_commissions", force: :cascade do |t|
+    t.bigint "transaction_id", null: false
+    t.bigint "user_id", null: false
+    t.integer "role"
+    t.decimal "commission_amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["transaction_id"], name: "index_transaction_commissions_on_transaction_id"
+    t.index ["user_id"], name: "index_transaction_commissions_on_user_id"
   end
 
   create_table "transactions", force: :cascade do |t|
@@ -264,11 +277,14 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_15_105112) do
   add_foreign_key "account_transactions", "users"
   add_foreign_key "account_transactions", "wallets"
   add_foreign_key "categories", "services"
+  add_foreign_key "commissions", "schemes"
   add_foreign_key "commissions", "service_product_items"
   add_foreign_key "enquiries", "roles"
   add_foreign_key "fund_requests", "users"
   add_foreign_key "service_product_items", "service_products"
   add_foreign_key "service_products", "categories"
+  add_foreign_key "transaction_commissions", "transactions"
+  add_foreign_key "transaction_commissions", "users"
   add_foreign_key "transactions", "service_products"
   add_foreign_key "transactions", "users"
   add_foreign_key "user_services", "services"

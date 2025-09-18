@@ -48,7 +48,7 @@ class Superadmin::ServiceProductsController < ApplicationController
   end
 
   def view_product_item
-    @service_products_items = ServiceProductItem.where(service_product_id: 11)
+    @service_produPrepaidcts_items = ServiceProductItem.where(service_product_id: 11)
   end
 
   private

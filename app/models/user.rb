@@ -12,6 +12,18 @@ class User < ApplicationRecord
   end
 
   has_one :wallet, dependent: :destroy
+  has_many :transaction_commissions, dependent: :destroy
+ 
+ def find_hierarchy
+    hierarchy = []
+    user = self
 
+    while user.parent.present?
+      hierarchy << user.parent
+      user = user.parent
+    end
+
+    hierarchy
+  end
 
 end

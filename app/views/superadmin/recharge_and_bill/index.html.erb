@@ -6,13 +6,10 @@
 
   <!-- Filters -->
   <div class="bg-white p-4 rounded shadow flex flex-col md:flex-row items-start md:items-center gap-4">
-  <%= form_with url: superadmin_recharge_and_bill_commission_set_path, method: :post, local: true do %>
-    <select id="scheme" name="scheme" class="border rounded px-3 py-2">
-      <option value="">-- Select Scheme --</option>
-      <% Scheme.all.each do |scheme|%>
-        <option value="<%=scheme.id%>"><%=scheme.scheme_name%></option>
-      <%end%>
-    </select>
+ <%= form_with url: superadmin_recharge_and_bill_commission_set_path, method: :post, local: true, data: { turbo: false } do %>
+
+   <%= select_tag :scheme, options_from_collection_for_select(Scheme.all, :id, :scheme_name), prompt: "Select Scheme", required: true, class:"border rounded px-3 py-2" %>
+
 
     <select id="planType" class="border rounded px-3 py-2">
       <option value="">-- Select Type --</option>
@@ -54,19 +51,30 @@
               <option value="flat">Flat</option>
             </select>
           </td>
-        <td class="px-4 py-2 border">
-          <%= text_field_tag "commissions[#{item.id}][admin_commission]", "", placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
-        </td>
-        <td class="px-4 py-2 border">
-          <%= text_field_tag "commissions[#{item.id}][master_commission]", "", placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
-        </td>
-        <td class="px-4 py-2 border">
-          <%= text_field_tag "commissions[#{item.id}][dealer_commission]", "", placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
-        </td>
-        <td class="px-4 py-2 border">
-          <%= text_field_tag "commissions[#{item.id}][retailer_commission]", "", placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
-        </td>
-        <td class="px-4 py-2 border text-center">
+          <td class="px-4 py-2 border">
+            <%= text_field_tag "commissions[#{item.id}][admin_commission]", 
+              Commission.find_by(service_product_item_id: item.id, to_role: "admin")&.value, 
+              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+          </td>
+
+          <td class="px-4 py-2 border">
+            <%= text_field_tag "commissions[#{item.id}][master_commission]", 
+              Commission.find_by(service_product_item_id: item.id, to_role: "master")&.value, 
+              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+          </td>
+
+          <td class="px-4 py-2 border">
+            <%= text_field_tag "commissions[#{item.id}][dealer_commission]", 
+              Commission.find_by(service_product_item_id: item.id, to_role: "dealer")&.value, 
+              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+          </td>
+
+          <td class="px-4 py-2 border">
+            <%= text_field_tag "commissions[#{item.id}][retailer_commission]", 
+              Commission.find_by(service_product_item_id: item.id, to_role: "retailer")&.value, 
+              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+          </td>
+         <td class="px-4 py-2 border text-center">
           <%= submit_tag "Submit", class: "bg-blue-600 text-white px-3 py-2 rounded cursor-pointer" %>
         </td>
       <% end %>
@@ -76,3 +84,25 @@
     </table>
   </div>
 </div>
+
+
+<% if flash.any? %>
+  <div id="flashModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6 relative">
+      <!-- Close Button -->
+      <% flash.each do |key, message| %>
+        <div class="mb-4 p-4 rounded-lg 
+                    <%= key == 'notice' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' %>">
+          <%= message %>
+        </div>
+      <% end %>
+
+      <div class="flex justify-center">
+        <button onclick="document.getElementById('flashModal').remove()" 
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -50,6 +50,8 @@ Rails.application.routes.draw do
 
     get "recharges_and_bills/index"
     get "recharges_and_bills/transaction"
+    post "recharges_and_bills/amdmin_commission_set"
+
 
     post "user_services/create", to: "user_services#create", as: :user_services_create
     # resources :user_services
@@ -72,7 +74,7 @@ Rails.application.routes.draw do
         get "user_services/index"
         post "user_services/service_category"
         post "user_services/service_product"
-
+        get "user_services/earn_commission"
         post "recharges/recharge"
         get "recharges/recharge_list"
         post "recharges/verify_pin"
@@ -95,6 +97,8 @@ Rails.application.routes.draw do
   root "superadmin/dashboards#index"
 
   namespace :superadmin do
+    get "reports/index"
+
     get "commissions/index"
     post "commissions/commission_set"
 

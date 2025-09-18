@@ -12,7 +12,6 @@ class Admin::UserServicesController < Admin::BaseController
     #  p @users
     # p "=============@usersss @usersss@usersss======"
     # p assignee_ids
-
   end
 
   def show

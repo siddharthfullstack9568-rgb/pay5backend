@@ -11,15 +11,22 @@ class Superadmin::RechargeAndBillController < ApplicationController
   end
 
   def commission_set
+    if params[:scheme].blank?
+      redirect_to superadmin_recharge_and_bill_index_path, alert: "Please select a scheme before submitting commissions."
+      return
+    end
+
     commission_type = params[:commission_type]
     scheme = Scheme.find(params[:scheme])
 
+    Rails.logger.info "Commission set started for scheme ID #{scheme.id}"
+
     error_messages = []
+    success_count = 0
 
     params[:commissions].each do |item_id, commission_params|
       item = ServiceProductItem.find(item_id)
 
-      # sabhi commission values ka sum nikalna
       total_commission = [
         commission_params[:admin_commission],
         commission_params[:master_commission],
@@ -28,21 +35,30 @@ class Superadmin::RechargeAndBillController < ApplicationController
       ].reject(&:blank?).map(&:to_f).sum
 
       if total_commission <= scheme.commision_rate.to_f
-        Commission.create!(service_product_item: item, commission_type: commission_type, from_role: "superadmin", to_role: "admin", value: commission_params[:admin_commission]) if commission_params[:admin_commission].present?
-        Commission.create!(service_product_item: item, commission_type: commission_type, from_role: "superadmin", to_role: "master", value: commission_params[:master_commission]) if commission_params[:master_commission].present?
-        Commission.create!(service_product_item: item, commission_type: commission_type, from_role: "superadmin", to_role: "dealer", value: commission_params[:dealer_commission]) if commission_params[:dealer_commission].present?
-        Commission.create!(service_product_item: item, commission_type: commission_type, from_role: "superadmin", to_role: "retailer", value: commission_params[:retailer_commission]) if commission_params[:retailer_commission].present?
+        begin
+          save_commission(item, scheme, commission_type, "superadmin", "admin", commission_params[:admin_commission])
+          save_commission(item, scheme, commission_type, "superadmin", "master", commission_params[:master_commission])
+          save_commission(item, scheme, commission_type, "superadmin", "dealer", commission_params[:dealer_commission])
+          save_commission(item, scheme, commission_type, "superadmin", "retailer", commission_params[:retailer_commission])
+
+          success_count += 1
+        rescue => e
+          error_messages << "For item #{item.name}, error: #{e.message}"
+          Rails.logger.error "Commission save error for item #{item.name}: #{e.message}"
+        end
       else
-        error_messages << "Item #{item.name} ke liye commission sum (#{total_commission}) Scheme limit (#{scheme.commision_rate}) se zyada hai"
+        error_messages << "For item #{item.name}, total commission (#{total_commission}) exceeds scheme limit (#{scheme.commision_rate})."
+        Rails.logger.warn "Commission total exceeded for item #{item.name}: total #{total_commission}, limit #{scheme.commision_rate}"
       end
     end
 
     if error_messages.any?
       redirect_to superadmin_recharge_and_bill_index_path, alert: error_messages.join(", ")
     else
-      redirect_to superadmin_recharge_and_bill_index_path, notice: "Commissions saved successfully!"
+      redirect_to superadmin_recharge_and_bill_index_path, notice: "#{success_count} item(s) commissions saved successfully!"
     end
   end
+
 
   def view
     @transcation = Transaction.find(params[:id]).order(created_at: :desc)
@@ -52,7 +68,23 @@ class Superadmin::RechargeAndBillController < ApplicationController
     @transcations = Transaction.all
   end
 
+
+  private
+
+  def save_commission(item, scheme, commission_type, from_role, to_role, value)
+    return if value.blank?
+
+    commission = Commission.find_or_initialize_by(
+      service_product_item: item,
+      commission_type: commission_type,
+      from_role: from_role,
+      to_role: to_role,
+      scheme_id: scheme.id
+    )
+    commission.value = value
+    commission.save!
+    Rails.logger.info "Saved commission for item #{item.name}, from #{from_role} to #{to_role}, value #{value}"
+  end
+
+
 end
-
-
-# @service_produPrepaidcts_items = ServiceProductItem.where(service_product_id: 11)
