@@ -35,13 +35,13 @@ Rails.application.routes.draw do
     get "dashboards/index"
     get "scheme/index"
 
-    get "user_services/index"
-    get "user_services/new"
+    # get "user_services/index"
+    # get "user_services/new"
     get "user_services/view_blance"
     get "user_services/set_pin"
     post "user_services/set_pin_update"
 
-    resources :user_services, only: [:destroy]
+    resources :user_services
 
     get "collect_moneys/index"
     get "collect_moneys/new"
@@ -59,6 +59,10 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      namespace :customer do
+        get "sessions/login"
+        post "sessions/verify_otp"
+      end
 
       namespace :master do
         get "dashboards/index"

@@ -1,39 +1,38 @@
 <div class="w-[1000px] mx-auto p-6 bg-white shadow-md rounded-xl h-[800px] mt-8 mb-4 overflow-auto">
   <h2 class="text-2xl font-bold mb-6">Edit User Details</h2>
-<%= form_with model: @admin, 
-              url: @admin.new_record? ? superadmin_admins_path : superadmin_admin_path(@admin),
-              local: true,
-              html: { class: "grid grid-cols-1 md:grid-cols-3 gap-6" } do |form| %>
-
+<%= form_with model: @user_service,
+                url: admin_user_service_path(@user_service),
+                method: :patch,
+                html: { class: "grid grid-cols-1 md:grid-cols-3 gap-6" } do |form| %>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Full Name</label>
-      <input type="text" value="<%=@admin.first_name%>" name="user[first_name]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%=@user_service.first_name%>" name="user[first_name]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Username</label>
-      <input type="text" value="<%=@admin.username%>" name="user[username]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%=@user_service.username%>" name="user[username]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Email</label>
-      <input type="email" value="<%=@admin.email%>" name="user[email]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="email" value="<%=@user_service.email%>" name="user[email]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Phone Number</label>
-      <input type="text" value="<%=@admin.phone_number%>" name="user[phone_number]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%=@user_service.phone_number%>" name="user[phone_number]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Alternative Number</label>
-      <input type="text" value="<%=@admin.alternative_number%>" name="user[alternative_number]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%=@user_service.alternative_number%>" name="user[alternative_number]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Date of Birth</label>
-      <input type="date" value="<%=@admin.date_of_birth%>" name="user[date_of_birth]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="date" value="<%=@user_service.date_of_birth%>" name="user[date_of_birth]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <div>
@@ -49,38 +48,39 @@
     <!-- Identity -->
     <div>
       <label class="block text-sm font-medium text-gray-700">Aadhaar Number</label>
-      <input type="text" value="<%=@admin.aadhaar_number%>" name="user[aadhaar_number]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%=@user_service.aadhaar_number%>" name="user[aadhaar_number]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">PAN Card</label>
-      <input type="text" value="<%=@admin.pan_card%>" name="user[pan_card]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%=@user_service.pan_card%>" name="user[pan_card]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <!-- Business Details -->
     <div>
       <label class="block text-sm font-medium text-gray-700">Business Name</label>
-      <input type="text" value="<%=@admin.business_name%>" name="user[business_name]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%=@user_service.business_name%>" name="user[business_name]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Business Owner Type</label>
-      <input type="text" value="<%=@admin.business_owner_type%>" name="user[business_owner_type]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%=@user_service.business_owner_type%>" name="user[business_owner_type]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Business Nature Type</label>
-      <input type="text" value="<%=@admin.business_nature_type%>" name="business_nature_type" class="mt-1 w-full border rounded-lg px-3 py-2">
-    </div>
+      <input type="text" value="<%=@user_service.business_nature_type%>" name="user[business_nature_type]" class="mt-1 w-full border rounded-lg px-3 py-2">
+    </div> 
+
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Business Registration Number</label>
-      <input type="text" value="<%=@admin.business_registration_number%>" name="user[business_registration_number]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%=@user_service.business_registration_number%>" name="user[business_registration_number]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">GST Number</label>
-      <input type="text" value="<%=@admin.gst_number%>" name="user[gst_number]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%=@user_service.gst_number%>" name="user[gst_number]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
      <!-- Scheme -->
@@ -97,28 +97,28 @@
     <!-- Address -->
     <div class="md:col-span-2">
       <label class="block text-sm font-medium text-gray-700">Full Address</label>
-      <textarea name="user[address]" value="<%=@admin.address%>" rows="2" class="mt-1 w-full border rounded-lg px-3 py-2"></textarea>
+      <textarea name="user[address]" value="<%=@user_service.address%>" rows="2" class="mt-1 w-full border rounded-lg px-3 py-2"></textarea>
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Pincode</label>
-      <input type="text" value="<%=@admin.pincode%>" name="user[pincode]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%=@user_service.pincode%>" name="user[pincode]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <!-- Bank Details -->
     <div>
       <label class="block text-sm font-medium text-gray-700">Bank Name</label>
-      <input type="text" value="<%=@admin.bank_name%>" name="user[bank_name]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%=@user_service.bank_name%>" name="user[bank_name]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Account Number</label>
-      <input type="text" value="<%=@admin.account_number%>" name="user[account_number]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%#=@admin.account_number%>" name="user[account_number]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Account Holder Name</label>
-      <input type="text" value="<%=@admin.account_holder_name%>"  name="user[account_holder_name]" class="mt-1 w-full border rounded-lg px-3 py-2">
+      <input type="text" value="<%#=@admin.account_holder_name%>"  name="user[account_holder_name]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
  

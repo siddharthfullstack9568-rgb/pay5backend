@@ -1,6 +1,4 @@
-<div class="mt-4 pl-8 p-4" data-controller="balancemodal">
-        <input type="hidden" name="retailer_id" value="">
-
+<div class="mt-4 pl-8 p-4">
   <div class="flex justify-between items-center mb-6">
         <div>
           <h1 class="text-2xl font-bold">Users List</h1>
@@ -12,11 +10,11 @@
           <button class="flex items-center gap-2 border px-4 py-2 rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300">
             📄 Export List
           </button>
-          <a href ="<%=admin_user_services_new_path%>" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 cursor-pointer">Create New User
+          <a href ="<%=new_admin_user_service_path%>" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 cursor-pointer">Create New User
          </a>
         </div>
       </div>
-  <div class="w-[1477px] relative overflow-x-auto shadow-md sm:rounded-lg pr-5 mt-8">
+  <div class="w-[1460px] relative overflow-x-auto shadow-md sm:rounded-lg pr-5 mt-8">
     <table class="w-full text-sm text-left text-gray-600">
       <thead class="text-xs uppercase bg-gray-100 text-gray-700">
         <tr>
@@ -89,7 +87,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @users.each_with_index do |retailer, index| %>
+        <% @user_services.each_with_index do |retailer, index| %>
         <tr class="bg-white border-b hover:bg-gray-50">
           <!-- Serial Number -->
           <th scope="row" class="px-6 py-4"><%= index + 1 %></th>
@@ -120,10 +118,6 @@
           <td class="px-6 py-4"><%= retailer.account_holder_name %></td>
           <!-- Actions -->
           <td class="flex gap-3 px-6 py-4">
-              <button data-action="click->balancemodal#open" data-id="<%=retailer.id%>"  data-balance="<%= Wallet.find_by(user_id: retailer.id)&.balance.to_f %>"
-                  class="font-medium text-blue-600 hover:underline bg-yellow-400 py-1 px-2 rounded-lg w-32">
-               View Balance
-             </button>
             <!-- Status Badge -->
           <% if retailer.status %>
             <%= button_to superadmin_retailer_update_status_path(id: retailer.id),
@@ -141,7 +135,7 @@
             <% end %>
           <% end %>
             <!-- Edit Link -->
-             <%= link_to "Edit", edit_superadmin_retailer_path(retailer),
+            <%= link_to "Edit", edit_admin_user_service_path(retailer),
                 class: "font-medium text-blue-600 hover:underline bg-yellow-400 py-1 px-2 rounded-lg" %>
 
             <!-- Delete Button -->
@@ -149,6 +143,7 @@
                 method: :delete,
                 data: { turbo_confirm: "Are you sure?" },
                 class: "px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition" %>
+
           </td>
 
         </tr>
@@ -156,28 +151,4 @@
       </tbody>
     </table>
   </div>
-
-
-<div
-  data-balancemodal-target="container"
-  data-action="click->balancemodal#backdrop"
-  class="hidden fixed inset-0 flex items-center justify-center z-50"
-  style="backdrop-filter: brightness(0.5);"
->
-  <div class="bg-white rounded-2xl shadow-xl w-[688px] p-6 relative mb-12">
-    <!-- Close button -->
-    <button data-action="click->balancemodal#close"
-      class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
-      ✕
-    </button>
-
-    <!-- Modal content -->
-    <h2 class="text-xl font-bold text-gray-800 mb-4">View Balance</h2>
-
-    <h4 data-balancemodal-target="balance" class="text-xl font-bold text-gray-500"></h4>
-  </div>
-</div>
-
-
-
 </div>
