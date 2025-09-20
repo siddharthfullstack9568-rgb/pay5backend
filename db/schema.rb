@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_17_051630) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_19_105236) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -156,6 +156,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_17_051630) do
     t.decimal "commission_amount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "service_product_item_id"
+    t.index ["service_product_item_id"], name: "index_transaction_commissions_on_service_product_item_id"
     t.index ["transaction_id"], name: "index_transaction_commissions_on_transaction_id"
     t.index ["user_id"], name: "index_transaction_commissions_on_user_id"
   end
@@ -283,6 +285,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_17_051630) do
   add_foreign_key "fund_requests", "users"
   add_foreign_key "service_product_items", "service_products"
   add_foreign_key "service_products", "categories"
+  add_foreign_key "transaction_commissions", "service_product_items"
   add_foreign_key "transaction_commissions", "transactions"
   add_foreign_key "transaction_commissions", "users"
   add_foreign_key "transactions", "service_products"

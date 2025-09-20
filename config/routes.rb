@@ -79,6 +79,8 @@ Rails.application.routes.draw do
         post "user_services/service_category"
         post "user_services/service_product"
         get "user_services/earn_commission"
+        post "user_services/transaction_list"
+
         post "recharges/recharge"
         get "recharges/recharge_list"
         post "recharges/verify_pin"

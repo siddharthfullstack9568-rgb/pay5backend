@@ -13,14 +13,16 @@ class Api::V1::Customer::SessionsController < ApplicationController
     unless params[:otp].present?
       render json: { code: 422, message: "otp is required" }, status: :unprocessable_entity and return
     end
-    
-    if @user && @user.otp == params[:otp]
+    p @user.otp
+    p params[:otp]
+    if @user && @user.otp.to_s == params[:otp].to_s
       @user.update(verify_otp: true, otp: nil)
       @user.regenerate_session_token
       render json: { code: 200, message: "OTP verified successfully", user: @user }
     else
       render json: { code: 401, message: "Invalid OTP" }, status: :unauthorized
     end
+
   end
 
   private

@@ -45,6 +45,9 @@ class Api::V1::Agent::UserServicesController < Api::V1::Agent::BaseController
 
   def service_product
     category_id = params[:id]
+    start_date = params[:start_date] # optional
+    end_date   = params[:end_date]   # optional
+
     if category_id.present?
       category = ServiceProduct.where(category_id: category_id)
       render json: {code: 200, message: "Successfully fetched data", categories: category}
@@ -61,6 +64,69 @@ class Api::V1::Agent::UserServicesController < Api::V1::Agent::BaseController
     p commission
     render json: { code: 200, message: "Successfully commission show", earn_commission: commission }
   end
+
+  def transaction_list
+    service_name = params[:service] # service name from params
+    start_date = params[:start_date] # optional
+    end_date   = params[:end_date]   # optional
+
+    if service_name.present? && service_name.downcase != "all"
+      # 1️⃣ Find the service record
+      service_record = Service.where(title: service_name)
+      unless service_record.exists?
+        render json: { message: "Service not found" }, status: 404 and return
+      end
+
+      # 2️⃣ Get category ids for this service
+      category_ids = Category.where(service_id: service_record.last.id).pluck(:id)
+      if category_ids.empty?
+        render json: { message: "No categories found for this service" }, status: 404 and return
+      end
+
+      # 3️⃣ Get service_product ids for these categories
+      service_product_ids = ServiceProduct.where(category_id: category_ids).pluck(:id)
+      if service_product_ids.empty?
+        render json: { message: "No service products found for these categories" }, status: 404 and return
+      end
+
+      # 4️⃣ Get service_product_item ids for these service products
+      service_product_item_ids = ServiceProductItem.where(service_product_id: service_product_ids).pluck(:id)
+      if service_product_item_ids.empty?
+        render json: { message: "No service product items found for these service products" }, status: 404 and return
+      end
+
+      # 5️⃣ Fetch TransactionCommission for current user and this service
+      transactions = TransactionCommission.where(service_product_item_id: service_product_item_ids, user_id: current_user.id)
+    else
+      # "all" selected -> fetch all transactions for current user
+      transactions = TransactionCommission.where(user_id: current_user.id)
+    end
+
+    # 6️⃣ Apply date filter if provided
+    if start_date.present? && end_date.present?
+      transactions = transactions.where(created_at: start_date..end_date)
+    elsif start_date.present?
+      transactions = transactions.where("created_at >= ?", start_date)
+    elsif end_date.present?
+      transactions = transactions.where("created_at <= ?", end_date)
+    end
+
+    # 7️⃣ Calculate totals
+    total_count   = transactions.count
+    total_earning = transactions.sum(:commission_amount)
+
+    # 8️⃣ Return JSON
+    render json: {
+      service_name: service_name,
+      total_transaction: total_count,
+      total_earning: total_earning
+    }
+  end
+
+
+
+
+
 
 
 end

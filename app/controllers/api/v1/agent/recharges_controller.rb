@@ -108,7 +108,8 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
             transaction_id: recharge_transaction.id,
             user_id: user.id,
             commission_amount: admin_commission_result,
-            role: "admin"
+            role: "admin",
+            service_product_item_id: 1
           )
 
           # Update admin wallet (only if direct parent)
@@ -123,7 +124,8 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
             transaction_id: recharge_transaction.id,
             user_id: user.id,
             commission_amount: superadmin_commission_result,
-            role: "superadmin"
+            role: "superadmin",
+            service_product_item_id: 1
           )
 
           # Update superadmin wallet (agar chaiye to)
@@ -147,7 +149,8 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
         transaction_id: recharge_transaction.id,
         user_id: current_user.id,
         commission_amount: retailer_commission_result,
-        role: "retailer"
+        role: "retailer",
+        service_product_item_id: 1
       )
 
       # Add retailer commission to current user's wallet
