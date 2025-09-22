@@ -121,7 +121,23 @@
       <input type="text" value="<%=@admin.account_holder_name%>"  name="user[account_holder_name]" class="mt-1 w-full border rounded-lg px-3 py-2">
     </div>
 
- 
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Services</label>
+
+      <div class="grid grid-cols-2 gap-2">
+        <% Service.all.each do |service| %>
+          <% assigned = UserService.exists?(assignee_id: @admin.id, service_id: service.id) %>
+
+          <div class="flex items-center space-x-2">
+            <%= check_box_tag "user[service_ids][]", service.id, assigned,
+              id: "service_#{service.id}",
+              class: "w-4 h-4",
+              data: { action: "retailer#toggle", retailer_target: "checkbox" } %>
+            <%= label_tag "service_#{service.id}", service.title.capitalize, class: "text-gray-600 font-medium" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
 
     <!-- Buttons -->
     <div class="md:col-span-3 h-[50px] flex justify-end gap-4">

@@ -114,12 +114,14 @@ class Api::V1::Agent::UserServicesController < Api::V1::Agent::BaseController
     # 7️⃣ Calculate totals
     total_count   = transactions.count
     total_earning = transactions.sum(:commission_amount)
+    total_transaction_amount = Transaction.where(id: transactions.pluck(:transaction_id)).sum(:amount)
 
     # 8️⃣ Return JSON
     render json: {
       service_name: service_name,
       total_transaction: total_count,
-      total_earning: total_earning
+      total_earning: total_earning,
+      total_transaction_amount: total_transaction_amount
     }
   end
 

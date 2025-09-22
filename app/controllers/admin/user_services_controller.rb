@@ -10,6 +10,9 @@ class Admin::UserServicesController < Admin::BaseController
 
 
   def new
+    @services = UserService.where(assignee_id: 104).joins(:service).select("services.id, services.title")
+    p "=-===========@services==="
+    p @services
     @user_service = User.new
   end
 
@@ -36,16 +39,42 @@ class Admin::UserServicesController < Admin::BaseController
   end
 
   def edit
-    # @user_service is already set by before_action
+    @services = UserService.where(assignee_id: 104).joins(:service).select("services.id, services.title")
   end
 
   def update
     if @user_service.update(user_params)
+      service_ids = Array(params[:user][:service_ids]).map(&:to_i)
+      assigner = current_admin_user
+
+      # 1️⃣ Purane records nikaalo (jo already assigned hai)
+      existing_ids = @user_service.user_services.pluck(:service_id)
+
+      # 2️⃣ Delete karo jo ab uncheck ho gaye hain
+      (existing_ids - service_ids).each do |sid|
+        UserService.where(
+          assigner: assigner,
+          assignee: @user_service,
+          service_id: sid
+        ).destroy_all
+      end
+
+      # 3️⃣ Add karo jo naye checked hain
+      (service_ids - existing_ids).each do |sid|
+        UserService.create!(
+          assigner: assigner,
+          assignee: @user_service,
+          service_id: sid
+        )
+      end
+
       redirect_to admin_user_services_path, notice: "Retailer updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
   end
+
+
 
   def update_status
     @enquiry = Enquiry.find_by(email: @user_service.email)

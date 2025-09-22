@@ -60,7 +60,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       namespace :customer do
-        get "sessions/login"
+        post "sessions/login"
         post "sessions/verify_otp"
       end
 
@@ -103,6 +103,7 @@ Rails.application.routes.draw do
   root "superadmin/dashboards#index"
 
   namespace :superadmin do
+    get "customer/index"
     get "reports/index"
 
     get "commissions/index"
