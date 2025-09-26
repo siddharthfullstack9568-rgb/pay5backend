@@ -17,11 +17,11 @@
 
     <!-- Tabs -->
     <div class="flex flex-wrap border-b border-gray-200 mb-6">
-      <button class="py-2 px-4 text-sm sm:text-base font-medium text-blue-600 border-b-2 border-blue-600">All Transactions</button>
-      <button class="py-2 px-4 text-sm sm:text-base font-medium text-gray-600">Mobile Recharge</button>
-      <button class="py-2 px-4 text-sm sm:text-base font-medium text-gray-600">DTH Recharge</button>
-      <button class="py-2 px-4 text-sm sm:text-base font-medium text-gray-600">Electricity Bill</button>
-      <button class="py-2 px-4 text-sm sm:text-base font-medium text-gray-600">Gas Bill</button>
+      <a href="<%=admin_recharges_and_bills_transaction_path(type: "all") %>" class="py-2 px-4 text-sm sm:text-base font-medium text-blue-600 border-b-2 border-blue-600">All Transactions</a>
+      <a href="<%=admin_recharges_and_bills_transaction_path(type: "Mobile Recharge") %>" class="py-2 px-4 text-sm sm:text-base font-medium text-gray-600">Mobile Recharge</a>
+      <a href="<%=admin_recharges_and_bills_transaction_path(type: "DTH Recharge")%>" class="py-2 px-4 text-sm sm:text-base font-medium text-gray-600">DTH Recharge</a>
+      <a href="<%=admin_recharges_and_bills_transaction_path(type: "all") %>" class="py-2 px-4 text-sm sm:text-base font-medium text-gray-600">Electricity Bill</a>
+      <a href="<%=admin_recharges_and_bills_transaction_path(type: "all") %>" class="py-2 px-4 text-sm sm:text-base font-medium text-gray-600">Gas Bill</a>
     </div>
 
     <!-- Search -->
@@ -45,9 +45,9 @@
           <thead class="bg-gray-50">
             <tr>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">TX ID</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service Type</th>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Operator</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Account/Mobile</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Counsumar No</th>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date & Time</th>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>

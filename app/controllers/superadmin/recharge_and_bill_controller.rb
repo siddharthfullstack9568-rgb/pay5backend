@@ -3,11 +3,13 @@ class Superadmin::RechargeAndBillController < ApplicationController
   def index
     @service_product_items = ServiceProductItem.all
 
-    if params[:plan_type].present? && params[:plan_type] != "ALL"
-      @service_product_items = @service_product_items.where(oprator_type: params[:plan_type])
-      p "================"
-      p @service_product_items
-    end
+    @service_product_mobile = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "Mobile Recharge"})
+   
+    p "================"
+    p @service_product_mobile
+
+    @service_product_dth = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "DTH Recharge"})
+
   end
 
   def commission_set

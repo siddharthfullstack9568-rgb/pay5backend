@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_19_105236) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_25_072715) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -173,6 +173,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_19_105236) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "service_product_id"
+    t.string "consumer_name"
+    t.string "subscriber_or_vc_number"
     t.index ["service_product_id"], name: "index_transactions_on_service_product_id"
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end
@@ -246,6 +248,24 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_19_105236) do
     t.integer "parent_id"
     t.string "set_pin"
     t.string "confirm_pin"
+    t.decimal "latitude", precision: 10, scale: 6
+    t.decimal "longitude", precision: 10, scale: 6
+    t.datetime "captured_at"
+    t.datetime "last_seen_at"
+    t.string "ip_address"
+    t.string "location"
+    t.string "kyc_status", default: "not_started"
+    t.string "kyc_method"
+    t.string "aadhaar_front_image"
+    t.string "aadhaar_back_image"
+    t.string "aadhaar_otp"
+    t.string "pan_otp"
+    t.string "pan_status", default: "not_started"
+    t.string "aadhaar_status", default: "not_started"
+    t.string "image"
+    t.boolean "kyc_verifications", default: false
+    t.datetime "kyc_verified_at"
+    t.jsonb "kyc_data", default: {}, null: false
     t.index ["email"], name: "index_users_on_email"
     t.index ["parent_id"], name: "index_users_on_parent_id"
     t.index ["role_id"], name: "index_users_on_role_id"

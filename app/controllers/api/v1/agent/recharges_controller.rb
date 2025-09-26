@@ -15,14 +15,20 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
 
 
   def recharge_list
-    recharg_lists = Transaction.where(user_id: current_user.id).order(created_at: :desc)
-    render json: {code: 200, message: "Successfully fetched data", list: recharg_lists}
+    subcategory_id = params[:subcategory_id] || params.dig(:params, :subcategory_id)
+   p "========subcategory_id========="
+   p subcategory_id
+    recharg_lists = Transaction.where(service_product_id: subcategory_id).order(created_at: :desc)
+   p "=============recharg_lists============="
+   p recharg_lists
+    render json: { code: 200, message: "Successfully fetched data", list: recharg_lists }
   end
+
 
   def recharge
     hierarchy = current_user.find_hierarchy
 
-    required = %i[transaction_type recharge_type mobile_number state operator amount service_product_id]
+    required = %i[transaction_type recharge_type mobile_number operator amount service_product_id]
     missing = required.select { |p| params[p].blank? }
 
     if missing.any?
@@ -56,7 +62,9 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
         transaction_type: params[:transaction_type],
         user_id: current_user.id,
         status: "SUCCESS",
-        service_product_id: params[:service_product_id]
+        service_product_id: params[:service_product_id],
+        consumer_name: params[:consumer_name],
+        subscriber_or_vc_number: params[:subscriber_or_vc_number]
       )
 
       # ==== Commission for hierarchy users (admin & superadmin) ====
@@ -66,11 +74,11 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
         # Get admin commission %
 
         admin_commission = Commission.where(scheme_id: current_user.scheme_id)
-        .joins(:service_product_item).where( service_product_item: { name: "Airtel" }, to_role: "admin").pluck(:value).last.to_f
+        .joins(:service_product_item).where( service_product_item: { name: params[:operator] }, to_role: "admin").pluck(:value).last.to_f
 
 
         scheme = Scheme.where(id: current_user.scheme_id)
-        
+
 
         scheme_commission = scheme.last.commision_rate.to_f
         p "===========scheme_commission"
@@ -80,14 +88,15 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
         superadmin_commission = scheme_commission - admin_commission
         p "=========superadmin_admin_first=========="
         p superadmin_commission
-  
+        p "======================params[:operator]    =  #{params[:operator]}"
+       p params[:operator]
 
         retailer_commission = Commission.where(scheme_id: current_user.scheme_id)
-        .joins(:service_product_item).where( service_product_item: { name: "Airtel" }, to_role: "retailer").pluck(:value).last.to_f
+        .joins(:service_product_item).where( service_product_item: { name: params[:operator] }, to_role: "retailer").pluck(:value).last.to_f
 
         p "=======retailer_commission_for_schemeretailer_commission_for_scheme====="
         p retailer_commission
-     
+
         admin_commission_first = admin_commission - retailer_commission
         p "============admin_commission_first==========="
         p admin_commission_first

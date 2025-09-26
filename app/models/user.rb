@@ -3,7 +3,7 @@ class User < ApplicationRecord
   has_many :children, class_name: "User", foreign_key: "parent_id"
 
   has_secure_token :session_token
-  
+
   belongs_to :role
   has_secure_password validations: false
   # belongs_to :scheme
@@ -17,7 +17,7 @@ class User < ApplicationRecord
   has_many :transaction_commissions, dependent: :destroy
   has_many :user_services, foreign_key: :assignee_id
 
- def find_hierarchy
+  def find_hierarchy
     hierarchy = []
     user = self
 
@@ -28,5 +28,14 @@ class User < ApplicationRecord
 
     hierarchy
   end
+
+
+   enum kyc_status: {
+    not_started: "not_started",
+    send_by: "send_by",
+    pending: "pending",
+    verified: "verified",
+    rejected: "rejected"
+  }
 
 end

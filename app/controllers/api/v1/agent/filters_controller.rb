@@ -51,7 +51,7 @@ class Api::V1::Agent::FiltersController < Api::V1::Agent::BaseController
           only: [
             :id, :tx_id, :operator, :transaction_type,
             :account_or_mobile, :amount, :status,
-            :user_id, :created_at
+            :user_id, :created_at, :consumer_name
           ]
         ).merge(
           consumer_no_Name: t.user.first_name,

@@ -5,11 +5,12 @@ class Admin::RechargesAndBillsController < Admin::BaseController
   def index
     @service_product_items = ServiceProductItem.all
 
-    if params[:plan_type].present? && params[:plan_type] != "ALL"
-      @service_product_items = @service_product_items.where(oprator_type: params[:plan_type])
-      p "================"
-      p @service_product_items
-    end
+    @service_product_mobile = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "Mobile Recharge"})
+
+    p "================"
+    p @service_product_mobile
+
+    @service_product_dth = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "DTH Recharge"})
   end
 
 
@@ -72,10 +73,18 @@ class Admin::RechargesAndBillsController < Admin::BaseController
 
   def transaction
     user_ids = current_admin_user.all_descendant_ids << current_admin_user.id
+
     @tr = Transaction.where(user_id: user_ids).order(created_at: :desc)
+
+    if params[:type].present? && params[:type] != "all"
+      @tr = @tr.joins(:service_product).where(service_products: { company_name: params[:type] })
+    end
+
     logger.info "------------ Tr -------------"
     logger.info @tr.inspect
   end
+
+
 
   private
 

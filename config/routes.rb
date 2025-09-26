@@ -60,6 +60,18 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       namespace :customer do
+        post "kycs/user_details"
+        post "kycs/aadhaar_otp", to: "kycs#aadhaar_otp"
+        post "kycs/verify_aadhaar_otp", to: "kycs#verify_aadhaar_otp"
+        post "kycs/manual_aadhaar_upload", to: "kycs#manual_aadhaar_upload"
+        post "kycs/pencard_otp", to: "kycs#pencard_otp"
+        post "kycs/verify_pencard_otp", to: "kycs#verify_pencard_otp"
+        post "kycs/selfie", to: "kycs#selfie"
+        get "kycs/kyc_details", to: "kycs#kyc_details"
+        post "kycs/submit_kyc_details", to: "kycs#submit_kyc_details"
+
+        get "locations/index"
+
         post "sessions/login"
         post "sessions/verify_otp"
       end
@@ -82,7 +94,7 @@ Rails.application.routes.draw do
         post "user_services/transaction_list"
 
         post "recharges/recharge"
-        get "recharges/recharge_list"
+        post "recharges/recharge_list"
         post "recharges/verify_pin"
 
         get "wallets/balance"
@@ -104,6 +116,8 @@ Rails.application.routes.draw do
 
   namespace :superadmin do
     get "customer/index"
+    post "customer/verify_status"
+
     get "reports/index"
 
     get "commissions/index"

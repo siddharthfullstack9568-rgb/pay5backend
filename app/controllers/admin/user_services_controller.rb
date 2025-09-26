@@ -18,7 +18,7 @@ class Admin::UserServicesController < Admin::BaseController
 
   def create
     role_id = params[:user][:role_id]
-    @user_service = User.new(user_params.merge(role_id: role_id))
+    @user_service = User.new(user_params.merge(role_id: role_id, parent_id: current_admin_user.id))
 
     if @user_service.save
       service_ids = Array(params[:user][:service_ids]).map(&:to_i)

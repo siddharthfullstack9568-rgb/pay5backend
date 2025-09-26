@@ -1,16 +1,15 @@
 
   <!-- Header -->
   <div class="bg-white p-4 rounded shadow">
+
+ <%= form_with url: superadmin_recharge_and_bill_commission_set_path, method: :post, local: true, data: { turbo: false } do %>
     <h1 class="text-lg font-semibold">Recharge & Bill Payment Commission Setup</h1>
   </div>
-
   <!-- Filters -->
   <div class="bg-white p-4 rounded shadow flex flex-col md:flex-row items-start md:items-center gap-4">
- <%= form_with url: superadmin_recharge_and_bill_commission_set_path, method: :post, local: true, data: { turbo: false } do %>
-
-   <%= select_tag :scheme, options_from_collection_for_select(Scheme.all, :id, :scheme_name), prompt: "Select Scheme", required: true, class:"border rounded px-3 py-2" %>
 
 
+    <%= select_tag :scheme, options_from_collection_for_select(Scheme.all, :id, :scheme_name), prompt: "Select Scheme", required: true, class:"border rounded px-3 py-2" %>
     <select id="planType" class="border rounded px-3 py-2">
       <option value="">-- Select Type --</option>
       <option value="ALL">All</option>
@@ -41,7 +40,7 @@
         </tr>
       </thead>
       <tbody class="text-sm text-gray-700">
-        <%@service_product_items.each do |item|%>
+        <%@service_product_mobile.each do |item|%>
         <tr>
           <td class="px-4 py-2 border"><%=item.service_product.company_name%></td>
           <td class="px-4 py-2 border"><%=item.name%></td>
@@ -77,12 +76,17 @@
          <td class="px-4 py-2 border text-center">
           <%= submit_tag "Submit", class: "bg-blue-600 text-white px-3 py-2 rounded cursor-pointer" %>
         </td>
-      <% end %>
+        <% end %>
         </tr>
-        <%end%>
+        
       </tbody>
     </table>
-  </div>
+  
+
+  <%= render "superadmin/recharge_and_bill/dth_commission", service_product_dth: @service_product_dth %> 
+<%end%>
+</div><br>
+
 </div>
 
 

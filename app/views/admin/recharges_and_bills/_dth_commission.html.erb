@@ -1,0 +1,60 @@
+
+<h2 class="text-lg font-semibold mb-4">DTH Recharge Prepaid</h2>
+
+<div class="overflow-x-auto">
+  <table class="w-full border-collapse">
+    <thead>
+      <tr class="bg-gray-100 text-left text-sm font-medium text-gray-700">
+        <th class="px-4 py-2 border">Service Name</th>
+        <th class="px-4 py-2 border">Company Name</th>
+        <th class="px-4 py-2 border">Type</th>
+        <th class="px-4 py-2 border">Admin Commission</th>
+        <th class="px-4 py-2 border">Master Commission</th>
+        <th class="px-4 py-2 border">Dealer Commission</th>
+        <th class="px-4 py-2 border">Retailer Commission</th>
+        <th class="px-4 py-2 border text-center">Action</th>
+      </tr>
+    </thead>
+    <tbody class="text-sm text-gray-700">
+      <% service_product_dth.each do |item| %>
+        <tr>
+          <td class="px-4 py-2 border"><%= item.service_product.company_name %></td>
+          <td class="px-4 py-2 border"><%=item.name%></td>
+          <td class="px-4 py-2 border">
+            <select class="border rounded px-2 py-1 w-full text-sm">
+              <option value="commission" <%#= "selected" if item.type == "commission" %>>Commission</option>
+              <option value="flat" <%#= "selected" if item.type == "flat" %>>Flat</option>
+            </select>
+          </td>
+      
+           <td class="px-4 py-2 border">
+            <%= text_field_tag "commissions[#{item.id}][admin_commission]", 
+              Commission.find_by(service_product_item_id: item.id, to_role: "admin")&.value, 
+              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+          </td>
+
+          <td class="px-4 py-2 border">
+            <%= text_field_tag "commissions[#{item.id}][master_commission]", 
+              Commission.find_by(service_product_item_id: item.id, to_role: "master")&.value, 
+              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+          </td>
+
+          <td class="px-4 py-2 border">
+            <%= text_field_tag "commissions[#{item.id}][dealer_commission]", 
+              Commission.find_by(service_product_item_id: item.id, to_role: "dealer")&.value, 
+              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+          </td>
+
+          <td class="px-4 py-2 border">
+            <%= text_field_tag "commissions[#{item.id}][retailer_commission]", 
+              Commission.find_by(service_product_item_id: item.id, to_role: "retailer")&.value, 
+              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+          </td>
+          <td class="px-4 py-2 border text-center">
+          <%= submit_tag "Submit", class: "bg-blue-600 text-white px-3 py-2 rounded cursor-pointer" %>
+        </td>
+      <% end %>
+        </tr>
+    </tbody>
+  </table>
+</div>
