@@ -1,4 +1,4 @@
-class Api::V1::Agent::SessionsController < Api::V1::Agent::BaseController
+class Api::V1::Agent::SessionsController < ApplicationController
   protect_from_forgery with: :null_session
 
   def login
