@@ -2,7 +2,7 @@
 module Api
   module V1
     module Agent
-      class ReatailerProfilesController < Api::V1::Agent::BaseController
+      class ReatailerProfilesController < ApplicationController
         protect_from_forgery with: :null_session
 
         def index
