@@ -1,4 +1,4 @@
-class Api::V1::Agent::FiltersController < ApplicationController
+class Api::V1::Agent::FiltersController < Api::V1::Agent::BaseController
   protect_from_forgery with: :null_session
 
   def category_filter
