@@ -45,10 +45,12 @@
               <option value="flat">Flat</option>
             </select>
           </td>
-          <td class="px-4 py-2 border">
+           <td class="px-4 py-2 border">
             <%= text_field_tag "commissions[#{item.id}][admin_commission]", 
               Commission.find_by(service_product_item_id: item.id, to_role: "admin")&.value, 
-              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+              placeholder: "%", 
+              class: "w-full border rounded px-2 py-1 text-sm cursor-default",
+              disabled: true %>
           </td>
 
           <td class="px-4 py-2 border">

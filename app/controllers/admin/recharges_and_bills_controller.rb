@@ -11,6 +11,8 @@ class Admin::RechargesAndBillsController < Admin::BaseController
     p @service_product_mobile
 
     @service_product_dth = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "DTH Recharge"})
+
+    @service_product_water = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "Water Bill"})
   end
 
 
@@ -70,19 +72,34 @@ class Admin::RechargesAndBillsController < Admin::BaseController
     end
   end
 
-
   def transaction
     user_ids = current_admin_user.all_descendant_ids << current_admin_user.id
 
+    # Start with base scope
     @tr = Transaction.where(user_id: user_ids).order(created_at: :desc)
 
+    # Filter by type (join only if needed)
     if params[:type].present? && params[:type] != "all"
-      @tr = @tr.joins(:service_product).where(service_products: { company_name: params[:type] })
+      @tr = @tr.eager_load(:service_product).where(service_products: { company_name: params[:type] })
     end
 
+    # Filter by search keyword
+    if params[:search].present?
+      search_term = "%#{params[:search]}%"
+      @tr = @tr.where(
+        "tx_id ILIKE :search OR account_or_mobile ILIKE :search OR operator ILIKE :search",
+        search: search_term
+      )
+    end
+
+    # Eager load service_product to avoid N+1 in view
+    @tr = @tr.includes(:service_product)
+
     logger.info "------------ Tr -------------"
-    logger.info @tr.inspect
+    logger.info @tr.to_sql # better than inspecting all records
   end
+
+
 
 
 

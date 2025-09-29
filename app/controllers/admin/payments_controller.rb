@@ -12,7 +12,6 @@ class Admin::PaymentsController < Admin::BaseController
     pin = params[:pin]&.join # Combine array to string
     p "=============pinpin"
     p pin
-    
 
     if current_admin_user.set_pin == pin
       @transaction = WalletTransaction.find(params[:id])

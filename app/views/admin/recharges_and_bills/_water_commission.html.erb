@@ -1,5 +1,5 @@
 
-<h2 class="text-lg font-semibold mb-4">DTH Recharge Prepaid</h2>
+<h2 class="text-lg font-semibold mb-4">Watter Bill</h2>
 
 <div class="overflow-x-auto">
   <table class="w-full border-collapse">
@@ -16,7 +16,7 @@
       </tr>
     </thead>
     <tbody class="text-sm text-gray-700">
-      <% service_product_dth.each do |item| %>
+      <% service_product_water.each do |item| %>
         <tr>
           <td class="px-4 py-2 border"><%= item.service_product.company_name %></td>
           <td class="px-4 py-2 border"><%=item.name%></td>
@@ -27,12 +27,10 @@
             </select>
           </td>
       
-          <td class="px-4 py-2 border">
+           <td class="px-4 py-2 border">
             <%= text_field_tag "commissions[#{item.id}][admin_commission]", 
               Commission.find_by(service_product_item_id: item.id, to_role: "admin")&.value, 
-              placeholder: "%", 
-              class: "w-full border rounded px-2 py-1 text-sm cursor-default",
-              disabled: true %>
+              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
           </td>
 
           <td class="px-4 py-2 border">

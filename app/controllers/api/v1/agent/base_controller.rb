@@ -1,5 +1,6 @@
 class Api::V1::Agent::BaseController < ApplicationController
   before_action :authenticate_user!
+  protect_from_forgery with: :null_session
 
   private
 

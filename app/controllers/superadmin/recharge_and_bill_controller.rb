@@ -4,11 +4,14 @@ class Superadmin::RechargeAndBillController < ApplicationController
     @service_product_items = ServiceProductItem.all
 
     @service_product_mobile = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "Mobile Recharge"})
-   
+
     p "================"
     p @service_product_mobile
 
     @service_product_dth = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "DTH Recharge"})
+
+    @service_product_water = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "Water Bill"})
+
 
   end
 
@@ -67,7 +70,7 @@ class Superadmin::RechargeAndBillController < ApplicationController
   end
 
   def transaction
-    @transcations = Transaction.all
+    @transcations = Transaction.all.order(created_at: :desc)
   end
 
 

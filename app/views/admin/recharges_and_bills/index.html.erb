@@ -53,7 +53,9 @@
           <td class="px-4 py-2 border">
             <%= text_field_tag "commissions[#{item.id}][admin_commission]", 
               Commission.find_by(service_product_item_id: item.id, to_role: "admin")&.value, 
-              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+              placeholder: "%", 
+              class: "w-full border bg-gray-100 rounded px-2 py-1 text-sm cursor-default",
+              disabled: true %>
           </td>
 
           <td class="px-4 py-2 border">
@@ -84,6 +86,8 @@
   
 
   <%= render "superadmin/recharge_and_bill/dth_commission", service_product_dth: @service_product_dth %> 
+   <br> <%= render "superadmin/recharge_and_bill/water_commission", service_product_water: @service_product_water %>
+
 <%end%>
 </div><br>
 

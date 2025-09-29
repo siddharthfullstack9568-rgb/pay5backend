@@ -64,7 +64,9 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
         status: "SUCCESS",
         service_product_id: params[:service_product_id],
         consumer_name: params[:consumer_name],
-        subscriber_or_vc_number: params[:subscriber_or_vc_number]
+        subscriber_or_vc_number: params[:subscriber_or_vc_number],
+        bill_no: params[:bill_no],
+        landline_no: params[:landline_no]
       )
 
       # ==== Commission for hierarchy users (admin & superadmin) ====
