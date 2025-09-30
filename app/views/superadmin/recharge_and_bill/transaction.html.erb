@@ -17,41 +17,55 @@
 
     <!-- Tabs -->
     <div class="flex flex-wrap border-b border-gray-200 mb-6">
-      <button class="py-2 px-4 text-sm sm:text-base font-medium text-blue-600 border-b-2 border-blue-600">All Transactions</button>
-      <button class="py-2 px-4 text-sm sm:text-base font-medium text-gray-600">Mobile Recharge</button>
-      <button class="py-2 px-4 text-sm sm:text-base font-medium text-gray-600">DTH Recharge</button>
-      <button class="py-2 px-4 text-sm sm:text-base font-medium text-gray-600">Electricity Bill</button>
-      <button class="py-2 px-4 text-sm sm:text-base font-medium text-gray-600">Gas Bill</button>
+      <% tab_types = {
+        "all" => "All Transactions",
+        "Mobile Recharge" => "Mobile Recharge",
+        "DTH Recharge" => "DTH Recharge",
+        "Water Bill" => "Water Bill",
+        "Electricity Bill" => "Electricity Bill",
+        "Gas Bill" => "Gas Bill"
+      } %>
+
+      <% tab_types.each do |type, label| %>
+        <a href="<%= superadmin_recharge_and_bill_transaction_path(type: type) %>" 
+           class="py-2 px-4 text-sm sm:text-base font-medium <%= 'text-blue-600 border-b-2 border-blue-600' if params[:type] == type || (type == 'all' && params[:type].blank?) %> <%= 'text-gray-600' unless params[:type] == type || (type == 'all' && params[:type].blank?) %>">
+          <%= label %>
+        </a>
+      <% end %>
     </div>
+
 
     <!-- Search -->
-   <div class="mb-4">
-      <form action="<%= admin_recharges_and_bills_transaction_path %>" method="get" class="flex items-center border rounded-lg overflow-hidden max-w-md w-full bg-white">
-        <!-- Search icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z"/>
-        </svg>
+      <div class="mb-4">
+        <form action="<%= superadmin_recharge_and_bill_transaction_path %>" method="get" class="flex items-center border rounded-lg overflow-hidden max-w-md w-full bg-white">
+          <!-- Search icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z"/>
+          </svg>
 
-        <!-- Input -->
-        <input
-          type="text"
-          name="search"
-          value="<%= params[:search] %>"
-          placeholder="Search by ID, Mobile, Account, Operator, Date..."
-          class="flex-1 px-3 py-3 text-sm outline-none"
-        />
+          <input
+            type="text"
+            name="search"
+            value="<%= params[:search] %>"
+            placeholder="Search by ID, Mobile, Account, Operator, Date..."
+            class="flex-1 px-3 py-3 text-sm outline-none"
+          />
 
-        <!-- Search Button -->
-        <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">
-          Search
-        </button>
+          <!-- Search Button -->
+          <div class="flex">
+              <button type="submit" class="px-4 py-3 bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">
+                Search
+              </button>
 
-        <!-- Cancel Button -->
-        <a href="<%= admin_recharges_and_bills_transaction_path %>" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300">
-          Cancel
-        </a>
-      </form>
-    </div>
+              <!-- Cancel Button -->
+              <a href="<%= superadmin_recharge_and_bill_transaction_path %>" class="px-4 py-3 bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300">
+                Cancel
+              </a>
+          </div>
+        </form>
+      </div>
+
+
 
 
     <!-- Table -->

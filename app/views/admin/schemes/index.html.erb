@@ -101,7 +101,7 @@
       <!-- Modal content -->
       <h2 class="text-xl font-bold text-gray-800 mb-4">New Scheme</h2>
 
-        <%= form_with model: @scheme, url: admin_scheme_create_path, local: true, class: "space-y-4" do |form| %>
+        <%= form_with model: @scheme, url: superadmin_scheme_create_path, local: true, class: "space-y-4" do |form| %>
         <!-- Scheme Name -->
         <div>
           <label for="scheme_name" class="block text-sm font-medium text-gray-700">Scheme Name</label>
@@ -164,7 +164,7 @@
     <h2 class="text-lg font-bold mb-4">Edit Scheme</h2>
 
     <!-- Modal Form -->
-    <%= form_with model: @scheme, url: admin_scheme_update_path, local: true, class: "space-y-4" do |f| %>      <div class="mb-4">
+    <%= form_with model: @scheme, url: superadmin_scheme_update_path, local: true, class: "space-y-4" do |f| %>      <div class="mb-4">
         <%= f.label :scheme_name, "Scheme Name", class: "block text-sm font-medium text-gray-700" %>
         <%= f.text_field :scheme_name, class: "mt-1 block w-full border border-gray-300 rounded-lg p-2" %>
       </div>

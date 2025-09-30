@@ -33,7 +33,10 @@ Rails.application.routes.draw do
     post "sessions/create"
     delete "sessions/destroy"
     get "dashboards/index"
-    get "scheme/index"
+
+    get "schemes/index"
+    post "schemes/create", to: "scheme#create", as: :scheme_create
+    post "schemes/update", to: "scheme#update", as: :scheme_update
 
     # get "user_services/index"
     # get "user_services/new"

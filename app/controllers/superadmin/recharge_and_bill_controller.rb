@@ -70,7 +70,28 @@ class Superadmin::RechargeAndBillController < ApplicationController
   end
 
   def transaction
-    @transcations = Transaction.all.order(created_at: :desc)
+
+     @transcations = Transaction.all.order(created_at: :desc)
+
+    # Filter by type (join only if needed)
+    if params[:type].present? && params[:type] != "all"
+      @transcations = @transcations.eager_load(:service_product).where(service_products: { company_name: params[:type] })
+    end
+
+    # Filter by search keyword
+    if params[:search].present?
+      search_term = "%#{params[:search]}%"
+      @transcations = @transcations.where(
+        "tx_id ILIKE :search OR account_or_mobile ILIKE :search OR operator ILIKE :search",
+        search: search_term
+      )
+    end
+
+    # Eager load service_product to avoid N+1 in view
+    @transcations = @transcations.includes(:service_product)
+
+    logger.info "------------ Tr -------------"
+    logger.info @transcations.to_sql # better than inspecting all records
   end
 
 
