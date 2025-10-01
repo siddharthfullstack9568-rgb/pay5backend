@@ -30,11 +30,12 @@ class Api::V1::Customer::SessionsController < ApplicationController
     if @customer.email_otp == params[:email_otp]
 
       # OTP correct -> login success
-      @customer.update(email_otp: nil, email_otp_sent_at: nil) # clear OTP
+      session_token = SecureRandom.hex(16)
+      @customer.update(email_otp: nil, email_otp_sent_at: nil, session_token: session_token) # clear OTP
 
       # Send login success email
 
-      render json: { success: true, message: "Login successful", customer_id: @customer.id }
+      render json: { success: true, message: "Login successful", user: @customer }
     else
       render json: { success: false, message: "Invalid or expired OTP" }, status: :unauthorized
     end
