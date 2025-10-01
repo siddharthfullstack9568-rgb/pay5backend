@@ -5,7 +5,7 @@ class Api::V1::Customer::KycsController < Api::V1::Customer::BaseController
   skip_before_action :check_kyc_status
 
   def user_details
-    required_params = [:first_name, :email, :date_of_birth, :gender, :gst_number, :address]
+    required_params = [:first_name, :email, :date_of_birth, :gender, :address]
 
     missing_params = required_params.select { |p| params[p].blank? }
 
