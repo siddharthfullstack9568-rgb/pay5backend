@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  first_name: MyString
+  last_name: MyString
+  email: MyString
+  employee_status: MyString
+  dob: 2025-09-30
+  pan_number: MyString
+  aadhaar_number: MyString
+  monthly_income: 9.99
+  credit_score: 1
+  fetch_credit_score: false
+
+two:
+  first_name: MyString
+  last_name: MyString
+  email: MyString
+  employee_status: MyString
+  dob: 2025-09-30
+  pan_number: MyString
+  aadhaar_number: MyString
+  monthly_income: 9.99
+  credit_score: 1
+  fetch_credit_score: false

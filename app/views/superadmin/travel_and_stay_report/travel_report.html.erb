@@ -1,0 +1,74 @@
+<div class="mt-4 pl-8 p-4">
+  <div class="flex justify-between items-center mb-6">
+        <div>
+          <h1 class="text-2xl font-bold">Loan List</h1>
+          <p class="text-gray-500 text-sm">
+            Manage administrator and their permission
+          </p>
+        </div>
+        <div class="flex gap-3">
+          <button class="flex items-center gap-2 border px-4 py-2 rounded-md text-white-700 bg-green-400 hover:bg-green-700">
+            📄 Export List
+          </button>
+         <%#  %>
+        </div>
+      </div>
+  <div class="w-[1477px] relative overflow-x-auto shadow-md sm:rounded-lg pr-5 mt-8">
+    <table class="w-full text-sm text-left text-gray-600">
+      <thead class="text-xs uppercase bg-gray-100 text-gray-700">
+        <tr>
+          <th scope="col" class="px-6 py-3">
+            Id
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Full Name
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Email
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Phone number
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Aadhaar number
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Pan Card
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Account number
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Account holder name
+          </th>
+          <th scope="col" class="px-6 py-3">
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @instant_Loans.each_with_index do |loan| %>
+        <tr class="bg-white border-b hover:bg-gray-50">
+          <!-- Serial Number -->
+          <th scope="row" class="px-6 py-4"><%= loan.id %></th>
+          <!-- User details -->
+          <td class="px-6 py-4">
+            <%= "#{loan.first_name} #{loan.last_name}" %>
+          </td>
+          <td class="px-6 py-4"><%= loan.email %></td>
+          <td class="px-6 py-4"><%= loan.mobile %></td>
+          <td class="px-6 py-4"><%= loan.aadhaar_number %></td>
+          <td class="px-6 py-4"><%= loan.pan_number %></td>
+          <td class="px-6 py-4"><%= loan.dob %></td>
+          <!-- Actions -->
+          <td class="flex gap-3 px-6 py-4">
+            <!-- Status Badge -->
+           
+          </td>
+
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_09_30_052835) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_30_104451) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -102,6 +102,22 @@ ActiveRecord::Schema[7.2].define(version: 2025_09_30_052835) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_fund_requests_on_user_id"
+  end
+
+  create_table "instant_loans", force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.string "employee_status"
+    t.string "mobile"
+    t.date "dob"
+    t.string "pan_number"
+    t.string "aadhaar_number"
+    t.decimal "monthly_income"
+    t.integer "credit_score"
+    t.boolean "fetch_credit_score"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "roles", force: :cascade do |t|

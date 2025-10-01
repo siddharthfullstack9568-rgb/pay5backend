@@ -1,0 +1,2 @@
+class InstantLoan < ApplicationRecord
+end

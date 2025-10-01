@@ -107,6 +107,8 @@ Rails.application.routes.draw do
         post "filters/service_category_filter"
         post "filters/service_product"
 
+        post "instant_loans/check_eligibility"
+
         resources :reatailer_profiles, only: [:index]
         post "reatailer_profiles/set_pin"
       end
@@ -157,6 +159,8 @@ Rails.application.routes.draw do
 
     post "admins/create", to: "admins#create", as: :admins_create
     post "admins/:id/admin_update_stauts", to: "admins#admin_update_stauts", as: :admin_update_status
+
+    get  "travel_and_stay_report/travel_report"
 
     resources :admins
     resources :banks
