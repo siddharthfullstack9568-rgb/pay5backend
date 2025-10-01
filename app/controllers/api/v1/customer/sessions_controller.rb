@@ -6,7 +6,7 @@ class Api::V1::Customer::SessionsController < ApplicationController
   def login_email
     p "================ login_email"
 
-    @customer = User.find_or_create_by(email: params[:email], role_id: "11") do |u|
+    @customer = User.find_or_create_by(email: params[:email], role_id: "5") do |u|
 
       u.first_name = params[:first_name] || "Guest User"
     end
@@ -23,15 +23,18 @@ class Api::V1::Customer::SessionsController < ApplicationController
   def email_verify
     @customer = User.find_by(email: params[:email])
 
-    if @customer &&
-        @customer.email_otp == params[:email_otp] &&
-        @customer.email_otp_sent_at.present? &&
-        @customer.email_otp_sent_at > 5.minutes.ago
-      @customer.regenerate_session_token
+    p "==============customer======"
+    p @customer.email_otp
+    p "===============#{params[:email_otp]}"
+
+    if @customer.email_otp == params[:email_otp]
+
       # OTP correct -> login success
       @customer.update(email_otp: nil, email_otp_sent_at: nil) # clear OTP
 
-      render json: { success: true, message: "Login successful", customer_id:  @customer }
+      # Send login success email
+
+      render json: { success: true, message: "Login successful", customer_id: @customer.id }
     else
       render json: { success: false, message: "Invalid or expired OTP" }, status: :unauthorized
     end
