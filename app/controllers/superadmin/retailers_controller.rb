@@ -45,9 +45,9 @@ class Superadmin::RetailersController < ApplicationController
     @retailer.update!(status: !@retailer.status)
 
     # Send mail only if the account is active now
-    # if @retailer.status
-    #   UserMailer.status_updated(@retailer).deliver_later
-    # end
+    if @retailer.status
+      UserMailer.status_updated(@retailer).deliver_later
+    end
 
     redirect_to superadmin_retailers_path, notice: "Retailer status updated successfully."
   end

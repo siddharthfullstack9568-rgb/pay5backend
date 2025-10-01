@@ -23,22 +23,22 @@ class Api::V1::Agent::SessionsController < ApplicationController
       token = SecureRandom.hex(20)
       user.update(session_token: token)
 
-      render json: { 
-        code: 200, 
-        message: "Login successful", 
-        user: user 
+      render json: {
+        code: 200,
+        message: "Login successful",
+        user: user
       }, status: :ok
     else
-      render json: { 
-        code: 401, 
-        message: "Invalid email or password" 
+      render json: {
+        code: 401,
+        message: "Invalid email or password"
       }, status: :unauthorized
     end
   end
 
-   def create
+  def create
     user = User.new(retailer_params.merge(status: false))
-    
+
     case params[:id_proof]
     when "Aadhaar"
       user.aadhaar_number = params[:id_number]
@@ -72,41 +72,41 @@ class Api::V1::Agent::SessionsController < ApplicationController
   private
 
   def retailer_params
-    params.permit(:first_name, 
-      :last_name, 
-      :email, 
-      :phone_number, 
-      :password, 
-      :otp, 
-      :role_id,
-      :verify_otp, 
-      :otp_expires_at,
-      :country_code,
-      :alternative_number,
-      :aadhaar_number,
-      :pan_card,
-      :date_of_birth,
-      :gender,
-      :business_name,
-      :business_owner_type,
-      :business_nature_type,
-      :business_registration_number,
-      :gst_number,
-      :pan_number,
-      :address,
-      :city,
-      :state,
-      :pincode,
-      :landmark,
-      :username,
-      :scheme,
-      :referred_by,
-      :bank_name,
-      :account_number,
-      :ifsc_code,
-      :account_holder_name,
-      :notes,
-      :session_token,)
+    params.permit(:first_name,
+                  :last_name,
+                  :email,
+                  :phone_number,
+                  :password,
+                  :otp,
+                  :role_id,
+                  :verify_otp,
+                  :otp_expires_at,
+                  :country_code,
+                  :alternative_number,
+                  :aadhaar_number,
+                  :pan_card,
+                  :date_of_birth,
+                  :gender,
+                  :business_name,
+                  :business_owner_type,
+                  :business_nature_type,
+                  :business_registration_number,
+                  :gst_number,
+                  :pan_number,
+                  :address,
+                  :city,
+                  :state,
+                  :pincode,
+                  :landmark,
+                  :username,
+                  :scheme,
+                  :referred_by,
+                  :bank_name,
+                  :account_number,
+                  :ifsc_code,
+                  :account_holder_name,
+                  :notes,
+                  :session_token,)
   end
 
 

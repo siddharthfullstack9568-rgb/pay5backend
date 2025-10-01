@@ -50,7 +50,6 @@ Rails.application.routes.draw do
     get "collect_moneys/new"
     post "collect_moneys/create"
 
-
     get "recharges_and_bills/index"
     get "recharges_and_bills/transaction"
     post "recharges_and_bills/amdmin_commission_set"
@@ -75,6 +74,8 @@ Rails.application.routes.draw do
 
         get "locations/index"
 
+        post "sessions/login_email"
+        post "sessions/email_verify"
         post "sessions/login"
         post "sessions/verify_otp"
       end
