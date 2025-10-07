@@ -1,6 +1,6 @@
 # app/mailers/user_mailer.rb
 class UserMailer < ApplicationMailer
-  default from: "sid20319@gmail.com"
+  default from: "Bharatgrowbusiness@gmail.com"
   p "================UserMailer"
   def status_updated(user)
     p "=---------- user welcome"

@@ -94,8 +94,8 @@ config.action_mailer.smtp_settings = {
   address: "smtp.gmail.com",
   port: 587,
   domain: "gmail.com",
-  user_name: "siddharthfullstack9568@gmail.com", # अपनी Gmail ID
-  password: "sbrt hlxn vcnu qmns",  # App Password
+  user_name: "Bharatgrowbusiness@gmail.com", # अपनी Gmail ID
+  password: "nvpv gfhm kdac kqwe",  # App Password
   authentication: "plain",
   enable_starttls_auto: true
 }
