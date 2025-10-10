@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_01_100711) do
+ActiveRecord::Schema[7.2].define(version: 2025_10_10_060045) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -116,6 +116,25 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_01_100711) do
     t.decimal "monthly_income"
     t.integer "credit_score"
     t.boolean "fetch_credit_score"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "personal_loans", force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.string "mobile"
+    t.date "dob"
+    t.string "pan_number"
+    t.string "aadhaar_number"
+    t.string "employee_status"
+    t.string "employer_name"
+    t.string "office_pin_code"
+    t.decimal "monthly_income"
+    t.integer "credit_score"
+    t.boolean "fetch_credit_score"
+    t.string "pincode"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -288,6 +307,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_01_100711) do
     t.jsonb "kyc_data", default: {}, null: false
     t.string "email_otp"
     t.datetime "email_otp_sent_at"
+    t.string "set_mpin"
+    t.string "confirm_mpin"
+    t.boolean "status_mpin", default: false
+    t.boolean "status_pin", default: false
     t.index ["email"], name: "index_users_on_email"
     t.index ["parent_id"], name: "index_users_on_parent_id"
     t.index ["role_id"], name: "index_users_on_role_id"

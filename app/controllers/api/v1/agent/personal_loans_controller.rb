@@ -1,8 +1,8 @@
-class Api::V1::Agent::InstantLoansController < Api::V1::Agent::BaseController
+class Api::V1::Agent::PersonalLoansController < Api::V1::Agent::BaseController
   protect_from_forgery with: :null_session
 
-  def instant_loan_list
-    persoanl_loans = InstantLoan.all
+  def persoanl_loan_list
+    persoanl_loans = PersonalLoan.all
     render json: {code: 200, message: "Personal Loans List", persoanl_loans: persoanl_loans}
   end
 
@@ -14,7 +14,7 @@ class Api::V1::Agent::InstantLoansController < Api::V1::Agent::BaseController
       return render json: { success: false, message: "Missing: #{missing.join(', ')}" }, status: :bad_request
     end
 
-    loan = InstantLoan.new(instant_params)
+    loan = PersonalLoan.new(instant_params)
 
     # Convert dob to age
     begin
@@ -54,6 +54,13 @@ class Api::V1::Agent::InstantLoansController < Api::V1::Agent::BaseController
   private
 
   def instant_params
+    params.permit(:first_name, :email, :mobile, :dob, :pan_number, :monthly_income, :credit_score)
+  end
+
+
+  private
+
+  def instant_params
     params.permit(
       :first_name,
       :last_name,
@@ -65,7 +72,10 @@ class Api::V1::Agent::InstantLoansController < Api::V1::Agent::BaseController
       :monthly_income,
       :credit_score,
       :fetch_credit_score,
-      :mobile
+      :mobile,
+      :employer_name,
+      :pincode,
+      :employee_status
     )
   end
 

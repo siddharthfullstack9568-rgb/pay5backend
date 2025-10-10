@@ -62,6 +62,13 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       namespace :customer do
+        get "locations/index"
+
+        post "sessions/login_email"
+        post "sessions/email_verify"
+        post "sessions/login"
+        post "sessions/verify_otp"
+
         post "kycs/user_details"
         post "kycs/aadhaar_otp", to: "kycs#aadhaar_otp"
         post "kycs/verify_aadhaar_otp", to: "kycs#verify_aadhaar_otp"
@@ -72,12 +79,9 @@ Rails.application.routes.draw do
         get "kycs/kyc_details", to: "kycs#kyc_details"
         post "kycs/submit_kyc_details", to: "kycs#submit_kyc_details"
 
-        get "locations/index"
-
-        post "sessions/login_email"
-        post "sessions/email_verify"
-        post "sessions/login"
-        post "sessions/verify_otp"
+        post "set_mpins/mpin"
+        post "set_mpins/set_mpin"
+        post "set_mpins/forget_mpin"
       end
 
       namespace :master do
@@ -109,6 +113,9 @@ Rails.application.routes.draw do
         post "filters/service_product"
 
         post "instant_loans/check_eligibility"
+        post "personal_loans/check_eligibility"
+        get "instant_loans/instant_loan_list"
+        get "personal_loans/persoanl_loan_list"
 
         resources :reatailer_profiles, only: [:index]
         post "reatailer_profiles/set_pin"

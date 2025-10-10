@@ -21,7 +21,20 @@ module Api
             render json: { code: 400, message: "Pin and confirm pin are required" }
           end
         end
-        
+
+        def set_mpin
+          if params[:set_mpin].present? && params[:confirm_mpin].present?
+            if params[:set_mpin] == params[:confirm_mpin]
+              current_user.update!(set_mpin: params[:set_mpin], confirm_mpin: params[:confirm_mpin], status_mpin: true)
+              render json: { code: 200, message: "Successfully set pin" }
+            else
+              render json: { code: 422, message: "Pin and confirm pin do not match" }
+            end
+          else
+            render json: { code: 400, message: "Pin and confirm pin are required" }
+          end
+        end
+
       end
     end
   end

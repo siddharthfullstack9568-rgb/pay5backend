@@ -2,6 +2,15 @@
 class UserMailer < ApplicationMailer
   default from: "Bharatgrowbusiness@gmail.com"
   p "================UserMailer"
+
+  def mpin_otp_email(user, otp)
+    @user = user
+    p "==========user"
+    p @user.id
+    @otp = otp
+    mail(to: @user.email,subject: "Your MPIN Reset OTP")
+  end
+
   def status_updated(user)
     p "=---------- user welcome"
     p user
