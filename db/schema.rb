@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_10_060045) do
+ActiveRecord::Schema[7.2].define(version: 2025_10_11_064553) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -311,6 +311,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_10_060045) do
     t.string "confirm_mpin"
     t.boolean "status_mpin", default: false
     t.boolean "status_pin", default: false
+    t.boolean "email_otp_status", default: false, null: false
+    t.datetime "email_otp_verified_at"
+    t.boolean "set_pin_status", default: false
     t.index ["email"], name: "index_users_on_email"
     t.index ["parent_id"], name: "index_users_on_parent_id"
     t.index ["role_id"], name: "index_users_on_role_id"

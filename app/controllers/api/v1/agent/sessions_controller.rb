@@ -2,31 +2,40 @@ class Api::V1::Agent::SessionsController < ApplicationController
   protect_from_forgery with: :null_session
 
   def login
+    @user = User.find_by(email: params[:email].to_s.strip)
     enquiry = Enquiry.find_by(email: params[:email].to_s.strip)
-    user = User.find_by(email: params[:email].to_s.strip)
 
-    if enquiry.present?
-      if !enquiry.status
-        return render json: { code: 200, message: "Please wait, admin will verify you" }, status: :ok
-      end
-    end
-
-    unless user
-      return render json: { code: 401, message: "Invalid email or password" }, status: :unauthorized
-    end
-
-    if !user.status
+    if enquiry.present? && !enquiry.status
       return render json: { code: 200, message: "Please wait, admin will verify you" }, status: :ok
     end
 
-    if user.authenticate(params[:password])
-      token = SecureRandom.hex(20)
-      user.update(session_token: token)
+    unless @user
+      return render json: { code: 401, message: "Invalid email or password" }, status: :unauthorized
+    end
+
+    if !@user.status
+      return render json: { code: 200, message: "Please wait, admin will verify you" }, status: :ok
+    end
+
+    if @user.authenticate(params[:password])
+      # Generate OTP
+      otp = rand(100000..999999).to_s
+
+      # Save OTP with expiry time (10 minutes)
+      @user.update!(
+        email_otp: otp,
+        email_otp_status: false,
+        email_otp_verified_at: 10.minutes.from_now
+      )
+
+      # Send OTP email
+      # UserMailer.send_email_otp(user: user, otp: otp).deliver_now
+      UserMailer.send_email_otp(@user, otp).deliver_now
 
       render json: {
         code: 200,
-        message: "Login successful",
-        user: user
+        message: "OTP sent to your email. Please verify.",
+        user: @user
       }, status: :ok
     else
       render json: {
@@ -35,6 +44,46 @@ class Api::V1::Agent::SessionsController < ApplicationController
       }, status: :unauthorized
     end
   end
+
+  def verify_email
+    # Find user by email
+    user = User.find_by(email: params[:email].to_s.strip)
+
+    # If user not found
+    unless user
+      return render json: { code: 404, message: "User not found" }, status: :not_found
+    end
+
+    # If OTP expired
+    if user.email_otp_verified_at.nil? || Time.current > user.email_otp_verified_at
+      return render json: { code: 401, message: "OTP expired. Please request a new one." }, status: :unauthorized
+    end
+
+    # Compare the OTP
+    if user.email_otp == params[:otp].to_s.strip
+      # Mark OTP as verified
+      user.update!(
+        email_otp_status: true,
+        email_otp: nil,
+        email_otp_verified_at: Time.current
+      )
+
+      # Generate session token or JWT (optional)
+      token = SecureRandom.hex(20)
+      user.update!()
+      render json: {
+        code: 200,
+        message: "Email verified successfully.",
+        user: user
+      }, status: :ok
+    else
+      render json: {
+        code: 401,
+        message: "Invalid OTP. Please try again."
+      }, status: :unauthorized
+    end
+  end
+
 
   def create
     user = User.new(retailer_params.merge(status: false))

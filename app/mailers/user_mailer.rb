@@ -3,6 +3,12 @@ class UserMailer < ApplicationMailer
   default from: "Bharatgrowbusiness@gmail.com"
   p "================UserMailer"
 
+  def send_email_otp(user, otp)
+    @user = user
+    @otp = otp
+    mail(to: @user.email, subject: "Your Login OTP Code")
+  end
+
   def mpin_otp_email(user, otp)
     @user = user
     p "==========user"
