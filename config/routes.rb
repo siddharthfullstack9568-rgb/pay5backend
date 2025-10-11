@@ -93,6 +93,7 @@ Rails.application.routes.draw do
         post "sessions/login"
         post "sessions/create"
         get "sessions/role"
+        post "sessions/verify_email"
         post "enquires/create"
 
         get "user_services/index"

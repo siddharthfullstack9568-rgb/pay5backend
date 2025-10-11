@@ -20,12 +20,14 @@ class Api::V1::Agent::SessionsController < ApplicationController
     if @user.authenticate(params[:password])
       # Generate OTP
       otp = rand(100000..999999).to_s
-
-      # Save OTP with expiry time (10 minutes)
+     
+      token = SecureRandom.hex(20)
+     
       @user.update!(
         email_otp: otp,
         email_otp_status: false,
-        email_otp_verified_at: 10.minutes.from_now
+        email_otp_verified_at: 10.minutes.from_now,
+        session_token: token
       )
 
       # Send OTP email
@@ -48,13 +50,14 @@ class Api::V1::Agent::SessionsController < ApplicationController
   def verify_email
     # Find user by email
     user = User.find_by(email: params[:email].to_s.strip)
-
+   p "_------------primepay"
+   p user.email_otp
     # If user not found
     unless user
       return render json: { code: 404, message: "User not found" }, status: :not_found
     end
 
-    # If OTP expired
+    # Check if OTP expired (assuming you store expiry in email_otp_expires_at)
     if user.email_otp_verified_at.nil? || Time.current > user.email_otp_verified_at
       return render json: { code: 401, message: "OTP expired. Please request a new one." }, status: :unauthorized
     end
@@ -68,13 +71,12 @@ class Api::V1::Agent::SessionsController < ApplicationController
         email_otp_verified_at: Time.current
       )
 
-      # Generate session token or JWT (optional)
-      token = SecureRandom.hex(20)
-      user.update!()
+      # Optional: generate a token
+
       render json: {
         code: 200,
         message: "Email verified successfully.",
-        user: user
+        user: user,
       }, status: :ok
     else
       render json: {
@@ -83,6 +85,7 @@ class Api::V1::Agent::SessionsController < ApplicationController
       }, status: :unauthorized
     end
   end
+
 
 
   def create

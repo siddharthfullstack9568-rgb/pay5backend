@@ -5,6 +5,8 @@ class UserMailer < ApplicationMailer
 
   def send_email_otp(user, otp)
     @user = user
+    p "=================="
+    p @user
     @otp = otp
     mail(to: @user.email, subject: "Your Login OTP Code")
   end
