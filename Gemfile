@@ -64,3 +64,4 @@ gem "tailwindcss-rails"
 gem "rack-cors"
 gem "dotenv-rails", groups: [:development, :test]
 gem 'sidekiq', '~> 6.0'
+gem 'httparty'

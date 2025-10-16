@@ -120,6 +120,10 @@ Rails.application.routes.draw do
 
         resources :reatailer_profiles, only: [:index]
         post "reatailer_profiles/set_pin"
+        post "reatailer_profiles/reset_transaction_pin"
+        post "reatailer_profiles/forget_transaction_pin"
+        post "reatailer_profiles/verfiy_transaction_pin"
+
       end
 
     end

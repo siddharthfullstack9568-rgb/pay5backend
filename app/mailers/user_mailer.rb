@@ -3,6 +3,16 @@ class UserMailer < ApplicationMailer
   default from: "Bharatgrowbusiness@gmail.com"
   p "================UserMailer"
 
+  def transcation_email_otp(user:, otp:)
+    @user = user
+    @otp = otp
+
+    mail(
+      to: @user.email,
+      subject: "Your OTP for Transaction PIN Reset"
+    )
+  end
+
   def send_email_otp(user, otp)
     @user = user
     p "=================="
