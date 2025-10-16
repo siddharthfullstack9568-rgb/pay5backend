@@ -36,23 +36,31 @@ module Api
         end
 
         def reset_transaction_pin
+          # Validate params
           if params[:old_pin].blank? || params[:set_pin].blank? || params[:confirm_pin].blank?
             return render json: { code: 400, message: "Old pin, new pin, and confirm pin are required" }
           end
 
           user = current_user
 
-          # Check if old PIN matches
+          # Check if old pin matches
           unless user.set_pin == params[:old_pin]
             return render json: { code: 400, message: "Old pin does not match" }
           end
 
-          # Check if new and confirm PIN match
+          # Check if new and confirm pin match
           unless params[:set_pin] == params[:confirm_pin]
-            user.update(set_pin: params[:set_pin])
             return render json: { code: 400, message: "New pin and confirm pin do not match" }
           end
+
+          # Update the new pin
+          if user.update(set_pin: params[:set_pin])
+            render json: { code: 200, message: "Transaction pin updated successfully" }
+          else
+            render json: { code: 500, message: "Failed to update transaction pin" }
+          end
         end
+
 
         def forget_transaction_pin
           # Check if email is provided
