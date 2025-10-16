@@ -124,6 +124,8 @@ Rails.application.routes.draw do
         post "reatailer_profiles/forget_transaction_pin"
         post "reatailer_profiles/verfiy_transaction_pin"
 
+        post "reatailer_profiles/set_password"
+
       end
 
     end

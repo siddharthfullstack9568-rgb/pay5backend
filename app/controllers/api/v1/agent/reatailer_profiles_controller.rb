@@ -110,6 +110,37 @@ module Api
           render json: { code: 200, message: "OTP verified successfully" }
         end
 
+        def set_password
+          # ✅ Ensure required parameters are present
+          unless params[:old_password].present? && params[:password].present? && params[:confirm_password].present?
+            return render json: { code: 400, message: "Old password, new password, and confirm password are required" }
+          end
+
+          user = current_user # or find user based on your authentication logic
+
+          # ✅ Check if user exists
+          unless user
+            return render json: { code: 404, message: "User not found" }
+          end
+
+          # ✅ Verify old password
+          unless user.authenticate(params[:old_password])
+            return render json: { code: 400, message: "Old password is incorrect" }
+          end
+
+          # ✅ Check password confirmation
+          if params[:password] != params[:confirm_password]
+            return render json: { code: 400, message: "Password and confirm password do not match" }
+          end
+
+          # ✅ Update password
+          if user.update(password: params[:password])
+            render json: { code: 200, message: "Password updated successfully" }
+          else
+            render json: { code: 422, message: "Failed to update password", errors: user.errors.full_messages }
+          end
+        end
+
 
       end
     end
