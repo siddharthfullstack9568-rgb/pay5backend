@@ -13,6 +13,16 @@ class UserMailer < ApplicationMailer
     )
   end
 
+  def reset_password_otp
+    @user = params[:user]
+    @otp = params[:otp]
+
+    mail(
+      to: @user.email,
+      subject: "Your Password Reset OTP Code"
+    )
+  end
+
   def send_email_otp(user, otp)
     @user = user
     p "=================="

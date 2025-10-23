@@ -7,17 +7,33 @@ class Api::V1::Customer::SessionsController < ApplicationController
   protect_from_forgery with: :null_session
 
 
+  # def login_email
+  #   @customer = User.find_or_create_by(email: params[:email], role_id: "5") do |u|
+  #     u.first_name = params[:first_name] || "Guest User"
+  #   end
+
+  #   otp = rand(100000..999999).to_s
+  #   @customer.update(email_otp: otp, email_otp_sent_at: Time.current)
+
+  #   UserMailer.send_otp(@customer, otp).deliver_now.
+
+  #     render json: { success: true, message: "OTP sent to email" }
+  # end
+
   def login_email
+    p "================ login_email"
+
     @customer = User.find_or_create_by(email: params[:email], role_id: "5") do |u|
+
       u.first_name = params[:first_name] || "Guest User"
     end
 
     otp = rand(100000..999999).to_s
     @customer.update(email_otp: otp, email_otp_sent_at: Time.current)
 
-    UserMailer.send_otp(@customer, otp).deliver_now.
+    UserMailer.send_otp(@customer, otp).deliver_now
 
-      render json: { success: true, message: "OTP sent to email" }
+    render json: { success: true, message: "OTP sent to email" }
   end
 
 
@@ -58,11 +74,11 @@ class Api::V1::Customer::SessionsController < ApplicationController
     otp = rand(100000..999999).to_s
 
     # 3️⃣ STPL credentials (stored in ENV or Rails credentials)
-    stpl_user        =  "amol@primepayindia.com"
-    stpl_pass        = "K7VSM1U7"
-    stpl_sender      = "BHRTGW"                # Approved sender ID
-    stpl_template_id = ENV['STPL_TEMPLATE_ID'] || "1107165678912345"      # DLT Template ID
-    stpl_entity_id   = ENV['STPL_ENTITY_ID']   || "1701165678901234567"   # DLT Entity ID (optional)
+    stpl_user        =  "amol@primepayindia.com",
+      stpl_pass        = "K7VSM1U7",
+      stpl_sender      = "BHRTGW"  ,              # Approved sender ID
+      stpl_template_id = 1107165678912345    ,  # DLT Template ID
+    stpl_entity_id   = 1701165678901234567,   # DLT Entity ID (optional)
 
     # 4️⃣ Prepare SMS text
     sms_text = "Your OTP is #{otp}"
@@ -135,29 +151,29 @@ class Api::V1::Customer::SessionsController < ApplicationController
 
 
 
-  def verify_otp
-    unless params[:otp].present?
-      render json: { code: 422, message: "otp is required" }, status: :unprocessable_entity and return
-    end
-    p @user.otp
-    p params[:otp]
-    if @user && @user.otp.to_s == params[:otp].to_s
-      @user.update(verify_otp: true, otp: nil)
-      @user.regenerate_session_token
-      render json: { code: 200, message: "OTP verified successfully", user: @user }
-    else
-      render json: { code: 401, message: "Invalid OTP" }, status: :unauthorized
-    end
-
+def verify_otp
+  unless params[:otp].present?
+    render json: { code: 422, message: "otp is required" }, status: :unprocessable_entity and return
+  end
+  p @user.otp
+  p params[:otp]
+  if @user && @user.otp.to_s == params[:otp].to_s
+    @user.update(verify_otp: true, otp: nil)
+    @user.regenerate_session_token
+    render json: { code: 200, message: "OTP verified successfully", user: @user }
+  else
+    render json: { code: 401, message: "Invalid OTP" }, status: :unauthorized
   end
 
-  private
+end
 
-  def set_or_create_user
-    unless params[:phone_number].present?
-      render json: { code: 422, message: "phone_number is required" }, status: :unprocessable_entity and return
-    end
+private
 
-    @user = User.find_or_create_by(phone_number: params[:phone_number], role_id: 11)
+def set_or_create_user
+  unless params[:phone_number].present?
+    render json: { code: 422, message: "phone_number is required" }, status: :unprocessable_entity and return
   end
+
+  @user = User.find_or_create_by(phone_number: params[:phone_number], role_id: 11)
+end
 end

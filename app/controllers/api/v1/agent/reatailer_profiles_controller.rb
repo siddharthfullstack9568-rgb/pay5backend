@@ -141,6 +141,34 @@ module Api
           end
         end
 
+        def reset_password
+          if params[:email].blank?
+            return render json: { code: 400, message: "Email is required" }
+          end
+
+          user = User.find_by(email: params[:email])
+
+          unless user
+            return render json: { code: 404, message: "User not found with this email" }
+          end
+
+          otp = rand(100000..999999).to_s
+
+          user.update(
+            email_otp: otp,
+            email_otp_sent_at: Time.current + 10.minutes
+          )
+
+          # ✅ Call mailer correctly
+          UserMailer.with(user: user, otp: otp).reset_password_otp.deliver_now
+
+          render json: { code: 200, message: "OTP sent successfully to your email" }
+
+        rescue => e
+          render json: { code: 500, message: "Something went wrong while sending OTP", error: e.message }
+        end
+
+
 
       end
     end

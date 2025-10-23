@@ -57,7 +57,7 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
       recharge_transaction = Transaction.create!(
         tx_id: txn_id,
         operator: params[:operator],
-        account_or_mobile: params[:mobile_number],
+        mobile: params[:mobile_number],
         amount: amount,
         transaction_type: params[:transaction_type],
         user_id: current_user.id,
@@ -67,7 +67,9 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
         subscriber_or_vc_number: params[:subscriber_or_vc_number],
         bill_no: params[:bill_no],
         landline_no: params[:landline_no],
-        consumer_no: params[:consumer_no]
+        consumer_no: params[:consumer_no],
+        account_or_mobile: params[:account_no],
+        bank: params[:bank]
       )
 
       # ==== Commission for hierarchy users (admin & superadmin) ====

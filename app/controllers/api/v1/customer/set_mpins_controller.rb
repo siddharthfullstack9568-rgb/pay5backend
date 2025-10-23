@@ -62,5 +62,26 @@ class Api::V1::Customer::SetMpinsController < Api::V1::Customer::BaseController
     end
   end
 
+  def verify_forget_mpin
+    if params[:email].blank? || params[:otp].blank?
+      return render json: { code: 400, message: "Email, OTP are required" }
+    end
+
+    user = User.find_by(email: params[:email])
+   p user
+    unless user
+      return render json: { code: 404, message: "User not found" }
+    end
+    # Check if OTP matches and is not expired
+    if user.email_otp == params[:otp]
+      # Update MPIN and clear OTP fields
+      user.update!(email_otp: nil)
+      render json: { code: 200, message: "OTP verified successfully" }
+    else
+      render json: { code: 401, message: "Invalid or expired OTP" }
+    end
+  end
+
+
 
 end

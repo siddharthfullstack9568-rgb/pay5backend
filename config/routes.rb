@@ -82,6 +82,7 @@ Rails.application.routes.draw do
         post "set_mpins/mpin"
         post "set_mpins/set_mpin"
         post "set_mpins/forget_mpin"
+        post "set_mpins/verify_forget_mpin"
       end
 
       namespace :master do
@@ -125,6 +126,7 @@ Rails.application.routes.draw do
         post "reatailer_profiles/verfiy_transaction_pin"
 
         post "reatailer_profiles/set_password"
+        post "reatailer_profiles/reset_password"
 
       end
 
