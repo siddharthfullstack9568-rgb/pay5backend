@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     post "sessions/create"
     delete "sessions/destroy"
     get "dashboards/index"
+    get "retailers/index"
   end
 
   namespace :master do
@@ -137,6 +138,7 @@ Rails.application.routes.draw do
   root "superadmin/dashboards#index"
 
   namespace :superadmin do
+    get "financial_services/index"
     get "customer/index"
     post "customer/verify_status"
 

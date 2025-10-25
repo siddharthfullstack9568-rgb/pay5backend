@@ -41,7 +41,7 @@ class Api::V1::Customer::SessionsController < ApplicationController
     @customer = User.find_by(email: params[:email])
 
     p "==============customer======"
-    p @customer.email_otp
+    p @customer
     p "===============#{params[:email_otp]}"
 
     if @customer.email_otp == params[:email_otp]
