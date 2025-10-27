@@ -54,7 +54,7 @@ class Api::V1::Agent::FiltersController < Api::V1::Agent::BaseController
             :user_id, :consumer_name, :landline_no, :bank, :card_number
           ]
         ).merge(
-          created_at: t.created_at.strftime("%d/%m/%y %I:%M %p"), # ✅ date + time (12-hour format)
+          created_at: t.created_at..strftime("%d/%m/%y %H:%M")
           consumer_no_Name: t.user.first_name,
           role: current_user.role&.title,
           service_type: t.service_product&.category&.title,
