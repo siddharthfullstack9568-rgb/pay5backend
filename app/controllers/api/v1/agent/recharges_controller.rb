@@ -71,7 +71,8 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
         account_or_mobile: params[:account_no],
         bank: params[:bank],
         ifsc_code: params[:ifsc_code],
-        pan: params[:pan]
+        pan: params[:pan],
+        card_number: params[:card_number]
       )
 
       # ==== Commission for hierarchy users (admin & superadmin) ====

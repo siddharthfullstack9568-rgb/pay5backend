@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_23_105604) do
+ActiveRecord::Schema[7.2].define(version: 2025_10_27_120924) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -222,6 +222,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_23_105604) do
     t.string "pan"
     t.string "upi_id"
     t.string "receiver_name"
+    t.string "card_number"
     t.index ["service_product_id"], name: "index_transactions_on_service_product_id"
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end

@@ -33,6 +33,7 @@ Rails.application.routes.draw do
     get "sessions/login"
     post "sessions/create"
     delete "sessions/destroy"
+    get "sessions/forgot_page"
     get "dashboards/index"
 
     get "schemes/index"
