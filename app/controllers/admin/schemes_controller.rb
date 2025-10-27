@@ -1,6 +1,7 @@
 class Admin::SchemesController < Admin::BaseController
   layout "admin"
   before_action :require_admin_login
+   before_action :set_scheme, only: [:show, :edit, :update, :destroy]
 
   def index
     @schemes = Scheme.all.order(created_at: :desc)

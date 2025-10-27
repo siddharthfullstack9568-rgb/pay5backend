@@ -24,7 +24,7 @@
         First Name <span class="text-red-500">*</span>
       </label>
       <input type="text" name="user[first_name]" placeholder="Enter First Name"
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm p-3 border border-gray-200" />
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm p-3 border border-gray-200" required/>
     </div>
 
     <!-- Last Name -->
@@ -44,7 +44,7 @@
       <div class="flex items-center mt-1 border border-gray-200 rounded-md shadow-sm">
         <span class="px-3 text-purple-500">  <i class='fa fa-envelope'></i></span>
         <input type="email" name="user[email]" placeholder="Enter Address"
-          class="w-full focus:ring-0 text-sm p-3" />
+          class="w-full focus:ring-0 text-sm p-3" required/>
       </div>
     </div>
 
@@ -56,7 +56,7 @@
       <div class="flex items-center mt-1 border border-gray-200 rounded-md shadow-sm">
         <span class="px-3 text-purple-500"><i class='fa-solid fa-phone'></i></span>
         <input type="text" name="user[phone_number]" placeholder="Enter Alternate Phone No."
-          class="w-full  focus:ring-0 text-sm p-3" />
+          class="w-full  focus:ring-0 text-sm p-3" required />
       </div>
     </div>
 
@@ -78,7 +78,7 @@
         Aadhar Number <span class="text-red-500">*</span>
       </label>
       <input type="text" name="user[aadhaar_number]" placeholder="Enter Aadhar Number"
-        class="mt-1 block w-full rounded-md border border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm p-3 border border-gray-200" />
+        class="mt-1 block w-full rounded-md border border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm p-3 border border-gray-200" required/>
     </div>
 
     <!-- PAN -->
@@ -87,7 +87,7 @@
         PAN Number <span class="text-red-500">*</span>
       </label>
       <input type="text" name="user[pan_card]" placeholder="Enter PAN Number"
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm p-3 border border-gray-200" />
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm p-3 border border-gray-200" required/>
     </div>
 
     <!-- Date of Birth -->
@@ -109,7 +109,7 @@
       </label>
       <select
         name="user[gender]"
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm p-3 border border-gray-200">
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm p-3 border border-gray-200" required>
         <option>Select gender</option>
         <option>Male</option>
         <option>Female</option>
@@ -276,13 +276,13 @@
       <div>
         <label class="block text-sm font-medium text-gray-700">Password</label>
         <input type="text" name="user[password]" placeholder="Enter City"
-          class="mt-1 w-full rounded-md border border-gray-300 p-3 text-sm shadow-sm" />
+          class="mt-1 w-full rounded-md border border-gray-300 p-3 text-sm shadow-sm" required />
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
         <input type="text" name="user[confirm_password]" placeholder="Enter State"
-          class="mt-1 w-full rounded-md border border-gray-300 p-3 text-sm shadow-sm" />
+          class="mt-1 w-full rounded-md border border-gray-300 p-3 text-sm shadow-sm" required />
       </div>
 
       <div class="">
@@ -291,7 +291,7 @@
       </label>
      <select
           name="user[scheme_id]"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm p-3 border border-gray-200">
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm p-3 border border-gray-200" required>
 
           <option value="">Select Scheme</option>
           <% Scheme.all.each do |sch| %>
@@ -415,17 +415,8 @@
 
   <%end%>
 
-
-
 </div>
 
 <!-- Alpine.js (CDN) -->
 <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
-
-
-
-
-
-
 

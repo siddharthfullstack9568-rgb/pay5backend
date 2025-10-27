@@ -36,8 +36,10 @@ Rails.application.routes.draw do
     get "dashboards/index"
 
     get "schemes/index"
-    post "schemes/create", to: "scheme#create", as: :scheme_create
-    post "schemes/update", to: "scheme#update", as: :scheme_update
+    post "schemes/create", to: "schemes#create", as: :admin_scheme_create
+    post "schemes/update", to: "schemes#update", as: :admin_scheme_update
+    resources :schemes, only: [:destroy]
+
 
     # get "user_services/index"
     # get "user_services/new"
@@ -128,6 +130,7 @@ Rails.application.routes.draw do
 
         post "reatailer_profiles/set_password"
         post "reatailer_profiles/reset_password"
+        post "reatailer_profiles/forget_password"
 
       end
 

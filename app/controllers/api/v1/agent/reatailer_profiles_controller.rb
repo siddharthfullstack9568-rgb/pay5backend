@@ -168,7 +168,22 @@ module Api
           render json: { code: 500, message: "Something went wrong while sending OTP", error: e.message }
         end
 
+        def forget_password
+          unless params[:password].present? && params[:confirm_password].present?
+            return render json: { code: 400, message: "New password and confirm password are required" }
+          end
 
+          if params[:password] != params[:confirm_password]
+            return render json: { code: 400, message: "Password and confirm password do not match" }
+          end
+
+          # ✅ Example: update password (assuming you have @user set before)
+          if current_user.update(password: params[:password])
+            render json: { code: 200, message: "Password updated successfully" }
+          else
+            render json: { code: 422, message: "Unable to update password", errors: @user.errors.full_messages }
+          end
+        end
 
       end
     end
