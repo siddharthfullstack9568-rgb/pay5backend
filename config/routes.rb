@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   namespace :dealer do
     get "sessions/login"
     post "sessions/create"
+    get "sessions/forgot_page"
     delete "sessions/destroy"
     get "dashboards/index"
     get "retailers/index"

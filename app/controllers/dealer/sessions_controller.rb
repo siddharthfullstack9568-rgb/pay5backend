@@ -7,7 +7,7 @@ class Dealer::SessionsController < Master::BaseController
 
   def create
     p "====================== userssssssssss"
-      p "====================== userssssssssss"
+    p "====================== userssssssssss"
 
     p params[:email]
     user = User.find_by(email: params[:email])
@@ -17,6 +17,10 @@ class Dealer::SessionsController < Master::BaseController
     else
       render json: { error: "Invalid email or password" }, status: :unauthorized
     end
+  end
+
+  def forgot_page
+    
   end
 
   def destroy
