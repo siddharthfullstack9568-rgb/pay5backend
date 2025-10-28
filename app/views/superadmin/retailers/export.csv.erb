@@ -1,0 +1,4 @@
+Name,Email,Username,Phone Number,Aadhaar Number,Pan card,Gender,Gst Number,Full address,pin code,Account Number,Created At
+<% @retailers.each do |retailer| %>
+<%= retailer.first_name %>,<%= retailer.email %>,<%= retailer.username %>,<%= retailer.phone_number %>,<%= retailer.aadhaar_number %>,<%= retailer.pan_card %>,<%= retailer.gender %>,<%= retailer.gst_number %>,<%= retailer.address %>,<%= retailer.pincode %>,<%= retailer.account_number %>,<%= retailer.created_at.strftime("%d-%m-%Y") %>
+<% end %>

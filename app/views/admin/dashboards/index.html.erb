@@ -1,42 +1,85 @@
- <main class="flex-1 p-6 overflow-y-auto">
-      <h1 class="text-2xl font-bold mb-2">Admin Dashboard</h1>
-      <p class="text-gray-500 mb-6">Welcome back! Here’s what’s happening today.</p>
+<!-- Main Content Only -->
+<main class="flex-1 p-6 overflow-y-auto" data-controller="dashboard">
+  <h1 class="text-2xl font-bold mb-2">Admin Dashboard</h1>
+  <p class="text-gray-500 mb-6">Welcome back! Here’s what’s happening today.</p>
 
-      <!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div class="bg-white p-4 rounded-lg shadow">
-          <h3 class="text-gray-500">Total Transactions</h3>
-          <p class="text-2xl font-bold">1,248</p>
-          <span class="text-green-600 text-sm">↑ 12% from last week</span>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow">
-          <h3 class="text-gray-500">Pending Actions</h3>
-          <p class="text-2xl font-bold">18</p>
-          <span class="text-red-600 text-sm">↓ 3% from yesterday</span>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow">
-          <h3 class="text-gray-500">Completed Today</h3>
-          <p class="text-2xl font-bold">94</p>
-          <span class="text-green-600 text-sm">↑ 8% from yesterday</span>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow">
-          <h3 class="text-gray-500">System Health</h3>
-          <p class="text-2xl font-bold">100%</p>
-          <span class="text-green-600 text-sm">All systems operational</span>
-        </div>
+  <!-- Dashboard Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white p-4 rounded shadow">
+      <div class="text-gray-500 text-xs sm:text-sm">Total Registered User</div>
+      <div class="text-xl sm:text-2xl font-bold flex items-center gap-2">
+        <span><%= @total_users %></span>
+        <img src="https://img.icons8.com/ios-glyphs/24/user.png"/>
       </div>
+    </div>
 
-      <!-- Chart Placeholder -->
-      <div class="bg-white p-6 rounded-lg shadow">
-        <div class="flex justify-between mb-4">
-          <h3 class="text-lg font-bold">Transaction Trends</h3>
-          <div class="space-x-2">
-            <button class="px-3 py-1 text-sm rounded bg-indigo-100 text-indigo-700">Weekly</button>
-            <button class="px-3 py-1 text-sm rounded border">Monthly</button>
-          </div>
-        </div>
-        <div class="h-64 flex items-center justify-center text-gray-400">
-          📊 Chart Placeholder
-        </div>
+    <div class="bg-white p-4 rounded shadow">
+      <div class="text-gray-500 text-xs sm:text-sm">Total Transaction</div>
+      <div class="text-xl sm:text-2xl font-bold flex items-center gap-2">
+        <span><%= @total_transcations %></span>
+        <img src="https://img.icons8.com/material-rounded/24/bank-cards.png"/>
       </div>
-    </main>
+    </div>
+
+    <div class="bg-white p-4 rounded shadow">
+      <div class="text-gray-500 text-xs sm:text-sm">Total Revenue</div>
+      <div class="text-xl sm:text-2xl font-bold flex items-center gap-2">
+        <span>₹<%= @total_revenue %></span>
+      </div>
+    </div>
+
+    <div class="bg-white p-4 rounded shadow">
+      <div class="text-gray-500 text-xs sm:text-sm">Total Pending</div>
+      <div class="text-xl sm:text-2xl font-bold flex items-center gap-2">
+        <span><%= @total_pending %></span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Charts -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-white p-5 rounded shadow h-64 sm:h-80">
+      <div class="font-semibold mb-2 text-sm">Transaction Trend</div>
+      <%= column_chart @transactions_graph.group_by_day_of_week(:created_at, format: "%a").count %>
+    </div>
+
+    <div class="bg-white p-5 rounded shadow sm:h-72" style="
+    height: 371px;">
+      <div class="font-semibold mb-2 text-sm">Revenue Overview</div>
+        <%= pie_chart({
+          "Total Revenue" => @total_revenue,
+          "Remaining" => 10000 - @total_revenue
+        }) %>
+       </div>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="bg-white p-4 rounded shadow overflow-x-auto">
+    <div class="font-semibold mb-4">Recent Transaction</div>
+    <table class="w-full text-left border-collapse min-w-[600px]">
+      <thead>
+        <tr class="text-gray-500 text-xs sm:text-sm">
+          <th class="py-2 px-2 sm:px-4">Transaction ID</th>
+          <th class="py-2 px-2 sm:px-4">User</th>
+          <th class="py-2 px-2 sm:px-4">Type</th>
+          <th class="py-2 px-2 sm:px-4">Amount</th>
+          <th class="py-2 px-2 sm:px-4">Status</th>
+          <th class="py-2 px-2 sm:px-4">Date & Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @transactions.each do |trn| %>
+          <tr class="border-t text-xs sm:text-sm">
+            <td class="py-2 px-2 sm:px-4"><%= trn.tx_id %></td>
+            <td class="py-2 px-2 sm:px-4"><%= trn.user.first_name %></td>
+            <td class="py-2 px-2 sm:px-4">Payment</td>
+            <td class="py-2 px-2 sm:px-4"><%= trn.amount %></td>
+            <td class="py-2 px-2 sm:px-4"><%= trn.status %></td>
+            <td class="py-2 px-2 sm:px-4"><%= trn.created_at.strftime("%d/%m/%y %H:%M") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</main>

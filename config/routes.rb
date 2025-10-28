@@ -180,6 +180,7 @@ Rails.application.routes.draw do
     get "recharge_and_bill/view"
     post "recharge_and_bill/commission_set"
 
+    get "retailers/export"
 
     get "service/index"
     get "enqueries/index"
@@ -214,7 +215,7 @@ Rails.application.routes.draw do
     namespace :master do
       get "dashboards/index"
     end
-
+  
 
 
     get "dashboards/index"

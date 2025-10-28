@@ -2,7 +2,7 @@ class Superadmin::RetailersController < ApplicationController
   before_action :set_retailer, only: [:show, :edit, :update, :destroy]
 
   def index
-     @retailers = User.joins(:role).where(roles: { title: ["retailer", "master", "dealer"] }).order(created_at: :desc)
+    @retailers = User.joins(:role).where(roles: { title: ["retailer", "master", "dealer"] }).order(created_at: :desc)
   end
 
   def show
@@ -57,6 +57,17 @@ class Superadmin::RetailersController < ApplicationController
   def destroy
     @retailer.destroy
     redirect_to superadmin_retailers_path, notice: "Retailer deleted successfully."
+  end
+
+  def export
+    @retailers = User.all
+
+    respond_to do |format|
+      format.csv do
+        headers['Content-Disposition'] = "attachment; filename=\"retailers-#{Date.today}.csv\""
+        headers['Content-Type'] ||= 'text/csv'
+      end
+    end
   end
 
   private

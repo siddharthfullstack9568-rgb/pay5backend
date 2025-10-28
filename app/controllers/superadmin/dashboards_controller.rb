@@ -9,7 +9,7 @@ class Superadmin::DashboardsController < Superadmin::BaseController
     p @total_revenue
     @transactions_graph = Transaction.all
     @total_pending = Transaction.where(user_id: @users.pluck(:id)).where(status: "PENDING").count
-    @transactions = Transaction.last(20)
+    @transactions = Transaction.order(created_at: :desc).limit(20)
     @revenue_data = TransactionCommission
     .where(user_id: @users.pluck(:id))
     .group(:user_id)

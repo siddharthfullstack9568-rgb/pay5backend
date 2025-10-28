@@ -7,13 +7,16 @@
           </p>
         </div>
         <div class="flex gap-3">
-          <button class="flex items-center gap-2 border px-4 py-2 rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300">
-            📄 Export List
-          </button>
-          <a href ="<%=new_superadmin_retailer_path%>" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 cursor-pointer">Create New User
-         </a>
-        </div>
+					  <%= link_to "📄 Export List",
+					              superadmin_retailers_export_path(format: :csv),
+					              class: "flex items-center gap-2 border px-4 py-2 rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300" %>
+
+					  <%= link_to "Create New User",
+					              new_superadmin_retailer_path,
+					              class: "bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 cursor-pointer" %>
+					</div>
       </div>
+      
 	<div class="w-[1477px] relative overflow-x-auto shadow-md sm:rounded-lg pr-5 mt-8">
 		<table class="w-full text-sm text-left text-gray-600">
       <thead class="text-xs uppercase bg-gray-100 text-gray-700">
