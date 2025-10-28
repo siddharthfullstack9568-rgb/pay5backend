@@ -8,6 +8,32 @@
         </div>
      
       </div>
+
+      <div>
+    <%= form_with url: superadmin_admins_path, method: :get, local: true, class: "flex items-center space-x-2" do %>
+      <input
+        type="text"
+        name="q"
+        value="<%= params[:q] %>"
+        placeholder="Search admin..."
+        class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-64"
+      />
+      <button
+        type="submit"
+        class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
+      >
+        Search
+      </button>
+      <a href="<%=superadmin_admins_path%>" 
+        type="submit"
+        class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
+      >
+        Cancel
+      </a>
+    <% end %>
+  </div>
+
+
   <div class="w-[1477px] relative overflow-x-auto shadow-md sm:rounded-lg pr-5 mt-8">
     <table class="w-full text-sm text-left text-gray-600">
       <thead class="text-xs uppercase bg-gray-100 text-gray-700">

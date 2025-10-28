@@ -1,7 +1,15 @@
 class Superadmin::AdminsController < ApplicationController
 
   def index
-    @users = User.joins(:role).where(roles:{title: "admin"}).order(updated_at: :desc, created_at: :desc)
+    @users = User
+    .joins(:role)
+    .where(roles: { title: "admin" })
+    .order(updated_at: :desc, created_at: :desc)
+
+    if params[:q].present?
+      query = "%#{params[:q]}%"
+      @users = @users.where("users.first_name ILIKE :query OR users.email ILIKE :query", query: query)
+    end
   end
 
   def new

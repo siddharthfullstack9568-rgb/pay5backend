@@ -67,9 +67,9 @@ class Superadmin::SessionsController < ApplicationController
     p "================email"
     p @email
     @user = User.find_by(email: @email)
-p "================user"
-      p @user
-     
+    p "================user"
+    p @user
+
     if params[:password].present? && params[:password_confirmation].present?
       p "================user"
       p @user
