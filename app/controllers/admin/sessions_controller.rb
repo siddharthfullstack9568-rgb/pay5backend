@@ -17,8 +17,23 @@ class Admin::SessionsController < ApplicationController
   end
 
   def forgot_page
-    
   end
+
+  def forgot_email
+    @user = User.find_by(email: params[:email])
+
+    if @user
+      otp = rand(100000..999999) # generate 6-digit OTP
+      @user.update(otp: otp, email_otp_verified_at: Time.current)
+
+      UserMailer.with(user: @user, email_otp: otp).forgot_email.deliver_now
+
+      render json: { message: "OTP sent successfully to your email" }, status: :ok
+    else
+      render json: { error: "Email not found" }, status: :not_found
+    end
+  end
+
 
 
   def destroy

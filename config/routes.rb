@@ -143,6 +143,16 @@ Rails.application.routes.draw do
   root "superadmin/dashboards#index"
 
   namespace :superadmin do
+    get "sessions/login"
+    post "sessions/create"
+    delete "sessions/destroy"
+    get "sessions/forgot_page"
+    post "sessions/forgot_email"
+    get "sessions/opt_page"
+    post "sessions/verify_otp"
+    get "sessions/set_password"
+    post "sessions/set_password"
+
     get "financial_services/index"
     get "customer/index"
     post "customer/verify_status"

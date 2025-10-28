@@ -23,6 +23,15 @@ class UserMailer < ApplicationMailer
     )
   end
 
+  def forgot_email
+    p "==============="
+    @user = params[:user]
+    @otp  = params[:otp]
+    p "===========ope forgot_email"
+    p @otp
+    mail(to: @user.email, subject: "Your OTP code")
+  end
+
   def send_email_otp(user, otp)
     @user = user
     p "=================="

@@ -51,7 +51,7 @@ class Api::V1::Agent::FiltersController < Api::V1::Agent::BaseController
           only: [
             :id, :tx_id, :operator, :transaction_type,
             :account_or_mobile, :amount, :status,
-            :user_id, :consumer_name, :landline_no, :bank, :card_number
+            :user_id, :consumer_name, :landline_no, :bank, :card_number, :mobile
           ]
         ).merge(
           created_at: t.created_at.strftime("%d/%m/%y %H:%M"),
