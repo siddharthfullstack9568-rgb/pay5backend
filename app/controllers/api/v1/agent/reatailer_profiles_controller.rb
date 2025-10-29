@@ -4,7 +4,7 @@ module Api
     module Agent
       class ReatailerProfilesController < Api::V1::Agent::BaseController
         protect_from_forgery with: :null_session
-        skip_before_action :authenticate_user!, only: [:forget_password, :reset_password, :verfiy_transaction_pin]
+        skip_before_action :authenticate_user!, only: [:forget_password, :reset_password , :main_forget_password]
 
 
         def index
@@ -186,6 +186,37 @@ module Api
             render json: { code: 422, message: "Unable to update password", errors: @user.errors.full_messages }
           end
         end
+
+        def main_forget_password
+          # Validate email presence
+          unless params[:email].present?
+            return render json: { code: 400, message: "Email is required" }
+          end
+
+          @user = User.find_by(email: params[:email])
+
+          # If user not found
+          unless @user
+            return render json: { code: 404, message: "User not found with this email" }
+          end
+
+          # Validate password inputs
+          unless params[:password].present? && params[:confirm_password].present?
+            return render json: { code: 400, message: "New password and confirm password are required" }
+          end
+
+          if params[:password] != params[:confirm_password]
+            return render json: { code: 400, message: "Password and confirm password do not match" }
+          end
+
+          # Update the user's password
+          if @user.update(password: params[:password])
+            render json: { code: 200, message: "Password updated successfully" }
+          else
+            render json: { code: 422, message: "Unable to update password", errors: @user.errors.full_messages }
+          end
+        end
+
 
       end
     end

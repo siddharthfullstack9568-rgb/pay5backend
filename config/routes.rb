@@ -133,6 +133,7 @@ Rails.application.routes.draw do
         post "reatailer_profiles/set_password"
         post "reatailer_profiles/reset_password"
         post "reatailer_profiles/forget_password"
+        post "reatailer_profiles/main_forget_password"
 
       end
 
