@@ -4,6 +4,8 @@ module Api
     module Agent
       class ReatailerProfilesController < Api::V1::Agent::BaseController
         protect_from_forgery with: :null_session
+        skip_before_action :authenticate_user!, only: [:forget_password, :reset_password]
+
 
         def index
           render json: { code: 200,message: "Users fetched successfully",users: current_user }, status: :ok

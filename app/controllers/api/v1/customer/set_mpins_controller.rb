@@ -1,7 +1,7 @@
 class Api::V1::Customer::SetMpinsController < Api::V1::Customer::BaseController
   protect_from_forgery with: :null_session
-  skip_before_action :check_kyc_status
-
+  # skip_before_action :check_kyc_status
+  skip_before_action :authenticate_user!, only: [:forget_mpin]
 
   def mpin
     if current_user && current_user.set_mpin == params[:set_mpin]

@@ -78,10 +78,10 @@ class Api::V1::Customer::SessionsController < ApplicationController
       stpl_pass        = "K7VSM1U7",
       stpl_sender      = "BHRTGW"  ,              # Approved sender ID
       stpl_template_id = 1107165678912345    ,  # DLT Template ID
-    stpl_entity_id   = 1701165678901234567,   # DLT Entity ID (optional)
+      stpl_entity_id   = 1701165678901234567,   # DLT Entity ID (optional)
 
-    # 4️⃣ Prepare SMS text
-    sms_text = "Your OTP is #{otp}"
+      # 4️⃣ Prepare SMS text
+      sms_text = "Your OTP is #{otp}"
 
     # 5️⃣ Build API parameters as per STPL documentation
     params = {
@@ -151,29 +151,29 @@ class Api::V1::Customer::SessionsController < ApplicationController
 
 
 
-def verify_otp
-  unless params[:otp].present?
-    render json: { code: 422, message: "otp is required" }, status: :unprocessable_entity and return
-  end
-  p @user.otp
-  p params[:otp]
-  if @user && @user.otp.to_s == params[:otp].to_s
-    @user.update(verify_otp: true, otp: nil)
-    @user.regenerate_session_token
-    render json: { code: 200, message: "OTP verified successfully", user: @user }
-  else
-    render json: { code: 401, message: "Invalid OTP" }, status: :unauthorized
-  end
+  def verify_otp
+    unless params[:otp].present?
+      render json: { code: 422, message: "otp is required" }, status: :unprocessable_entity and return
+    end
+    p @user.otp
+    p params[:otp]
+    if @user && @user.otp.to_s == params[:otp].to_s
+      @user.update(verify_otp: true, otp: nil)
+      @user.regenerate_session_token
+      render json: { code: 200, message: "OTP verified successfully", user: @user }
+    else
+      render json: { code: 401, message: "Invalid OTP" }, status: :unauthorized
+    end
 
-end
-
-private
-
-def set_or_create_user
-  unless params[:phone_number].present?
-    render json: { code: 422, message: "phone_number is required" }, status: :unprocessable_entity and return
   end
 
-  @user = User.find_or_create_by(phone_number: params[:phone_number], role_id: 11)
-end
+  private
+
+  def set_or_create_user
+    unless params[:phone_number].present?
+      render json: { code: 422, message: "phone_number is required" }, status: :unprocessable_entity and return
+    end
+
+    @user = User.find_or_create_by(phone_number: params[:phone_number], role_id: 11)
+  end
 end
