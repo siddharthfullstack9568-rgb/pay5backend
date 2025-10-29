@@ -152,7 +152,9 @@ Rails.application.routes.draw do
     post "sessions/verify_otp"
     get "sessions/set_password"
     post "sessions/set_password"
-
+    get "sessions/otp"
+    post "sessions/verify_otp_login"
+    
     get "financial_services/index"
     get "customer/index"
     post "customer/verify_status"

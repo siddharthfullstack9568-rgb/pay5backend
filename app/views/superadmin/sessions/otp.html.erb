@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify OTP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gray-50">
+
+  <div class="bg-white p-8 rounded-xl shadow-lg w-96">
+    <h2 class="text-2xl font-semibold text-center text-indigo-600 mb-6">
+      Verify OTP
+    </h2>
+
+    <%= form_with url: superadmin_sessions_verify_otp_login_path, method: :post, local: true, id: "otpForm" do |f| %>
+
+      <input type="hidden" value="<%=@email%>" name="email">
+      <div id="otpInputs" class="flex justify-between mb-4">
+        <% 6.times do %>
+          <input type="text"
+                 maxlength="1"
+                 class="otp-input w-12 h-12 text-center border border-gray-300 rounded-lg text-xl focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        <% end %>
+      </div>
+
+      <%= f.hidden_field :otp, id: "hiddenOtp" %>
+
+      <p id="otpError" class="text-red-500 text-center mb-3 text-sm"></p>
+
+      <button
+        type="submit"
+        class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
+      >
+        Submit OTP
+      </button>
+    <% end %>
+
+    <p class="text-center text-sm text-gray-500 mt-4">
+      Didn’t receive OTP?
+      <a href="#" class="text-indigo-600 hover:underline">Resend</a>
+    </p>
+  </div>
+
+  <script>
+    const inputs = document.querySelectorAll('.otp-input');
+    const otpForm = document.getElementById('otpForm');
+    const otpError = document.getElementById('otpError');
+    const hiddenOtp = document.getElementById('hiddenOtp');
+
+    // Auto move to next input
+    inputs.forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+        const value = e.target.value.replace(/[^0-9]/g, '');
+        e.target.value = value;
+        if (value && index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+      });
+
+      // Move back on Backspace
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !e.target.value && index > 0) {
+          inputs[index - 1].focus();
+        }
+      });
+    });
+
+    // Handle Paste (full OTP paste)
+    document.getElementById('otpInputs').addEventListener('paste', (e) => {
+      const pasteData = e.clipboardData.getData('text').trim();
+      if (/^\d+$/.test(pasteData)) {
+        pasteData.split('').forEach((char, i) => {
+          if (inputs[i]) inputs[i].value = char;
+        });
+        if (inputs[pasteData.length - 1]) {
+          inputs[pasteData.length - 1].focus();
+        }
+      }
+      e.preventDefault();
+    });
+
+    // Before Submit
+    otpForm.addEventListener('submit', (e) => {
+      const otp = Array.from(inputs).map(input => input.value).join('');
+
+      if (otp.length !== 6) {
+        e.preventDefault();
+        otpError.textContent = 'Please enter a valid 6-digit OTP.';
+        return false;
+      }
+
+      otpError.textContent = '';
+      hiddenOtp.value = otp; // ✅ send OTP with form to Rails controller
+    });
+  </script>
+
+</body>
+</html>

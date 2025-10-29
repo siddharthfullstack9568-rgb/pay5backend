@@ -1,4 +1,4 @@
-class Api::V1::Agent::EnquiresController < Api::V1::Agent::BaseController
+class Api::V1::Agent::EnquiresController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def create
