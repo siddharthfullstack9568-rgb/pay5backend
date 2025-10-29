@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
+    get "enquery/index"
     get "accounts/index"
     get "accounts/new"
     post "accounts/add_credit"
