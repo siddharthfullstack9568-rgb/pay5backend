@@ -144,6 +144,8 @@ Rails.application.routes.draw do
   root "superadmin/dashboards#index"
 
   namespace :superadmin do
+    get "reset_passwords/reset_password"
+    post "reset_passwords/reset_password"
     get "sessions/login"
     post "sessions/create"
     delete "sessions/destroy"

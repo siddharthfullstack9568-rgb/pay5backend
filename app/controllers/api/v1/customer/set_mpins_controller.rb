@@ -75,8 +75,9 @@ class Api::V1::Customer::SetMpinsController < Api::V1::Customer::BaseController
     # Check if OTP matches and is not expired
     if user.email_otp == params[:otp]
       # Update MPIN and clear OTP fields
-      user.update!(email_otp: nil)
-      render json: { code: 200, message: "OTP verified successfully" }
+      token = SecureRandom.hex(16)
+      user.update!(email_otp: nil, session_token: token)
+      render json: { code: 200, message: "OTP verified successfully", session_token: token}
     else
       render json: { code: 401, message: "Invalid or expired OTP" }
     end
