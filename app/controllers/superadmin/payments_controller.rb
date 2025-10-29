@@ -1,4 +1,5 @@
-class Superadmin::PaymentsController < ApplicationController
+class Superadmin::PaymentsController < Superadmin::BaseController
+  before_action :require_superadmin_login
 
   def index
     user_id = 136
@@ -53,10 +54,10 @@ class Superadmin::PaymentsController < ApplicationController
   end
 
   def set_pin_update
-    super_admin_id = User.find(136)
+    super_admin_id = current_superadmin_user.id
     if params[:set_pin].present? && params[:confirm_pin].present?
       if params[:set_pin] == params[:confirm_pin]
-        if super_admin_id.update(set_pin: params[:set_pin])
+        if current_superadmin_user.update(set_pin: params[:set_pin])
           flash[:notice] = "PIN set successfully"
         else
           flash[:alert] = super_admin_id.errors.full_messages.to_sentence

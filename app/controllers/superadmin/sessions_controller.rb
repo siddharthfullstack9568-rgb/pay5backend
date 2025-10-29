@@ -59,6 +59,7 @@ class Superadmin::SessionsController < ApplicationController
       UserMailer.with(user: @user, otp: otp).forgot_email.deliver_now
 
       flash[:notice] = "OTP sent to your email."
+      session[:superadmin_user_id] = nil
       redirect_to superadmin_sessions_opt_page_path(email: @user.email)
     else
       flash[:alert] = "Email not found."
