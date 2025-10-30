@@ -37,6 +37,13 @@ Rails.application.routes.draw do
     delete "sessions/destroy"
     get "sessions/forgot_page"
     get "dashboards/index"
+    post "sessions/forgot_email"
+    get "sessions/opt_page"
+    post "sessions/verify_otp"
+    get "sessions/set_password"
+    post "sessions/set_password"
+    get "sessions/otp"
+    post "sessions/verify_otp_login"
 
     get "schemes/index"
     post "schemes/create", to: "schemes#create", as: :admin_scheme_create
