@@ -8,13 +8,13 @@
      <div class="w-full relative" data-action="click@document->superadmindropdown#hide">
       <button 
         class="flex items-center gap-3 text-lg font-medium px-3 py-2 rounded-lg hover:bg-indigo-600 w-full"
-        data-action="click->superadmindropdown#paymenttoggle">
+        data-action="click->superadmindropdown#adminTogle">
         <i class="fa fa-user"></i>
         <span>Admin</span>
         <i class="fa fa-caret-down ml-[9.5rem]"></i>
       </button>
 
-      <div data-superadmindropdown-target="payment" class="mt-1 space-y-1 pl-8 hidden">
+      <div data-superadmindropdown-target="admin" class="mt-1 space-y-1 pl-8 hidden">
         <a href="/admin/schemes/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
           Scheme
         </a>
@@ -54,7 +54,7 @@
     </div>
 
     <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-exchange-alt"></i> Money Transfer</a>
-    <div class="w-full relative" data-action="click@document->superadmindropdown#bankhide">
+    <div class="w-full relative" >
       <button 
         class="flex items-center gap-3 text-lg font-medium px-3 py-2 rounded-lg hover:bg-indigo-600 w-full"
         data-action="click->superadmindropdown#rechargetoggle">

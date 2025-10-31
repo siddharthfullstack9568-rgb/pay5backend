@@ -1,28 +1,34 @@
+<!-- Filters -->
+<div class="bg-white p-4 rounded shadow flex flex-col md:flex-row items-start md:items-center gap-4"
+     data-controller="commission">
 
-  <!-- Header -->
-  <div class="bg-white p-4 rounded shadow">
+  <!-- Scheme dropdown -->
+  <%= select_tag :scheme_id,
+        options_from_collection_for_select(Scheme.all, :id, :scheme_name),
+        prompt: "Select Scheme",
+        required: true,
+        class:"border rounded px-3 py-2",
+        id: "schemeSelect",
+        data: { commission_target: "schemeSelect", action: "change->commission#updateScheme" } %>
 
- <%= form_with url: superadmin_recharge_and_bill_commission_set_path, method: :post, local: true, data: { turbo: false } do %>
-    <h1 class="text-lg font-semibold">Recharge & Bill Payment Commission Setup</h1>
-  </div>
-  <!-- Filters -->
-  <div class="bg-white p-4 rounded shadow flex flex-col md:flex-row items-start md:items-center gap-4">
+  <select id="planType" class="border rounded px-3 py-2">
+    <option value="">-- Select Type --</option>
+    <option value="ALL">All</option>
+    <option value="Prepaid">Prepaid</option>
+    <option value="Postpaid">Postpaid</option>
+  </select>
+
+  <button id="submitFilter"
+          data-commission-target="filterButton"
+          class="px-2 py-2 rounded-xl text-white bg-blue-600 cursor-not-allowed opacity-50"
+          disabled>
+    Submit
+  </button>
+</div>
 
 
-    <%= select_tag :scheme, options_from_collection_for_select(Scheme.all, :id, :scheme_name), prompt: "Select Scheme", required: true, class:"border rounded px-3 py-2" %>
-    <select id="planType" class="border rounded px-3 py-2">
-      <option value="">-- Select Type --</option>
-      <option value="ALL">All</option>
-      <option value="Prepaid">Prepaid</option>
-      <option value="Postpaid">Postpaid</option>
-    </select>
-
-    <button id="submitFilter" disabled class="px-2 py-2 rounded-xl text-white bg-blue-600 cursor-pointer">
-      Submit
-    </button>
-  </div>
-
- <div class="bg-white p-6 rounded-lg shadow-md">
+<!-- Commission Table -->
+<div class="bg-white p-6 rounded-lg shadow-md">
   <h2 class="text-lg font-semibold mb-4">Mobile Recharge Prepaid</h2>
 
   <div class="overflow-x-auto">
@@ -39,77 +45,55 @@
           <th class="px-4 py-2 border text-center">Action</th>
         </tr>
       </thead>
+
       <tbody class="text-sm text-gray-700">
-        <%@service_product_mobile.each do |item|%>
-        <tr>
-          <td class="px-4 py-2 border"><%=item.service_product.company_name%></td>
-          <td class="px-4 py-2 border"><%=item.name%></td>
-          <td class="px-4 py-2 border">
-            <select name="commission_type" class="border rounded px-2 py-1 w-full text-sm">
-              <option value="commission">Commision</option>
-              <option value="flat">Flat</option>
-            </select>
-          </td>
-          <td class="px-4 py-2 border">
-            <%= text_field_tag "commissions[#{item.id}][admin_commission]", 
-              Commission.find_by(service_product_item_id: item.id, to_role: "admin")&.value, 
-              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
-          </td>
+        <% @service_product_mobile.each do |item| %>
+          <%= form_with url: superadmin_recharge_and_bill_commission_set_path, method: :post, local: true, data: { turbo: true, action: "submit->commission#validateForm" } do %>
 
-          <td class="px-4 py-2 border">
-            <%= text_field_tag "commissions[#{item.id}][master_commission]", 
-              Commission.find_by(service_product_item_id: item.id, to_role: "master")&.value, 
-              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
-          </td>
+            <!-- Hidden scheme field (auto updated by Stimulus) -->
+            <%= hidden_field_tag :scheme_id, nil, data: { commission_target: "schemeHidden" } %>
 
-          <td class="px-4 py-2 border">
-            <%= text_field_tag "commissions[#{item.id}][dealer_commission]", 
-              Commission.find_by(service_product_item_id: item.id, to_role: "dealer")&.value, 
-              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
-          </td>
+            <tr>
+              <td class="px-4 py-2 border"><%= item.service_product.company_name %></td>
+              <td class="px-4 py-2 border"><%= item.name %></td>
+              <td class="px-4 py-2 border">
+                <select name="commission_type" class="border rounded px-2 py-1 w-full text-sm">
+                  <option value="commission">Commission</option>
+                  <option value="flat">Flat</option>
+                </select>
+              </td>
 
-          <td class="px-4 py-2 border">
-            <%= text_field_tag "commissions[#{item.id}][retailer_commission]", 
-              Commission.find_by(service_product_item_id: item.id, to_role: "retailer")&.value, 
-              placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
-          </td>
-         <td class="px-4 py-2 border text-center">
-          <%= submit_tag "Submit", class: "bg-blue-600 text-white px-3 py-2 rounded cursor-pointer" %>
-        </td>
+              <td class="px-4 py-2 border">
+                <%= text_field_tag "commissions[#{item.id}][admin_commission]",
+                    Commission.find_by(service_product_item_id: item.id, to_role: "admin")&.value,
+                    placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+              </td>
+
+              <td class="px-4 py-2 border">
+                <%= text_field_tag "commissions[#{item.id}][master_commission]",
+                    Commission.find_by(service_product_item_id: item.id, to_role: "master")&.value,
+                    placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+              </td>
+
+              <td class="px-4 py-2 border">
+                <%= text_field_tag "commissions[#{item.id}][dealer_commission]",
+                    Commission.find_by(service_product_item_id: item.id, to_role: "dealer")&.value,
+                    placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+              </td>
+
+              <td class="px-4 py-2 border">
+                <%= text_field_tag "commissions[#{item.id}][retailer_commission]",
+                    Commission.find_by(service_product_item_id: item.id, to_role: "retailer")&.value,
+                    placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+              </td>
+
+              <td class="px-4 py-2 border text-center">
+                <%= submit_tag "Submit", class: "bg-blue-600 text-white px-3 py-2 rounded cursor-pointer" %>
+              </td>
+            </tr>
+          <% end %>
         <% end %>
-        </tr>
-        
       </tbody>
-    </table><br>
-  
-
-  <%= render "superadmin/recharge_and_bill/dth_commission", service_product_dth: @service_product_dth %>
-
- <br> <%= render "superadmin/recharge_and_bill/water_commission", service_product_water: @service_product_water %>
-
-<%end%>
-</div><br>
-
-</div>
-
-
-<% if flash.any? %>
-  <div id="flashModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6 relative">
-      <!-- Close Button -->
-      <% flash.each do |key, message| %>
-        <div class="mb-4 p-4 rounded-lg 
-                    <%= key == 'notice' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' %>">
-          <%= message %>
-        </div>
-      <% end %>
-
-      <div class="flex justify-center">
-        <button onclick="document.getElementById('flashModal').remove()" 
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-          OK
-        </button>
-      </div>
-    </div>
+    </table>
   </div>
-<% end %>
+</div>

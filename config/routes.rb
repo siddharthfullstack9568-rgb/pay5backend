@@ -219,6 +219,7 @@ Rails.application.routes.draw do
     resources :service_products do
       member do
         get :view_product_item
+        get :new_prodcut_item
       end
     end
 

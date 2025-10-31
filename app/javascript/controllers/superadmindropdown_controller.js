@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["menu", "bankmenu", "rechargemenu", "collectmoney", "payment", "account"]
+  static targets = ["menu", "bankmenu", "rechargemenu", "collectmoney", "payment", "account","admin"]
 
   connect() {
     console.log("dropdown connected")
@@ -27,6 +27,11 @@ export default class extends Controller {
       this.menuTarget.classList.add("hidden")
       this.bankmenuTarget.classList.add("hidden")
     }
+  }
+
+  adminTogle(event){
+    event.stopPropagation()
+    this.adminTarget.classList.toggle("hidden") // bank dropdown भी toggle करेगा
   }
 
   paymenttoggle(event) {

@@ -20,14 +20,19 @@ class Superadmin::ServiceProductsController < ApplicationController
   end
 
   def create
-    cat_id = params[:category_id]
-    @service_product = ServiceProduct.new(service_product_params.merge(category_id: cat_id))
+    cat_id = params[:category_id].presence
+    p "---------------"
+    p cat_id
+    @service_product = ServiceProduct.new(service_product_params)
+    @service_product.category_id = cat_id if cat_id.present?
+
     if @service_product.save
       redirect_to superadmin_service_products_path(category_id: cat_id), notice: "Service product created successfully."
     else
       render :new, status: :unprocessable_entity
     end
   end
+
 
   def edit
     @cat_id = params[:category_id]
@@ -52,6 +57,11 @@ class Superadmin::ServiceProductsController < ApplicationController
     @service_producut_items = ServiceProductItem.where(service_product_id: @service_product_id)
     p "==============ServiceProductItem"
     p @service_producut_items
+  end
+
+  def new_prodcut_item
+    @service_product = ServiceProductItem.new
+
   end
 
   private

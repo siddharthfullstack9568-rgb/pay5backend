@@ -1,5 +1,5 @@
 
-<h2 class="text-lg font-semibold mb-4">Watter Bill</h2>
+<h2 class="text-lg font-semibold mb-4">Water Bill</h2>
 
 <div class="overflow-x-auto">
   <table class="w-full border-collapse">
@@ -26,6 +26,7 @@
               <option value="flat" <%#= "selected" if item.type == "flat" %>>Flat</option>
             </select>
           </td>
+          <input type="hidden" value="<%=item.id%>" name="service_product_item_id">
       
            <td class="px-4 py-2 border">
             <%= text_field_tag "commissions[#{item.id}][admin_commission]", 

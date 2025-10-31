@@ -56,16 +56,24 @@ class Admin::SessionsController < ApplicationController
   end
 
   def verify_otp
-    @email = params[:email]
-    p "==========email"
-    p @email
-    @user = User.find_by(email: @email)
-    p @user
+    @user = User.find_by(email: params[:email])
 
-    if @user && @user.email_otp == params[:otp] && @user.email_otp_verified_at > 10.minutes.ago
-      redirect_to admin_sessions_set_password_path(email: @user.email)
+    if @user.present? &&
+        @user.email_otp == params[:otp] &&
+        @user.email_otp_verified_at.present? &&
+        @user.email_otp_verified_at > Time.current
+
+      # ✅ OTP sahi hai — ab session save karo
+      session[:admin_user_id] = @user.id
+
+      # Optional: OTP reset kar do (security ke liye)
+      @user.update(email_otp: nil, email_otp_verified_at: nil)
+
+      flash[:notice] = "Login successful!"
+      redirect_to admin_dashboards_index_path # ya jaha redirect karna ho
     else
-      redirect_to admin_sessions_opt_page_path
+      flash[:alert] = "Invalid or expired OTP"
+      redirect_to admin_sessions_opt_page_path(email: params[:email])
     end
   end
 
