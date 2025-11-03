@@ -47,6 +47,8 @@ class Api::V1::Agent::WalletsController < Api::V1::Agent::BaseController
         {
           id: txn.id,
           wallet_id: txn.wallet_id,
+          deposit_bank: txn.fund_request&.deposit_bank,
+          your_bank: txn.fund_request&.your_bank,
           tx_id: txn.tx_id,
           mode: txn.mode,
           transaction_type: txn.transaction_type,
