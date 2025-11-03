@@ -23,7 +23,7 @@ class Dealer::RetailersController < Dealer::BaseController
     @retailer = User.new(retailer_params.merge(role_id: role_id))
 
     if @retailer.save
-      redirect_to superadmin_retailers_path, notice: "Retailer created successfully."
+      redirect_to dealer_retailers_path, notice: "Retailer created successfully."
     else
       render :new, status: :unprocessable_entity
     end
@@ -34,7 +34,7 @@ class Dealer::RetailersController < Dealer::BaseController
 
   def update
     if @retailer.update(retailer_params)
-      redirect_to superadmin_retailers_path, notice: "Retailer updated successfully."
+      redirect_to dealer_retailers_path, notice: "Retailer updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -53,14 +53,14 @@ class Dealer::RetailersController < Dealer::BaseController
       UserMailer.status_updated(@retailer).deliver_now
     end
 
-    redirect_to superadmin_retailers_path, notice: "Retailer status updated successfully."
+    redirect_to dealer_retailers_path, notice: "Retailer status updated successfully."
   end
 
 
 
   def destroy
     @retailer.destroy
-    redirect_to superadmin_retailers_path, notice: "Retailer deleted successfully."
+    redirect_to dealer_retailers_path, notice: "Retailer deleted successfully."
   end
 
   private

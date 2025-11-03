@@ -1,6 +1,6 @@
 class WalletTransaction < ApplicationRecord
   belongs_to :wallet
-  belongs_to :reference, class_name: "FundRequest", optional: true
+  belongs_to :fund_request, optional: true
 
   # enum mode: { credit: "credit", debit: "debit" }
   

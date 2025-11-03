@@ -38,9 +38,31 @@ class Api::V1::Agent::WalletsController < Api::V1::Agent::BaseController
 
   def fund_request_list
     trn_mode = params[:trn_mode]
-    wallter_transcation = WalletTransaction.where(mode: trn_mode)
-    render json: {code: 200, message: "Successfully list show", wallter_transcation: wallter_transcation}
+    wallet_transactions = WalletTransaction.includes(:fund_request).where(mode: trn_mode).order(created_at: :desc)
+
+    render json: {
+      code: 200,
+      message: "Successfully list show",
+      wallter_transcation: wallet_transactions.map do |txn|
+        {
+          id: txn.id,
+          wallet_id: txn.wallet_id,
+          tx_id: txn.tx_id,
+          mode: txn.mode,
+          transaction_type: txn.transaction_type,
+          amount: txn.amount,
+          status: txn.status,
+          description: txn.description,
+          created_at: txn.created_at,
+          updated_at: txn.updated_at,
+          fund_request_id: txn.fund_request_id,
+          reject_note: txn.fund_request&.reject_note  # 👈 this line is key
+        }
+      end
+    }
   end
+
+
 
   def balance
     total_balance = Wallet.where(user_id: current_user.id).pluck(:balance)
