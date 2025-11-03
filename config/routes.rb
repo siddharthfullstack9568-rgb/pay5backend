@@ -168,7 +168,8 @@ Rails.application.routes.draw do
         get "wallets/balance"
         post "wallets/create"
         post "wallets/fund_request_list"
-        post "wallets/bank_list"
+        get "wallets/bank_list"
+        post "wallets/bank_details"
 
         post "filters/category_filter"
         post "filters/service_category_filter"

@@ -4,8 +4,36 @@ class Api::V1::Agent::WalletsController < Api::V1::Agent::BaseController
   def bank_list
     p "==========current_user"
     p current_user.parent_id
+
     banks = Bank.where(user_id: current_user.parent_id)
-    render json: { code: 200, message: "Bank list", banks: banks }
+
+    render json: {
+      code: 200,
+      message: "Bank details fetched successfully",
+      banks: banks.as_json(only: [:bank_name])
+    }
+  end
+
+
+  def bank_details
+    bank_id = params[:id]
+
+    if bank_id.blank?
+      return render json: { code: 400, message: "Bank ID is required" }
+    end
+
+    bank = Bank.find_by(id: bank_id, user_id: current_user.parent_id)
+
+    if bank
+      render json: {
+        code: 200,
+        message: "Bank details fetched successfully",
+        bank: bank.as_json(only: [:id, :bank_name, :account_number, :ifsc_code, :branch_name])
+      }
+    else
+      render json: { code: 404, message: "Bank not found" }
+    end
+
   end
 
   def fund_request_list
