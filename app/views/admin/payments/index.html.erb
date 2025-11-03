@@ -27,38 +27,52 @@
       <% end %>
     </div>
 
-    <div class="flex flex-wrap gap-3 mb-4">
-      <input
-        type="text"
-        placeholder="Search by Transaction ID or Date (YYYY-MM-DD)"
-        class="px-3 py-2 border border-gray-300 rounded-md"
-      />
-      <input
-        type="date"
-        class="px-3 py-2 border border-gray-300 rounded-md"
-      />
-      <input
-        type="date"
-        class="px-3 py-2 border border-gray-300 rounded-md"
-      />
-      <select class="px-3 py-2 border border-gray-300 rounded-md">
-        <option>All Statuses</option>
-        <option>Pending</option>
-        <option>Approved</option>
-        <option>Rejected</option>
-      </select>
-      <select class="px-3 py-2 border border-gray-300 rounded-md">
-        <option>All Methods</option>
-        <option>Bank Transfer</option>
-        <option>PayPal</option>
-        <option>Credit Card</option>
-      </select>
+    <%= form_with url: admin_payments_index_path, method: :get, local: true, class: "flex flex-wrap gap-3 mb-4" do %>
+  <input
+    type="text"
+    name="transaction_id"
+    placeholder="Search by Transaction ID"
+    value="<%= params[:transaction_id] %>"
+    class="px-3 py-2 border border-gray-300 rounded-md"
+  />
 
-      <!-- Apply Filters Button -->
-      <button class="px-4 py-2 rounded-md bg-blue-600 text-white">
-        Apply Filters
-      </button>
-    </div>
+  <input
+    type="date"
+    name="start_date"
+    value="<%= params[:start_date] %>"
+    class="px-3 py-2 border border-gray-300 rounded-md"
+  />
+
+  <input
+    type="date"
+    name="end_date"
+    value="<%= params[:end_date] %>"
+    class="px-3 py-2 border border-gray-300 rounded-md"
+  />
+
+  <select name="status" class="px-3 py-2 border border-gray-300 rounded-md">
+    <option <%= 'selected' if params[:status].blank? || params[:status] == 'All' %>>All</option>
+    <option <%= 'selected' if params[:status] == 'pending' %>>Pending</option>
+    <option <%= 'selected' if params[:status] == 'success' %>>Success</option>
+    <option <%= 'selected' if params[:status] == 'rejected' %>>Rejected</option>
+  </select>
+
+  <select name="method" class="px-3 py-2 border border-gray-300 rounded-md">
+    <option <%= 'selected' if params[:method].blank? || params[:method] == 'All' %>>All</option>
+    <option <%= 'selected' if params[:method] == 'Bank Transfer' %>>Bank Transfer</option>
+    <option <%= 'selected' if params[:method] == 'UPI' %>>UPI</option>
+    <option <%= 'selected' if params[:method] == 'Credit Card' %>>Credit Card</option>
+  </select>
+
+  <!-- Apply Filters Button -->
+  <button class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">
+    Apply Filters
+  </button>
+  <a href="<%=admin_payments_index_path%>" class="px-4 py-2 rounded-md bg-gray-400 text-white hover:bg-gray-700">
+    Cencel
+  </a>
+<% end %>
+
 
     <!-- Table -->
     <div class="overflow-x-auto bg-white rounded-lg shadow">
@@ -243,6 +257,10 @@
 
   // Close reject modal
   document.getElementById("closeRejectModal").addEventListener("click", () => {
+    document.getElementById("rejectModal").classList.add("hidden");
+  });
+
+   document.getElementById("cancelRejectModal").addEventListener("click", () => {
     document.getElementById("rejectModal").classList.add("hidden");
   });
 

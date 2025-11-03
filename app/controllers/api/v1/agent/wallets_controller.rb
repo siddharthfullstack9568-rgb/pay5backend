@@ -10,7 +10,7 @@ class Api::V1::Agent::WalletsController < Api::V1::Agent::BaseController
     render json: {
       code: 200,
       message: "Bank details fetched successfully",
-      banks: banks.as_json(only: [:bank_name])
+      banks: banks.as_json(only: [:id, :bank_name])
     }
   end
 

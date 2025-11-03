@@ -6,8 +6,31 @@ class Admin::PaymentsController < Admin::BaseController
 
   def index
     fund_requests = FundRequest.where(requested_by: current_admin.id)
-    @fund_transactions = WalletTransaction.where(fund_request_id: fund_requests.pluck(:id)).order(created_at: :desc)
+    @fund_transactions = WalletTransaction.where(fund_request_id: fund_requests.pluck(:id))
+    @fund_transactions = @fund_transactions.order(created_at: :desc)
+
+    # --- Filters ---
+    if params[:transaction_id].present?
+      @fund_transactions = @fund_transactions.where("tx_id ILIKE ?", "%#{params[:transaction_id]}%")
+    end
+
+    if params[:start_date].present?
+      @fund_transactions = @fund_transactions.where("created_at >= ?", params[:start_date].to_date.beginning_of_day)
+    end
+
+    if params[:end_date].present?
+      @fund_transactions = @fund_transactions.where("created_at <= ?", params[:end_date].to_date.end_of_day)
+    end
+
+    if params[:status].present? && params[:status] != "All"
+      @fund_transactions = @fund_transactions.where(status: params[:status].downcase)
+    end
+
+    if params[:method].present? && params[:method] != "All"
+      @fund_transactions = @fund_transactions.where(transaction_type: params[:method])
+    end
   end
+
 
   def approved
     pin = params[:pin]&.join # Combine array to string
