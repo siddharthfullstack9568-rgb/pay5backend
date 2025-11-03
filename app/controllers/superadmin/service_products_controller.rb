@@ -1,4 +1,4 @@
-class Superadmin::ServiceProductsController < ApplicationController
+class Superadmin::ServiceProductsController < Superadmin::BaseController
 
   before_action :set_service_product, only: [:show, :edit, :update, :destroy]
 

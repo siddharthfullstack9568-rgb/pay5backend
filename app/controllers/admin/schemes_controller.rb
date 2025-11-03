@@ -1,6 +1,8 @@
 class Admin::SchemesController < Admin::BaseController
   layout "admin"
-  before_action :require_admin_login
+  #before_action :require_admin_login
+      # before_action :authenticate_user!
+
    before_action :set_scheme, only: [:show, :edit, :update, :destroy]
 
   def index
@@ -50,6 +52,6 @@ class Admin::SchemesController < Admin::BaseController
   end
 
   def scheme_params
-    params.require(:scheme).permit(:scheme_name, :scheme_type, :commision_rate)
+    params.permit(:scheme_name, :scheme_type, :commision_rate)
   end
 end

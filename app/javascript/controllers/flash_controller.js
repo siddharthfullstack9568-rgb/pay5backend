@@ -1,20 +1,15 @@
-// app/javascript/controllers/flash_controller.js
-import { Controller } from "@hotwired/stimulus";
+import { Controller } from "@hotwired/stimulus"
 
+// Automatically remove flash message after 3 seconds
 export default class extends Controller {
-  static values = { duration: Number }
   static targets = ["message"]
 
   connect() {
-    this.messageTargets.forEach((el) => {
-      // Show animation
-      el.classList.add("translate-y-0", "opacity-100");
-
-      // Hide after duration
+    if (this.hasMessageTarget) {
       setTimeout(() => {
-        el.classList.add("opacity-0", "translate-y-[-20px]");
-        setTimeout(() => el.remove(), 300); // remove from DOM after transition
-      }, this.durationValue || 3000);
-    });
+        this.messageTarget.classList.add("opacity-0", "transition-opacity", "duration-700")
+        setTimeout(() => this.messageTarget.remove(), 700) // remove completely after fade-out
+      }, 2000)
+    }
   }
 }

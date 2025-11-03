@@ -1,10 +1,11 @@
 class Admin::PaymentsController < Admin::BaseController
   layout "admin"
-  before_action :require_admin_login
+  #before_action :require_admin_login
+  # before_action :authenticate_user!
   before_action :verify_pin_before_action, only: [:approved]
 
   def index
-    fund_requests = FundRequest.where(requested_by: current_admin_user.id)
+    fund_requests = FundRequest.where(requested_by: current_admin.id)
     @fund_transactions = WalletTransaction.where(fund_request_id: fund_requests.pluck(:id)).order(created_at: :desc)
   end
 
@@ -13,9 +14,9 @@ class Admin::PaymentsController < Admin::BaseController
     p "=============pinpin"
     p pin
 
-    if current_admin_user.set_pin == pin
+    if current_admin.set_pin == pin
       @transaction = WalletTransaction.find(params[:id])
-      parent_wallet = Wallet.find_by(user_id: current_admin_user.id) # parent wallet object
+      parent_wallet = Wallet.find_by(user_id: current_admin.id) # parent wallet object
       wallet = @transaction.wallet
 
       if parent_wallet.balance.to_f < @transaction.amount.to_f
@@ -44,12 +45,31 @@ class Admin::PaymentsController < Admin::BaseController
     redirect_to admin_payments_index_path
   end
 
+  def reject_payment_request
+    fund_request = FundRequest.find(params[:id])
+
+    if fund_request.update(
+        status: "rejected",
+        reject_note: params[:reject_note],
+        approved_by: current_admin.id,
+        approved_at: Time.current
+      )
+
+      # ✅ Update related wallet transactions too
+      WalletTransaction.where(fund_request_id: fund_request.id).update_all(status: "rejected")
+
+      redirect_to admin_payments_index_path, notice: "Fund request rejected successfully."
+    else
+      redirect_to admin_payments_index_path, alert: "Failed to reject the fund request."
+    end
+  end
+
 
   private
 
   def verify_pin_before_action
     pin = params[:pin]&.join # pin inputs se array milta hai, string bana do
-    unless current_admin_user.set_pin == pin
+    unless current_admin.set_pin == pin
       flash[:alert] = "❌ Invalid PIN. Please try again."
       redirect_back fallback_location: admin_payments_index_path
     end

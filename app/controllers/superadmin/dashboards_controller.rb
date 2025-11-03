@@ -1,5 +1,8 @@
 class Superadmin::DashboardsController < Superadmin::BaseController
-  before_action :require_superadmin_login
+  # before_action :authenticate_user!
+  #   before_action :authenticate_user!
+  # before_action -> { authorize_role(:superadmin) }
+
   def index
     @total_users = User.where(role_id: 5).count
     @total_transcations = Transaction.all.count

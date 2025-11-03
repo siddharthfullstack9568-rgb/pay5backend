@@ -1,9 +1,9 @@
 class Admin::AccountsController < Admin::BaseController
   layout "admin"
-  before_action :require_admin_login
-
+  #before_action :require_admin_login
+# before_action :authenticate_user!
   def index
-    @account_transaction = AccountTransaction.where(parent_id: current_admin_user.id, txn_type: "Credit").order(created_at: :desc)
+    @account_transaction = AccountTransaction.where(parent_id: current_admin.id, txn_type: "Credit").order(created_at: :desc)
   end
 
   def new
@@ -17,13 +17,13 @@ class Admin::AccountsController < Admin::BaseController
       return
     end
 
-    if params[:set_pin] == current_admin_user.set_pin
+    if params[:set_pin] == current_admin.set_pin
       amount = params[:amount].to_f
       wallet = @user.wallet || @user.create_wallet(balance: 0)
 
-      current_admin_user.wallet()
+      current_admin.wallet()
 
-      parent_wallet = Wallet.find_by(user_id: current_admin_user.id) # parent wallet object
+      parent_wallet = Wallet.find_by(user_id: current_admin.id) # parent wallet object
       p "==============-------------parent_walletparent_wallet"
       parent_wallet.update!(balance: parent_wallet.balance.to_f - amount)
 
@@ -41,7 +41,7 @@ class Admin::AccountsController < Admin::BaseController
           txn_type: params[:type],
           user_id: @user.id,
           status: "success",
-          parent_id: current_admin_user.id
+          parent_id: current_admin.id
         )
       end
 
@@ -52,7 +52,7 @@ class Admin::AccountsController < Admin::BaseController
   end
 
   def debit_index
-    @account_transaction = AccountTransaction.where(parent_id: current_admin_user.id, txn_type: "Debit").order(created_at: :desc)
+    @account_transaction = AccountTransaction.where(parent_id: current_admin.id, txn_type: "Debit").order(created_at: :desc)
   end
 
   def add_debit
@@ -63,7 +63,7 @@ class Admin::AccountsController < Admin::BaseController
       return
     end
 
-    if params[:set_pin] == current_admin_user.set_pin
+    if params[:set_pin] == current_admin.set_pin
       amount = params[:amount].to_f
       wallet = @user.wallet || @user.create_wallet(balance: 0) # ensure wallet exists
 
@@ -74,7 +74,7 @@ class Admin::AccountsController < Admin::BaseController
         return
       end
 
-      parent_wallet = Wallet.find_by(user_id: current_admin_user.id) # parent wallet object
+      parent_wallet = Wallet.find_by(user_id: current_admin.id) # parent wallet object
       p "==============-------------parent_walletparent_wallet"
       parent_wallet.update!(balance: parent_wallet.balance.to_f + amount)
 
@@ -93,7 +93,7 @@ class Admin::AccountsController < Admin::BaseController
           txn_type: params[:type] || "debit",
           user_id: @user.id,
           status: "success",
-          parent_id: current_admin_user.id
+          parent_id: current_admin.id
         )
       end
 

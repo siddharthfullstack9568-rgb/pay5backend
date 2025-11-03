@@ -1,10 +1,12 @@
 class Admin::UserServicesController < Admin::BaseController
   layout "admin"
-  before_action :require_admin_login
+  # before_action :require_admin_login
+  # before_action :authenticate_user!
+
   before_action :set_user_service, only: [:edit, :update, :destroy, :update_status]
 
   def index
-    @user_services = User.where(parent_id: current_admin_user.id).order(created_at: :desc)
+    @user_services = User.where(parent_id: current_admin.id).order(created_at: :desc)
     # If you want only retailers for the current admin, you can filter here later.
   end
 
@@ -18,11 +20,11 @@ class Admin::UserServicesController < Admin::BaseController
 
   def create
     role_id = params[:user][:role_id]
-    @user_service = User.new(user_params.merge(role_id: role_id, parent_id: current_admin_user.id))
+    @user_service = User.new(user_params.merge(role_id: role_id, parent_id: current_admin.id))
 
     if @user_service.save
       service_ids = Array(params[:user][:service_ids]).map(&:to_i)
-      assigner = current_admin_user
+      assigner = current_admin
 
       service_ids.each do |sid|
         UserService.find_or_create_by!(
@@ -45,7 +47,7 @@ class Admin::UserServicesController < Admin::BaseController
   def update
     if @user_service.update(user_params)
       service_ids = Array(params[:user][:service_ids]).map(&:to_i)
-      assigner = current_admin_user
+      assigner = current_admin
 
       # 1️⃣ Purane records nikaalo (jo already assigned hai)
       existing_ids = @user_service.user_services.pluck(:service_id)
@@ -89,6 +91,34 @@ class Admin::UserServicesController < Admin::BaseController
   def destroy
     @user_service.destroy
     redirect_to admin_user_services_path, notice: "Retailer deleted successfully."
+  end
+
+  def set_pin
+    p "===================set_pin"
+  end
+
+  def set_pin_update
+     if params[:old_pin].present? && params[:set_pin].present? && params[:confirm_pin].present?
+      # Step 1: Check if old PIN matches current_admin's stored PIN
+      if current_admin.set_pin == params[:old_pin]
+        # Step 2: Check if new and confirm PIN match
+        if params[:set_pin] == params[:confirm_pin]
+          if current_admin.update(set_pin: params[:set_pin])
+            flash[:notice] = "PIN updated successfully"
+          else
+            flash[:alert] = current_admin.errors.full_messages.to_sentence
+          end
+        else
+          flash[:alert] = "New PIN and Confirm PIN do not match"
+        end
+      else
+        flash[:alert] = "Old PIN is incorrect"
+      end
+    else
+      flash[:alert] = "All fields (Old PIN, New PIN, Confirm PIN) are required"
+    end
+
+    redirect_to admin_user_services_set_pin_path
   end
 
   private

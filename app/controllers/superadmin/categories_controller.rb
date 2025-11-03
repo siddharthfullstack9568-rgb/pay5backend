@@ -1,4 +1,7 @@
-class Superadmin::CategoriesController < ApplicationController
+class Superadmin::CategoriesController < Superadmin::BaseController
+# before_action :authenticate_user!
+# before_action -> { authorize_role(:superadmin) }
+
   before_action :set_category, only: [:show, :edit, :update, :destroy]
 
   def index

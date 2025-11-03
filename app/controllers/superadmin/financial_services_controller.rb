@@ -1,4 +1,4 @@
-class Superadmin::FinancialServicesController < ApplicationController
+class Superadmin::FinancialServicesController < Superadmin::BaseController
 
   def index
     @transactions = Transaction.where(service_product: [15, 17, 18])

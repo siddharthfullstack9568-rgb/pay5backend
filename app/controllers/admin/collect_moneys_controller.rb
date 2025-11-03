@@ -1,7 +1,7 @@
 class Admin::CollectMoneysController < Admin::BaseController
   layout "admin"
-  before_action :require_admin_login
-
+  #before_action :require_admin_login
+# before_action :authenticate_user!
   def index
     @fund_requests = FundRequest.where(user_id: current_admin_user.id).order(created_at: :desc)
   end

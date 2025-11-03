@@ -1,7 +1,7 @@
 class Admin::RechargesAndBillsController < Admin::BaseController
   layout "admin"
-  before_action :require_admin_login
-
+ # before_action :require_admin_login
+# before_action :authenticate_user!
   def index
     @service_product_items = ServiceProductItem.all
 
@@ -43,9 +43,9 @@ class Admin::RechargesAndBillsController < Admin::BaseController
 
         if total_commission <= scheme.commision_rate.to_f
           # Save commissions only if the total is within the allowed limit
-          save_commission(item, scheme, commission_type, current_admin_user.role.title, "master", commission_params[:master_commission])
-          save_commission(item, scheme, commission_type, current_admin_user.role.title, "dealer", commission_params[:dealer_commission])
-          save_commission(item, scheme, commission_type, current_admin_user.role.title, "retailer", commission_params[:retailer_commission])
+          save_commission(item, scheme, commission_type, current_admin.role.title, "master", commission_params[:master_commission])
+          save_commission(item, scheme, commission_type, current_admin.role.title, "dealer", commission_params[:dealer_commission])
+          save_commission(item, scheme, commission_type, current_admin.role.title, "retailer", commission_params[:retailer_commission])
 
           success_count += 1
           Rails.logger.info "Commissions saved for item #{item.name}"
@@ -73,7 +73,7 @@ class Admin::RechargesAndBillsController < Admin::BaseController
   end
 
   def transaction
-    user_ids = current_admin_user.all_descendant_ids << current_admin_user.id
+    user_ids = current_admin.all_descendant_ids << current_admin.id
 
     # Start with base scope
     @tr = Transaction.where(user_id: user_ids).order(created_at: :desc)

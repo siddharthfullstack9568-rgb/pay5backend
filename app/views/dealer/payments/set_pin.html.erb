@@ -1,0 +1,77 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-50">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-96"
+       data-controller="reset-pin"
+       data-action="submit->reset-pin#validate">
+
+    <h2 class="text-2xl font-semibold text-center text-indigo-600 mb-2">
+      🔒 Reset Transaction PIN
+    </h2>
+    <p class="text-center text-gray-500 mb-6">
+      Enter your old and new 6-digit wallet PIN.
+    </p>
+
+    <!-- ✅ Flash Message -->
+    <% if flash[:notice].present? || flash[:alert].present? %>
+      <div data-reset-pin-target="flash"
+           class="<%= flash[:notice] ? 'bg-green-100 border-green-400 text-green-700' : 'bg-red-100 border-red-400 text-red-700' %> border px-4 py-2 rounded-lg text-center mb-4">
+        <%= flash[:notice] || flash[:alert] %>
+      </div>
+    <% end %>
+
+    <%= form_with url: dealer_payments_set_pin_update_path, method: :post, local: true, class: "space-y-5" do %>
+      <!-- Old PIN -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Old PIN *</label>
+        <input type="password"
+               name="old_pin"
+               maxlength="6"
+               class="w-full border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+               placeholder="Enter Old PIN" />
+      </div>
+
+      <!-- New PIN -->
+      <div class="relative">
+        <label class="block text-sm font-medium text-gray-700 mb-1">New PIN *</label>
+        <input type="password"
+               name="set_pin"
+               maxlength="6"
+               data-reset-pin-target="newPin"
+               class="w-full border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+               placeholder="Enter New PIN" />
+        <button type="button"
+                data-action="click->reset-pin#toggleNewPin"
+                class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-indigo-600 mt-5">
+          👁️
+        </button>
+      </div>
+
+      <!-- Confirm PIN -->
+      <div class="relative">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New PIN *</label>
+        <input type="password"
+               name="confirm_pin"
+               maxlength="6"
+               data-reset-pin-target="confirmPin"
+               class="w-full border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+               placeholder="Confirm New PIN" />
+        <button type="button"
+                data-action="click->reset-pin#toggleConfirmPin"
+                class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-indigo-600 mt-5">
+          👁️
+        </button>
+      </div>
+
+      <p data-reset-pin-target="error" class="text-red-500 text-center text-sm"></p>
+
+      <button type="submit"
+              class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">
+        Reset PIN
+      </button>
+    <% end %>
+
+    <p class="text-center text-sm text-gray-600 mt-4">
+      Forgot old PIN?
+      <%= link_to "Click here", dealer_payments_forgot_mpin_path, class: "text-indigo-600 hover:underline font-medium" %>
+    </p>
+  </div>
+</div>

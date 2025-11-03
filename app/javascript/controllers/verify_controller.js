@@ -2,9 +2,10 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["container", "transactionId", "pinInputs"];
+  static targets = ["container", "transactionId", "pinInputs","rejectcontainer"];
 
   connect() {
+    console.log("verfiy controllers connected");
     // nothing needed here yet
   }
 
@@ -20,6 +21,25 @@ export default class extends Controller {
     this.pinInputsTargets[0].focus();
   }
 
+  reject(event) {
+  console.log("✅ reject modal open called")
+  const button = event.currentTarget
+  const id = button.dataset.id
+
+  // make sure rejectcontainer exists
+  if (!this.hasrejectcontainerTarget) {
+    console.error("❌ rejectcontainer target not found!")
+    return
+  }
+
+  console.log('transactionIdTarget', this.transactionIdTarget);
+
+  this.transactionIdTarget.value = id
+  this.rejectcontainerTarget.classList.remove("hidden")
+}
+
+
+
   // Close modal
   close() {
     this.containerTarget.classList.add("hidden");
@@ -28,7 +48,7 @@ export default class extends Controller {
 
   // Close modal if clicking backdrop
   backdrop(event) {
-    if (event.target === this.containerTarget) {
+    if (event.target === this.containerTarget || event.target === this.rejectcontainerTarget) {
       this.close();
     }
   }

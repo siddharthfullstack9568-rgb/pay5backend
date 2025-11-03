@@ -1,4 +1,4 @@
-<div class="p-6">
+  <div class="w-full  mx-auto px-6 py-5 bg-blue-50 min-h-screen">
   <!-- Breadcrumb -->
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white border rounded-lg p-4 mb-6 shadow-sm gap-4">
     <div class="flex flex-col gap-3">
@@ -17,7 +17,7 @@
       <!-- First Name -->
       <div>
         <%= form.label :title, "Service Name", class: "block text-sm font-medium text-gray-700 mb-1" %>
-        <%= form.text_field :title, placeholder: "Service name", class: "w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" %>
+        <%= form.text_field :title, placeholder: "Service name", class: "w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500", required: true %>
       </div>
 
       <!-- Submit Button -->

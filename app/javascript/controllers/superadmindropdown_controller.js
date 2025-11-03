@@ -1,85 +1,62 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Connects to data-controller="superadmindropdown"
 export default class extends Controller {
-  static targets = ["menu", "bankmenu", "rechargemenu", "collectmoney", "payment", "account","admin"]
+  static targets = [
+    "menu", "bankmenu", "rechargemenu",
+    "payment", "account", "collectmoney", "admin"
+  ]
 
   connect() {
-    console.log("dropdown connected")
-    document.addEventListener("click", this.hide.bind(this)) // outside click listener
+    // store a single bound function so we can remove it later
+    this.boundDocumentClick = this._onDocumentClick.bind(this)
+    document.addEventListener("click", this.boundDocumentClick)
   }
 
   disconnect() {
-    document.removeEventListener("click", this.hide.bind(this))
+    document.removeEventListener("click", this.boundDocumentClick)
   }
 
   toggle(event) {
-    event.stopPropagation()
-    this.menuTarget.classList.toggle("hidden") // अब दोबारा click करने पर hide करेगा
-  }
+    event.stopPropagation() // prevent document click from firing
+    const menuName = event.currentTarget.dataset.menu
+    if (!menuName) return
 
-  banktoggle(event) {
-    event.stopPropagation()
-    this.bankmenuTarget.classList.toggle("hidden") // bank dropdown भी toggle करेगा
-  }
-
-  hide(event) {
-    if (!this.element.contains(event.target)) {
-      this.menuTarget.classList.add("hidden")
-      this.bankmenuTarget.classList.add("hidden")
+    const target = this[`${menuName}Target`]
+    if (target) {
+      target.classList.toggle("hidden")
+    } else {
+      console.warn(`superadmindropdown: no target found for '${menuName}'`)
     }
   }
 
-  adminTogle(event){
-    event.stopPropagation()
-    this.adminTarget.classList.toggle("hidden") // bank dropdown भी toggle करेगा
-  }
-
-  paymenttoggle(event) {
-    event.stopPropagation()
-    this.paymentTarget.classList.toggle("hidden") // bank dropdown भी toggle करेगा
-  }
-
-  hide(event) {
-    if (!this.element.contains(event.target)) {
-      this.menuTarget.classList.add("hidden")
-      this.paymentTarget.classList.add("hidden")
+  close(event) {
+    if (event) event.stopPropagation()
+    const menuName = event?.currentTarget?.dataset?.menu
+    if (menuName && this[`${menuName}Target`]) {
+      this[`${menuName}Target`].classList.add("hidden")
     }
   }
 
-  rechargetoggle(event) {
-    event.stopPropagation()
-    this.rechargemenuTarget.classList.toggle("hidden") // bank dropdown भी toggle करेगा
-  }
-
-  hide(event) {
+  // ✅ Now this closes dropdowns only when you click OUTSIDE the controller
+  _onDocumentClick(event) {
+    // If click is OUTSIDE the controller element → close all menus
     if (!this.element.contains(event.target)) {
-      this.menuTarget.classList.add("hidden")
-      this.rechargemenuTarget.classList.add("hidden")
+      this._hideAll()
     }
   }
 
-  collectmoneytoggle(event) {
-    event.stopPropagation()
-    this.collectmoneyTarget.classList.toggle("hidden") // bank dropdown भी toggle करेगा
-  }
+  _hideAll() {
+    const menuNames = [
+      "menu", "bankmenu", "rechargemenu",
+      "payment", "account", "collectmoney", "admin"
+    ]
 
-  hide(event) {
-    if (!this.element.contains(event.target)) {
-      this.menuTarget.classList.add("hidden")
-      this.collectmoneyTarget.classList.add("hidden")
-    }
+    menuNames.forEach((name) => {
+      const target = this[`${name}Target`]
+      if (target && !target.classList.contains("hidden")) {
+        target.classList.add("hidden")
+      }
+    })
   }
-
-  accounttoggle(event) {
-    event.stopPropagation()
-    this.accountTarget.classList.toggle("hidden") // bank dropdown भी toggle करेगा
-  }
-
-  hide(event) {
-    if (!this.element.contains(event.target)) {
-      this.menuTarget.classList.add("hidden")
-      this.accountTarget.classList.add("hidden")
-    }
-  }
-
 }

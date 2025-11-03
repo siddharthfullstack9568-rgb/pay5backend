@@ -1,14 +1,14 @@
 class Admin::ReportsController < Admin::BaseController
   layout "admin"
-  before_action :require_admin_login
-
+  #before_action :require_admin_login
+# before_action :authenticate_user!
   def index
     @services = Service.all
 
-    # Transaction counts grouped by service_product_id for users under current admin
+    # Transaction counts grouped by service_product_id for users under current_admin
     transaction_counts = Transaction
     .joins(service_product: { category: :service })    # join the service chain
-    .where(user_id: User.where(parent_id: current_admin_user.id).select(:id))  # filter by users under admin
+    .where(user_id: User.where(parent_id: current_admin.id).select(:id))  # filter by users under admin
     .group("services.id")
     .count
 

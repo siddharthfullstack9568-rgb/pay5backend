@@ -1,4 +1,4 @@
-class Superadmin::ServicesController < ApplicationController
+class Superadmin::ServicesController < Superadmin::BaseController
   before_action :set_service, only: [:show, :edit, :update, :destroy]
 
   def index

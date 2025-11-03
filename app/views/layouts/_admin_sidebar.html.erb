@@ -3,120 +3,109 @@
     <%= image_tag "logo.png", alt: "Logo", class: "h-11 w-auto bg-white rounded-full" %>
     <span>Admin Portal</span>
   </div>
+
   <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-    <a href="/admin/dashboards/index" class="flex text-lg font-medium items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-600"><i class="fa fa-home"></i> Home</a>
-     <div class="w-full relative" data-action="click@document->superadmindropdown#hide">
+
+    <a href="/admin/dashboards/index" class="flex text-lg font-medium items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-600">
+      <i class="fa fa-home"></i> Home
+    </a>
+
+    <!-- Admin Dropdown -->
+    <div class="w-full relative">
       <button 
         class="flex items-center gap-3 text-lg font-medium px-3 py-2 rounded-lg hover:bg-indigo-600 w-full"
-        data-action="click->superadmindropdown#adminTogle">
+        data-action="click->superadmindropdown#toggle"
+        data-menu="admin">
         <i class="fa fa-user"></i>
         <span>Admin</span>
         <i class="fa fa-caret-down ml-[9.5rem]"></i>
       </button>
 
       <div data-superadmindropdown-target="admin" class="mt-1 space-y-1 pl-8 hidden">
-        <a href="/admin/schemes/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          Scheme
-        </a>
-        <a href="/admin/payments/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          Balance
-        </a>
-        <a href="/superadmin/payments/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          Bank A/C
-        </a>
+        <a href="/admin/schemes/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Scheme</a>
+        <a href="/admin/payments/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Balance</a>
+        <a href="/admin/banks" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Bank A/C</a>
       </div>
     </div>
-    <a href="/admin/user_services" class="flex text-lg font-medium items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-600"><i class="fa-solid fa-bars"></i>Master/Dealer/Retailer</a>
-     <a href="/admin/enquery/index" class="flex text-lg font-medium items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-600"><i class="fa fa-envelope-open"></i>Enquiry</a>
-    <div class="w-full relative" data-action="click@document->superadmindropdown#hide">
+
+    <!-- Simple links -->
+    <a href="/admin/user_services" class="flex text-lg font-medium items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-600"><i class="fa-solid fa-bars"></i> Master/Dealer/Retailer</a>
+    <a href="/admin/enquery/index" class="flex text-lg font-medium items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-600"><i class="fa fa-envelope-open"></i> Enquiry</a>
+
+    <!-- Payment Dropdown -->
+    <div class="w-full relative">
       <button 
         class="flex items-center gap-3 text-lg font-medium px-3 py-2 rounded-lg hover:bg-indigo-600 w-full"
-        data-action="click->superadmindropdown#paymenttoggle">
+        data-action="click->superadmindropdown#toggle"
+        data-menu="payment">
         <i class="fa fa-credit-card"></i>
         <span>Payment</span>
         <i class="fa fa-caret-down ml-[8rem]"></i>
       </button>
 
       <div data-superadmindropdown-target="payment" class="mt-1 space-y-1 pl-8 hidden">
-        <a href="/superadmin/admins/new" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          Set Commission
-        </a>
-        <a href="/superadmin/payments/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          Create
-        </a>
-        <a href="/admin/payments/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          List
-        </a>
-        <a href="/superadmin/payments/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          Gateway
-        </a>
+        <a href="/superadmin/admins/new" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Set Commission</a>
+        <a href="/superadmin/payments/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Create</a>
+        <a href="/admin/payments/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">List</a>
+        <a href="/superadmin/payments/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Gateway</a>
       </div>
     </div>
 
-    <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-exchange-alt"></i> Money Transfer</a>
-    <div class="w-full relative" >
+    <!-- Recharge & Bill Dropdown -->
+    <div class="w-full relative">
       <button 
         class="flex items-center gap-3 text-lg font-medium px-3 py-2 rounded-lg hover:bg-indigo-600 w-full"
-        data-action="click->superadmindropdown#rechargetoggle">
+        data-action="click->superadmindropdown#toggle"
+        data-menu="rechargemenu">
         <i class="fa fa-bolt"></i>
         <span>Recharge & Bill</span>
         <i class="fa fa-caret-down ml-20"></i>
       </button>
 
-       <div data-superadmindropdown-target="rechargemenu" class="mt-1 space-y-1 pl-8 hidden">
-        <a href="/admin/recharges_and_bills/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          Set Commission & charges
-        </a>
-        <a href="/admin/recharges_and_bills/transaction" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          Trasaction
-        </a>
-       </div>
+      <div data-superadmindropdown-target="rechargemenu" class="mt-1 space-y-1 pl-8 hidden">
+        <a href="/admin/recharges_and_bills/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Set Commission & charges</a>
+        <a href="/admin/recharges_and_bills/transaction" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Transaction</a>
       </div>
+    </div>
 
-
-      <div class="w-full relative" data-action="click@document->superadmindropdown#hide">
+    <!-- Collect Money Dropdown -->
+    <div class="w-full relative">
       <button 
         class="flex items-center gap-3 text-lg font-medium px-3 py-2 rounded-lg hover:bg-indigo-600 w-full"
-        data-action="click->superadmindropdown#collectmoneytoggle">
-        <i class="fa fa-bolt"></i>
+        data-action="click->superadmindropdown#toggle"
+        data-menu="collectmoney">
+        <i class="fa fa-hand-holding-usd"></i>
         <span>Collect Money</span>
         <i class="fa fa-caret-down ml-20"></i>
       </button>
 
-       <div data-superadmindropdown-target="collectmoney" class="mt-1 space-y-1 pl-8 hidden">
-        <a href="/admin/collect_moneys/new" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          New Request
-        </a>
-        <a href="/admin/collect_moneys/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          Collect Money Histroy
-        </a>
-       </div>
+      <div data-superadmindropdown-target="collectmoney" class="mt-1 space-y-1 pl-8 hidden">
+        <a href="/admin/collect_moneys/new" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">New Request</a>
+        <a href="/admin/collect_moneys/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Collect Money History</a>
       </div>
+    </div>
 
-    <div class="w-full relative" data-action="click@document->superadmindropdown#hide">
+    <!-- Account Dropdown -->
+    <div class="w-full relative">
       <button 
         class="flex items-center gap-3 text-lg font-medium px-3 py-2 rounded-lg hover:bg-indigo-600 w-full"
-        data-action="click->superadmindropdown#accounttoggle">
+        data-action="click->superadmindropdown#toggle"
+        data-menu="account">
         <i class="fa fa-credit-card"></i>
         <span>Account</span>
         <i class="fa fa-caret-down ml-[8rem]"></i>
       </button>
 
       <div data-superadmindropdown-target="account" class="mt-1 space-y-1 pl-8 hidden">
-        <a href="/admin/accounts/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          Credit Note
-        </a>
-        <a href="/admin/accounts/debit_index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          Debit Note
-        </a>
-        <a href="#" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">
-          Administrator
-        </a>
+        <a href="/admin/accounts/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Credit Note</a>
+        <a href="/admin/accounts/debit_index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Debit Note</a>
+        <a href="#" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Administrator</a>
       </div>
     </div>
 
+    <!-- Simple links -->
     <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-landmark"></i> Financial Services</a>
-     <a href="/admin/reports/index" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-landmark"></i>Report</a>
+    <a href="/admin/reports/index" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-landmark"></i> Report</a>
     <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-plane"></i> Travel Services</a>
     <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-cogs"></i> Payment Services</a>
   </nav>

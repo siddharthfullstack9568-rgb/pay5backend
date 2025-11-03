@@ -1,5 +1,32 @@
 Rails.application.routes.draw do
 
+  scope :sessions, controller: :sessions do
+    # Login
+    get  :login,                action: :login,              as: :login_sessions
+    post :create,               action: :create,             as: :create_sessions
+
+    # OTP Verification (for login)
+    get  :otp,                  action: :otp,                as: :otp_sessions
+    post :verify_otp_login,     action: :verify_otp_login,   as: :verify_otp_login_sessions
+
+    # Forgot Password
+    get  :forgot,               action: :forgot,             as: :forgot_sessions
+    post :forgot_email,         action: :forgot_email,       as: :forgot_email_sessions
+
+    # OTP Verification (for forgot password)
+    get  :otp_verify,           action: :otp_verify,         as: :otp_verify_sessions
+    post :verify_otp,           action: :verify_otp,         as: :verify_otp_sessions
+
+    # Set Password (after forgot OTP verified)
+    get  :set_password,         action: :set_password,       as: :set_password_sessions
+    post :set_password_update,  action: :set_password_update,as: :set_password_update_sessions
+
+    # Logout
+    delete :logout,             action: :logout,             as: :logout_sessions
+  end
+
+
+
   namespace :dealer do
     get "sessions/login"
     post "sessions/create"
@@ -7,6 +34,17 @@ Rails.application.routes.draw do
     delete "sessions/destroy"
     get "dashboards/index"
     get "retailers/index"
+
+    get "payments/set_pin"
+    post "payments/set_pin_update"
+    get "payments/forgot_mpin"
+    post "payments/send_mpin_otp"
+    get "payments/verify_mpin"
+    post "payments/verify_mpin_otp"
+
+    get "reset_passwords/reset_password"
+    post "reset_passwords/reset_password"
+
   end
 
   namespace :master do
@@ -31,6 +69,7 @@ Rails.application.routes.draw do
     get "payments/index"
     post "payments/approved"
     get "payments/verify_pin"
+    post "payments/reject_payment_request"
 
     get "sessions/login"
     post "sessions/create"
@@ -45,11 +84,17 @@ Rails.application.routes.draw do
     get "sessions/otp"
     post "sessions/verify_otp_login"
 
+    get "reset_passwords/reset_page"
+    post "reset_passwords/reset_password"
+    post "reset_passwords/forget_password"
+    post "reset_passwords/main_forget_password"
+
     get "schemes/index"
     post "schemes/create", to: "schemes#create", as: :admin_scheme_create
     post "schemes/update", to: "schemes#update", as: :admin_scheme_update
     resources :schemes, only: [:destroy]
 
+    resources :banks
 
     # get "user_services/index"
     # get "user_services/new"
@@ -122,6 +167,8 @@ Rails.application.routes.draw do
 
         get "wallets/balance"
         post "wallets/create"
+        post "wallets/fund_request_list"
+        post "wallets/bank_list"
 
         post "filters/category_filter"
         post "filters/service_category_filter"
@@ -142,6 +189,7 @@ Rails.application.routes.draw do
         post "reatailer_profiles/reset_password"
         post "reatailer_profiles/forget_password"
         post "reatailer_profiles/main_forget_password"
+        post "reatailer_profiles/set_mpin"
 
         post "commission_reports/index"
 
@@ -167,7 +215,7 @@ Rails.application.routes.draw do
     post "sessions/set_password"
     get "sessions/otp"
     post "sessions/verify_otp_login"
-    
+
     get "financial_services/index"
     get "customer/index"
     post "customer/verify_status"
@@ -187,6 +235,13 @@ Rails.application.routes.draw do
     get "payments/index"
     get "payments/set_pin"
     post "payments/set_pin_update"
+    get "payments/forgot_mpin"
+    post "payments/send_mpin_otp"
+    get "payments/verify_mpin"
+    post "payments/verify_mpin_otp"
+    get "payments/set_pin_agin"
+    post "payments/set_pin_agin_update"
+    post "payments/reject_payment_request"
 
     get "blance/index"
     get "categories/index"
@@ -231,7 +286,7 @@ Rails.application.routes.draw do
     namespace :master do
       get "dashboards/index"
     end
-  
+
 
 
     get "dashboards/index"

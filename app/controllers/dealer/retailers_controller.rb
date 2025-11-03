@@ -1,10 +1,12 @@
 class Dealer::RetailersController < Dealer::BaseController
   layout "dealer"
-  before_action :require_dealer_login
+  #before_action :require_dealer_login
+  # before_action :authenticate_user!
+
   before_action :set_retailer, only: [:show, :edit, :update, :destroy]
 
   def index
-     @retailers = User.joins(:role).where(roles: { title: ["retailer"] } ,parent_id: current_dealer_user.id).order(created_at: :desc)
+     @retailers = User.joins(:role).where(roles: { title: ["retailer"] } ,parent_id: current_dealer.id).order(created_at: :desc)
   end
 
   def show

@@ -1,6 +1,7 @@
 class Admin::DashboardsController < Admin::BaseController
   layout "admin"
-  before_action :require_admin_login
+  # before_action :require_admin_login
+  #before_action :authenticate_user!
 
   def index
     @total_users = User.where(role_id: 5).count

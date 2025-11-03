@@ -1,0 +1,186 @@
+<div class="min-h-screen bg-gray-50 font-sans" data-controller="verify">
+  <main class="p-5">
+    <!-- Filters -->
+    <!-- Flash Messages -->
+<div
+  data-controller="flash"
+  data-flash-duration-value="3000"
+  class="fixed top-5 right-5 z-50 space-y-2"
+>
+  <% if flash[:notice] %>
+    <div
+      class="flash-message px-4 py-3 rounded-md bg-green-500 text-white shadow-lg transform transition-all duration-300"
+      data-flash-target="message"
+    >
+      <%= flash[:notice] %>
+    </div>
+  <% end %>
+
+  <% if flash[:alert] %>
+    <div
+      class="flash-message px-4 py-3 rounded-md bg-red-500 text-white shadow-lg transform transition-all duration-300"
+      data-flash-target="message"
+    >
+      <%= flash[:alert] %>
+    </div>
+  <% end %>
+</div>
+
+
+    <div class="flex flex-wrap gap-3 mb-4">
+      <input
+        type="text"
+        placeholder="Search by Transaction ID or Date (YYYY-MM-DD)"
+        class="px-3 py-2 border border-gray-300 rounded-md"
+      />
+      <input
+        type="date"
+        class="px-3 py-2 border border-gray-300 rounded-md"
+      />
+      <input
+        type="date"
+        class="px-3 py-2 border border-gray-300 rounded-md"
+      />
+      <select class="px-3 py-2 border border-gray-300 rounded-md">
+        <option>All Statuses</option>
+        <option>Pending</option>
+        <option>Approved</option>
+        <option>Rejected</option>
+      </select>
+      <select class="px-3 py-2 border border-gray-300 rounded-md">
+        <option>All Methods</option>
+        <option>Bank Transfer</option>
+        <option>PayPal</option>
+        <option>Credit Card</option>
+      </select>
+
+      <!-- Apply / Remove Filters Button -->
+      <button class="px-4 py-2 rounded-md bg-blue-600 text-white">
+        Apply Filters
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto bg-white rounded-lg shadow">
+      <table class="min-w-full">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="px-4 py-3 text-left">Transaction ID</th>
+            <th class="px-4 py-3 text-left">Requester</th>
+            <th class="px-4 py-3 text-left">Amount</th>
+            <th class="px-4 py-3 text-left">Payment Method</th>
+            <th class="px-4 py-3 text-left">Date</th>
+            <th class="px-4 py-3 text-left">Status</th>
+            <th class="px-4 py-3 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @fund_transactions.each do |fund|%>
+          <tr class="border-b border-gray-200 hover:bg-gray-50">
+            <td class="px-4 py-3"><%=fund.tx_id%></td>
+            <td class="px-4 py-3"><%=fund.wallet.user.first_name%></td>
+            <td class="px-4 py-3">₹<%=fund.amount%></td>
+            <td class="px-4 py-3"><%=fund.transaction_type%></td>
+            <td class="px-4 py-3"><%= fund.created_at.strftime("%d/%m/%Y") %></td>
+            <td class="px-4 py-3">
+              <span class="font-medium text-yellow-600"><%= fund.status%></span>
+            </td>
+            <td class="flex px-4 py-3">
+              <button class="px-3 py-1 bg-blue-500 text-white rounded mr-2">
+                View
+              </button>
+              <% if fund.status != "success" && fund.status != "rejected" %>
+                  <button data-action="click->verify#open" data-id="<%= fund.id %>"
+                    class="px-3 py-1 bg-green-500 text-white rounded mr-2">
+                    Approved
+                  </button>
+
+                  <%= button_to admin_payments_verify_pin_path(id: fund.id),
+                                method: :get, data: { turbo: false } do %>
+                    <p class="px-3 py-1 bg-red-500 text-white rounded mr-2">
+                      Reject
+                    </p>
+                  <% end %>
+                <% end %>
+            </td>
+          </tr>
+
+          <%end%>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div
+    data-verify-target="container"
+    data-action="click->verify#backdrop"
+    class="hidden fixed inset-0 flex items-center justify-center z-50"
+    style="backdrop-filter: brightness(0.5);"
+  >
+    <div class="bg-white rounded-2xl shadow-xl w-[688px] p-6 relative mb-12">
+      <!-- Close button -->
+      <button data-action="click->verify#close"
+        class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
+        ✕
+      </button>
+
+      <!-- Modal content -->
+      <div class="flex justify-between items-center p-4 border-b border-gray-200">
+        <h2 class="text-lg sm:text-xl font-semibold text-gray-800">
+          Enter Wallet PIN
+        </h2>
+      </div>
+
+      <!-- PIN Section -->
+      <div class="p-6 sm:p-8 flex flex-col items-center">
+        <p class="mb-4 font-bold text-black text-center text-xl">
+          Enter 6 Digit Wallet PIN
+        </p>
+
+        <%= form_with url: superadmin_payments_approved_path, method: :post, local: true, class: "space-y-5" do %>
+          <!-- Hidden Transaction ID -->
+          <input type="hidden" name="id" data-verify-target="transactionId">
+
+          <!-- PIN Inputs -->
+          <div class="flex justify-center gap-4 mb-6" id="pin-inputs">
+            <% 6.times do |i| %>
+              <input 
+                type="password" 
+                name="pin[]" 
+                maxlength="1" 
+                data-verify-target="pinInputs"
+                data-action="input->verify#pinInput"
+                class="w-12 h-12 sm:w-14 sm:h-14 text-center border border-gray-400 rounded-md text-xl font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+            <% end %>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="flex gap-4 justify-center">
+            <button
+              class="w-28 sm:w-32 py-2 bg-blue-600 text-white rounded-md text-sm sm:text-base font-medium hover:bg-blue-700 transition-colors cursor-pointer">
+              Submit
+            </button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+      document.querySelectorAll(".flash-message").forEach(el => {
+        el.style.transition = "opacity 0.5s, transform 0.5s";
+        el.style.opacity = "0";
+        el.style.transform = "translateX(100%)";
+        setTimeout(() => el.remove(), 500);
+      });
+    }, 3000); // hides after 3 seconds
+  });
+</script>

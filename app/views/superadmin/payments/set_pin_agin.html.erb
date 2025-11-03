@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reset Transaction PIN</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ✅ Heroicons CDN for proper eye icons -->
+  <script src="https://unpkg.com/@heroicons/vue@1.0.6/dist/outline.js"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gray-50 relative">
+
+  <!-- ✅ Flash Messages -->
+  <% if flash.any? %>
+    <div id="flash-container" class="fixed top-5 right-5 z-50 space-y-2">
+      <% flash.each do |key, message| %>
+        <% color = case key.to_sym
+          when :notice then "bg-green-100 text-green-800 border-green-400"
+          when :alert  then "bg-red-100 text-red-800 border-red-400"
+          else "bg-yellow-100 text-yellow-800 border-yellow-400"
+        end %>
+
+        <div class="flash-popup border-l-4 <%= color %> px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 opacity-100">
+          <div class="flex items-start justify-between">
+            <p class="text-sm font-medium pr-2"><%= message %></p>
+            <button class="text-gray-500 hover:text-gray-700 ml-2" onclick="this.parentElement.parentElement.remove()">
+              ✖️
+            </button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- ✅ Main Form -->
+  <div class="bg-white rounded-2xl shadow-lg w-full max-w-md p-8 m-auto">
+    <h2 class="text-3xl font-semibold text-center text-gray-800 mb-6">
+      🔒 Reset Transaction PIN
+    </h2>
+
+    <%= form_with url: superadmin_payments_set_pin_agin_update_path, method: :post, local: true, id: "resetPinForm", class: "space-y-5" do %>
+      <p class="text-sm text-gray-600 text-center mb-4">
+        Enter your old and new 6-digit wallet PIN.
+      </p>
+
+      <!-- New PIN -->
+      <div>
+        <label class="text-sm font-medium text-gray-700">
+          New PIN <span class="text-red-600">*</span>
+        </label>
+        <div class="relative">
+          <%= password_field_tag :set_pin, nil,
+            id: "new_pin",
+            maxlength: 6,
+            placeholder: "Enter New PIN",
+            class: "w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none text-center tracking-widest pr-10",
+            required: true %>
+          <button type="button" id="toggleNewPin" class="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" id="eyeNew" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Confirm PIN -->
+      <div>
+        <label class="text-sm font-medium text-gray-700">
+          Confirm New PIN <span class="text-red-600">*</span>
+        </label>
+        <div class="relative">
+          <%= password_field_tag :confirm_pin, nil,
+            id: "confirm_pin",
+            maxlength: 6,
+            placeholder: "Confirm New PIN",
+            class: "w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none text-center tracking-widest pr-10",
+            required: true %>
+          <button type="button" id="toggleConfirmPin" class="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" id="eyeConfirm" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex gap-3">
+        <%= submit_tag "Reset PIN",
+          id: "submitBtn",
+          class: "w-1/2 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition font-medium" %>
+
+        <button type="button"
+          onclick="history.back()"
+          class="w-1/2 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition font-medium">
+          Back
+        </button>
+      </div>
+    <% end %>
+    <p class="text-center text-sm text-gray-600 mt-4">
+      Forgot old PIN?
+      <%= link_to "Click here", superadmin_payments_forgot_mpin_path, class: "text-indigo-600 hover:underline font-medium" %>
+    </p>
+  </div>
+
+  <!-- ✅ Working JavaScript -->
+  <script>
+    document.addEventListener("turbo:load", init);
+    document.addEventListener("DOMContentLoaded", init);
+
+    function init() {
+      // Numeric only
+      document.querySelectorAll("#old_pin, #new_pin, #confirm_pin").forEach((input) => {
+        input.addEventListener("input", (e) => e.target.value = e.target.value.replace(/\D/g, ""));
+      });
+
+      // Eye toggle logic
+      const setupToggle = (btnId, inputId) => {
+        const btn = document.getElementById(btnId);
+        const input = document.getElementById(inputId);
+        if (!btn || !input) return;
+
+        btn.addEventListener("click", () => {
+          const svg = btn.querySelector("svg");
+          if (input.type === "password") {
+            input.type = "text";
+            svg.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.953 9.953 0 012.255-3.507M9.88 9.88a3 3 0 104.24 4.24M6.1 6.1l11.8 11.8"/>`;
+          } else {
+            input.type = "password";
+            svg.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>`;
+          }
+        });
+      };
+
+      setupToggle("toggleOldPin", "old_pin");
+      setupToggle("toggleNewPin", "new_pin");
+      setupToggle("toggleConfirmPin", "confirm_pin");
+
+      // Auto hide flash
+      const flashes = document.querySelectorAll(".flash-popup");
+      setTimeout(() => {
+        flashes.forEach(el => {
+          el.style.opacity = "0";
+          setTimeout(() => el.remove(), 500);
+        });
+      }, 4000);
+    }
+  </script>
+
+</body>
+</html>

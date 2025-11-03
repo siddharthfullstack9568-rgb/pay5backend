@@ -1,4 +1,4 @@
-class Superadmin::CustomerController < ApplicationController
+class Superadmin::CustomerController < Superadmin::BaseController
 
   def index
     @curstomers = User.joins(:role).where(roles:{title: "customer"}).order(created_at: :desc)

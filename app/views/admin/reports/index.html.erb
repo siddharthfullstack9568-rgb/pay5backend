@@ -36,7 +36,7 @@
       Commission Report
     </span>
     <span class="mt-1 text-lg font-semibold text-indigo-900">
-      <%=  TransactionCommission.where(user_id: current_admin_user.id).pluck(:commission_amount).compact.sum.to_f %>
+      <%=  TransactionCommission.where(user_id: current_admin.id).pluck(:commission_amount).compact.sum.to_f %>
     </span>
   </div>
 

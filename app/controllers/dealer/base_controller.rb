@@ -1,17 +1,16 @@
 class Dealer::BaseController < ApplicationController
-  helper_method :current_dealer_user, :logged_dealer_in?
+  before_action :require_admin
 
-  def current_dealer_user
-    @current_dealer_user ||= User.find_by(id: session[:dealer_user_id]) if session[:dealer_user_id]
+  private
+
+  def current_dealer
+    @current_admin ||= User.find_by(id: session["dealer_id"])
   end
+  helper_method :current_dealer
 
-  def logged_dealer_in?
-    current_dealer_user.present?
-  end
-
-  def require_dealer_login
-    unless logged_dealer_in?
-      redirect_to dealer_sessions_login_path, alert: "Please log in first"
+  def require_admin
+    unless current_dealer&.role&.title&.downcase == "dealer"
+      redirect_to login_sessions_path, alert: "Access denied!"
     end
   end
 end

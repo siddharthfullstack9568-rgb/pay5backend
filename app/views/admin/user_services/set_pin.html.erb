@@ -1,79 +1,77 @@
-<div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-2xl m-auto mt-20">
-  <!-- Title -->
-  <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">
-    Set Your 6-Digit PIN
-  </h2>
+<div class="flex items-center justify-center min-h-screen bg-gray-50">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-96"
+       data-controller="reset-pin"
+       data-action="submit->reset-pin#validate">
 
-  <!-- Form -->
-  <%= form_with url: admin_user_services_set_pin_update_path, method: :post, local: true, class: "space-y-5" do %>
-    <!-- New PIN -->
-    <div>
-      <label for="new-pin" class="block text-gray-700 font-medium mb-2">Enter New PIN</label>
-      <input 
-  type="password" 
-  name="set_pin" 
-  id="new-pin" 
-  placeholder="Enter 6-digit PIN"
-  maxlength="6"
-  inputmode="numeric"
-  pattern="[0-9]{6}"
-  required
-  class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-/>
+    <h2 class="text-2xl font-semibold text-center text-indigo-600 mb-2">
+      🔒 Reset Transaction PIN
+    </h2>
+    <p class="text-center text-gray-500 mb-6">
+      Enter your old and new 6-digit wallet PIN.
+    </p>
 
-    </div>
-
-    <!-- Confirm PIN -->
-    <div>
-      <label for="confirm-pin" class="block text-gray-700 font-medium mb-2">Confirm PIN</label>
-      <input type="password" name="confirm_pin" id="confirm-pin" placeholder="Confirm 6-digit PIN"
-        class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="6" required>
-    </div>
-
-    <!-- Button -->
-    <button type="submit"
-      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg shadow-md transition duration-200">
-      Set PIN
-    </button>
-  <% end %>
-</div>
-
-<!-- Popup Flash Messages -->
-<div id="flash-container" class="fixed top-5 right-5 space-y-3 z-50">
-  <% flash.each do |key, message| %>
-    <% if message.present? %>
-      <% if key == "notice" %>
-        <div class="flash-message bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg">
-          ✅ <%= message %>
-        </div>
-      <% elsif key == "alert" %>
-        <div class="flash-message bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg">
-          ⚠️ <%= message %>
-        </div>
-      <% end %>
+    <!-- ✅ Flash Message -->
+    <% if flash[:notice].present? || flash[:alert].present? %>
+      <div data-reset-pin-target="flash"
+           class="<%= flash[:notice] ? 'bg-green-100 border-green-400 text-green-700' : 'bg-red-100 border-red-400 text-red-700' %> border px-4 py-2 rounded-lg text-center mb-4">
+        <%= flash[:notice] || flash[:alert] %>
+      </div>
     <% end %>
-  <% end %>
+
+    <%= form_with url: admin_user_services_set_pin_update_path, method: :post, local: true, class: "space-y-5" do %>
+      <!-- Old PIN -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Old PIN *</label>
+        <input type="password"
+               name="old_pin"
+               maxlength="6"
+               class="w-full border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+               placeholder="Enter Old PIN" />
+      </div>
+
+      <!-- New PIN -->
+      <div class="relative">
+        <label class="block text-sm font-medium text-gray-700 mb-1">New PIN *</label>
+        <input type="password"
+               name="set_pin"
+               maxlength="6"
+               data-reset-pin-target="newPin"
+               class="w-full border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+               placeholder="Enter New PIN" />
+        <button type="button"
+                data-action="click->reset-pin#toggleNewPin"
+                class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-indigo-600 mt-5">
+          👁️
+        </button>
+      </div>
+
+      <!-- Confirm PIN -->
+      <div class="relative">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New PIN *</label>
+        <input type="password"
+               name="confirm_pin"
+               maxlength="6"
+               data-reset-pin-target="confirmPin"
+               class="w-full border rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+               placeholder="Confirm New PIN" />
+        <button type="button"
+                data-action="click->reset-pin#toggleConfirmPin"
+                class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-indigo-600 mt-5">
+          👁️
+        </button>
+      </div>
+
+      <p data-reset-pin-target="error" class="text-red-500 text-center text-sm"></p>
+
+      <button type="submit"
+              class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">
+        Reset PIN
+      </button>
+    <% end %>
+
+    <p class="text-center text-sm text-gray-500 mt-4">
+      Forgot old PIN?
+      <a href="#" class="text-indigo-600 hover:underline">Click here</a>
+    </p>
+  </div>
 </div>
-
-<!-- Auto-hide flash -->
-<script>
-  setTimeout(() => {
-    document.querySelectorAll(".flash-message").forEach(el => {
-      el.style.transition = "opacity 0.5s, transform 0.5s";
-      el.style.opacity = "0";
-      el.style.transform = "translateX(100%)";
-      setTimeout(() => el.remove(), 500);
-    });
-  }, 3000);
-</script>
-
-
-<script>
-  document.getElementById("new-pin").addEventListener("input", function(e) {
-    this.value = this.value.replace(/[^0-9]/g, ""); // सिर्फ digits रहने दो
-  });
-  document.getElementById("confirm-pin").addEventListener("input", function(e) {
-    this.value = this.value.replace(/[^0-9]/g, ""); // सिर्फ digits रहने दो
-  });
-
-</script>

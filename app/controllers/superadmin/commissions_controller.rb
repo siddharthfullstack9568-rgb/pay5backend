@@ -1,4 +1,4 @@
-class Superadmin::CommissionsController < ApplicationController
+class Superadmin::CommissionsController < Superadmin::BaseController
   def index
   end
 end

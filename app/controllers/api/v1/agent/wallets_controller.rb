@@ -1,6 +1,19 @@
 class Api::V1::Agent::WalletsController < Api::V1::Agent::BaseController
   protect_from_forgery with: :null_session
 
+  def bank_list
+    p "==========current_user"
+    p current_user.parent_id
+    banks = Bank.where(user_id: current_user.parent_id)
+    render json: { code: 200, message: "Bank list", banks: banks }
+  end
+
+  def fund_request_list
+    trn_mode = params[:trn_mode]
+    wallter_transcation = WalletTransaction.where(mode: trn_mode)
+    render json: {code: 200, message: "Successfully list show", wallter_transcation: wallter_transcation}
+  end
+
   def balance
     total_balance = Wallet.where(user_id: current_user.id).pluck(:balance)
     p "=============total_balance===="

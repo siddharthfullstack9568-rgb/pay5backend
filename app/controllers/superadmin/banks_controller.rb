@@ -1,9 +1,9 @@
-class Superadmin::BanksController < ApplicationController
+class Superadmin::BanksController < Superadmin::BaseController
   before_action :set_bank, only: [:show, :edit, :update, :destroy]
 
   # GET /superadmin/banks
   def index
-    @banks = Bank.order(created_at: :desc)
+    @banks = Bank.where(user_id: current_superadmin.id).order(created_at: :desc)
   end
 
   # GET /superadmin/banks/:id
@@ -17,13 +17,15 @@ class Superadmin::BanksController < ApplicationController
 
   # POST /superadmin/banks
   def create
-    @bank = Bank.new(bank_params)
-    if @bank.save
-      redirect_to superadmin_banks_path(@bank), notice: "Bank created successfully."
-    else
-      render :new, status: :unprocessable_entity
-    end
+  @bank = Bank.new(bank_params.merge(user_id: current_superadmin.id))
+
+  if @bank.save
+    redirect_to superadmin_banks_path, notice: "Bank created successfully."
+  else
+    flash.now[:alert] = "Failed to create bank. Please check the details and try again."
+    render :new, status: :unprocessable_entity
   end
+end
 
   # GET /superadmin/banks/:id/edit
   def edit
