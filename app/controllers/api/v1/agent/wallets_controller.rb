@@ -85,8 +85,8 @@ class Api::V1::Agent::WalletsController < Api::V1::Agent::BaseController
             mobile: txn.mobile,
             txn_type: txn.txn_type,
             status: txn.status,
-            wallet_id: txn.created_at,
-            created_at: txn.wallet_id
+            wallet_id: txn.wallet_id,
+            created_at: txn.created_at
           }
         end
       }
