@@ -53,6 +53,7 @@ class Api::V1::Agent::WalletsController < Api::V1::Agent::BaseController
             id: txn.id,
             wallet_id: txn.wallet_id,
             deposit_bank: txn.fund_request&.deposit_bank,
+            account_number: txn.fund_request&.account_number,
             your_bank: txn.fund_request&.your_bank,
             tx_id: txn.tx_id,
             mode: txn.mode,
@@ -84,7 +85,8 @@ class Api::V1::Agent::WalletsController < Api::V1::Agent::BaseController
             mobile: txn.mobile,
             txn_type: txn.txn_type,
             status: txn.status,
-            wallet_id: txn.wallet_id
+            wallet_id: txn.created_at,
+            created_at: txn.wallet_id
           }
         end
       }
