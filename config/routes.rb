@@ -145,6 +145,8 @@ Rails.application.routes.draw do
         post "set_mpins/set_mpin"
         post "set_mpins/forget_mpin"
         post "set_mpins/verify_forget_mpin"
+
+        post "recharges/create"
       end
 
       namespace :master do
