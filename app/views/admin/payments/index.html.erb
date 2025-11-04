@@ -100,9 +100,13 @@
                 <span class="font-medium text-yellow-600"><%= fund.status %></span>
               </td>
               <td class="flex px-4 py-3">
-                <button class="px-3 py-1 bg-blue-500 text-white rounded mr-2">
+               <button
+                  class="px-3 py-1 bg-blue-500 text-white rounded mr-2"
+                  onclick="openViewModal('<%= fund.tx_id %>', '<%= fund.wallet.user.first_name %>', '<%= fund.amount %>', '<%= fund.transaction_type %>', '<%= fund.created_at.strftime("%d/%m/%Y") %>', '<%= fund.status %>', '<%= fund.fund_request.image if fund.fund_request.image.present? %>')"
+                >
                   View
                 </button>
+
 
                 <% if fund.status != "success" && fund.status != "rejected" %>
                   <button data-action="click->verify#open" data-id="<%= fund.id %>"
@@ -245,6 +249,50 @@
   </div>
 </div>
 
+<!-- View Modal -->
+<div
+  id="viewModal"
+  class="hidden fixed inset-0 flex items-center justify-center z-50"
+  style="backdrop-filter: brightness(0.5);"
+>
+  <div class="bg-white rounded-2xl shadow-xl w-[688px] p-6 relative mx-4">
+    <!-- Close Button -->
+    <button
+      id="closeViewModal"
+      class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition"
+    >
+      ✕
+    </button>
+
+    <!-- Header -->
+    <div class="text-center mb-6">
+      <h2 class="text-2xl font-semibold text-gray-800">Transaction Details</h2>
+    </div>
+
+    <!-- Details Section -->
+    <div id="viewDetails" class="space-y-3 text-gray-700">
+      <p><strong>Transaction ID:</strong> <span id="viewTxId"></span></p>
+      <p><strong>Requester:</strong> <span id="viewRequester"></span></p>
+      <p><strong>Amount:</strong> ₹<span id="viewAmount"></span></p>
+      <p><strong>Payment Method:</strong> <span id="viewMethod"></span></p>
+      <p><strong>Date:</strong> <span id="viewDate"></span></p>
+      <p><strong>Status:</strong> <span id="viewStatus" class="font-semibold"></span></p>
+
+      <!-- Image -->
+      <div class="mt-4">
+        <p class="font-medium mb-2">Payment Proof:</p>
+        <img
+          id="viewImage"
+          src=""
+          alt="Transaction Image"
+          class="w-full max-h-96 object-contain rounded-md border border-gray-300 shadow-sm"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <script>
   // Open reject modal
@@ -268,6 +316,40 @@
   document.getElementById("rejectModal").addEventListener("click", (e) => {
     if (e.target.id === "rejectModal") {
       document.getElementById("rejectModal").classList.add("hidden");
+    }
+  });
+</script>
+
+
+<script>
+  function openViewModal(txId, requester, amount, method, date, status, imageUrl) {
+    document.getElementById("viewTxId").textContent = txId || "-";
+    document.getElementById("viewRequester").textContent = requester || "-";
+    document.getElementById("viewAmount").textContent = amount || "0";
+    document.getElementById("viewMethod").textContent = method || "-";
+    document.getElementById("viewDate").textContent = date || "-";
+    document.getElementById("viewStatus").textContent = status || "-";
+
+    const img = document.getElementById("viewImage");
+    if (imageUrl) {
+      img.src = imageUrl;
+      img.classList.remove("hidden");
+    } else {
+      img.classList.add("hidden");
+    }
+
+    document.getElementById("viewModal").classList.remove("hidden");
+  }
+
+  // Close view modal
+  document.getElementById("closeViewModal").addEventListener("click", () => {
+    document.getElementById("viewModal").classList.add("hidden");
+  });
+
+  // Close when clicking outside modal
+  document.getElementById("viewModal").addEventListener("click", (e) => {
+    if (e.target.id === "viewModal") {
+      document.getElementById("viewModal").classList.add("hidden");
     }
   });
 </script>

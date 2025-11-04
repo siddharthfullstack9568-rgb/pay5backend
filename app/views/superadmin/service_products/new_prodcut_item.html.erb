@@ -13,9 +13,8 @@
   <div class="bg-white rounded-lg shadow-md p-8 max-w-3xl mx-auto">
     <h2 class="text-2xl font-semibold text-center mb-6">Add Service Product Form</h2>
 
-      <%= form_with(model: [:superadmin, @service_product], local: true) do |form| %>
+<%= form_with url: prodcut_item_create_superadmin_service_product_path, method: :post, local: true do |form| %>
       <!-- First Name -->
-      <input type="hidden" value="<%=@cat_id%>" name="category_id">
 
       <div>
         <%= form.label :company_name, "Product Name", class: "block text-sm font-medium text-gray-700 mb-1" %>

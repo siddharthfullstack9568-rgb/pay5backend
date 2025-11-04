@@ -60,8 +60,14 @@ class Superadmin::ServiceProductsController < Superadmin::BaseController
   end
 
   def new_prodcut_item
-    @service_product = ServiceProductItem.new
+    "-------------------------"
+    @service_product_id = params[:category_id]
+    @service_product_item = ServiceProductItem.new
+  end
 
+  def prodcut_item_create
+    @service_product_item = ServiceProductItem.create!(service_product_id: params[:id], name: params[:company_name])
+    redirect_to view_product_item_superadmin_service_product_path(id: @service_product_item.service_product_id)
   end
 
   private

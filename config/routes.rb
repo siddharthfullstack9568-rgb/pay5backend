@@ -34,6 +34,10 @@ Rails.application.routes.draw do
     delete "sessions/destroy"
     get "dashboards/index"
     get "retailers/index"
+    resources :retailers
+    post "retailers/create", to: "retailers#create", as: :retailer_create
+    post "retailers/:id/update_status", to: "retailers#update_status", as: :retailer_update_status
+
 
     get "payments/set_pin"
     post "payments/set_pin_update"
@@ -276,6 +280,7 @@ Rails.application.routes.draw do
       member do
         get :view_product_item
         get :new_prodcut_item
+        post :prodcut_item_create
       end
     end
 

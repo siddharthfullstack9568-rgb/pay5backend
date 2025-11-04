@@ -67,3 +67,4 @@ gem 'sidekiq', '~> 6.0'
 gem 'httparty'
 gem "chartkick"
 gem "groupdate"
+gem "cloudinary"

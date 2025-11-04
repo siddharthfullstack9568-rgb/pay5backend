@@ -1,19 +1,17 @@
 class Superadmin::RechargeAndBillController < ApplicationController
 
   def index
-    @service_product_items = ServiceProductItem.all
-
-    @service_product_mobile = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "Mobile Recharge"})
-
-    p "================"
-    p @service_product_mobile
-
-    @service_product_dth = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "DTH Recharge"})
-
-    @service_product_water = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "Water Bill"})
-
-
+    if params[:scheme].present?
+      @grouped_commissions = Commission
+      .includes(service_product_item: :service_product)
+      .where(scheme_id: params[:scheme])
+      .select('DISTINCT ON (service_product_item_id) commissions.*')
+      .group_by { |c| c.service_product_item.service_product.company_name }
+    else
+      @grouped_commissions = {}
+    end
   end
+
 
   def commission_set
     if params[:scheme].blank?
@@ -58,9 +56,9 @@ class Superadmin::RechargeAndBillController < ApplicationController
     end
 
     if error_messages.any?
-      redirect_to superadmin_recharge_and_bill_index_path, alert: error_messages.join(", ")
+      redirect_to superadmin_recharge_and_bill_index_path(scheme: scheme.id), alert: error_messages.join(", ")
     else
-      redirect_to superadmin_recharge_and_bill_index_path, notice: "#{success_count} item(s) commissions saved successfully!"
+      redirect_to superadmin_recharge_and_bill_index_path(scheme: scheme.id), notice: "#{success_count} item(s) commissions saved successfully!"
     end
   end
 
@@ -71,7 +69,7 @@ class Superadmin::RechargeAndBillController < ApplicationController
 
   def transaction
 
-     @transcations = Transaction.all.order(created_at: :desc)
+    @transcations = Transaction.all.order(created_at: :desc)
 
     # Filter by type (join only if needed)
     if params[:type].present? && params[:type] != "all"

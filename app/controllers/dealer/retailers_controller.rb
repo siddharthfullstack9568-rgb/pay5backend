@@ -3,14 +3,15 @@ class Dealer::RetailersController < Dealer::BaseController
   #before_action :require_dealer_login
   # before_action :authenticate_user!
 
-  before_action :set_retailer, only: [:show, :edit, :update, :destroy]
+  before_action :set_retailer, only: [ :edit, :update, :destroy]
 
   def index
+    p "============"
+    p current_dealer
      @retailers = User.joins(:role).where(roles: { title: ["retailer"] } ,parent_id: current_dealer.id).order(created_at: :desc)
   end
 
-  def show
-  end
+  
 
   def new
     @retailer = User.new
@@ -20,7 +21,7 @@ class Dealer::RetailersController < Dealer::BaseController
     role_id = params[:user][:role_id]
     p "==========="
     p role_id
-    @retailer = User.new(retailer_params.merge(role_id: role_id))
+    @retailer = User.new(user_params.merge(role_id: role_id, parent_id: current_dealer.id))
 
     if @retailer.save
       redirect_to dealer_retailers_path, notice: "Retailer created successfully."

@@ -2,18 +2,17 @@ class Admin::RechargesAndBillsController < Admin::BaseController
   layout "admin"
  # before_action :require_admin_login
 # before_action :authenticate_user!
-  def index
-    @service_product_items = ServiceProductItem.all
-
-    @service_product_mobile = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "Mobile Recharge"})
-
-    p "================"
-    p @service_product_mobile
-
-    @service_product_dth = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "DTH Recharge"})
-
-    @service_product_water = ServiceProductItem.joins(:service_product).where(service_product: {company_name: "Water Bill"})
+ def index
+  if params[:scheme].present?
+    @grouped_commissions = Commission
+      .includes(service_product_item: :service_product)
+      .where(scheme_id: params[:scheme])
+      .select('DISTINCT ON (service_product_item_id) commissions.*')
+      .group_by { |c| c.service_product_item.service_product.company_name }
+  else
+    @grouped_commissions = {}
   end
+end
 
 
   def amdmin_commission_set
