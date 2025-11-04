@@ -142,6 +142,7 @@ class Api::V1::Agent::WalletsController < Api::V1::Agent::BaseController
         amount: fund_request.amount,
         status: "pending",
         fund_request_id: fund_request.id,
+        account_number: params[:account_number],
         description: "Fund request created by user #{current_user.id}"
       )
 
