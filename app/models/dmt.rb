@@ -1,0 +1,2 @@
+class Dmt < ApplicationRecord
+end

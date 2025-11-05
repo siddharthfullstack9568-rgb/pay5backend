@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_11_05_062051) do
+ActiveRecord::Schema[7.2].define(version: 2025_11_05_064724) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -70,6 +70,31 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_05_062051) do
     t.bigint "scheme_id"
     t.index ["scheme_id"], name: "index_commissions_on_scheme_id"
     t.index ["service_product_item_id"], name: "index_commissions_on_service_product_item_id"
+  end
+
+  create_table "dmts", force: :cascade do |t|
+    t.string "full_name"
+    t.string "account_number"
+    t.string "confirm_account_number"
+    t.string "phone_number"
+    t.string "bank_name"
+    t.string "branch_name"
+    t.string "ifsc_code"
+    t.string "sender_full_name"
+    t.string "sender_phone_number"
+    t.string "sender_aadhar_number"
+    t.string "sender_aadhar_otp_email"
+    t.boolean "beneficiaries_status", default: false
+    t.string "sender_name"
+    t.string "receiver_name"
+    t.string "sender_mobile_number"
+    t.string "receiver_mobile_number"
+    t.string "status"
+    t.string "aadhaar_number_otp"
+    t.string "aadhaar_number_otp_expriry"
+    t.string "datetime"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "enquiries", force: :cascade do |t|

@@ -38,7 +38,7 @@ Rails.application.routes.draw do
     post "retailers/create", to: "retailers#create", as: :retailer_create
     post "retailers/:id/update_status", to: "retailers#update_status", as: :retailer_update_status
 
-
+    get "payments/index"
     get "payments/set_pin"
     post "payments/set_pin_update"
     get "payments/forgot_mpin"
@@ -199,6 +199,10 @@ Rails.application.routes.draw do
         post "reatailer_profiles/set_mpin"
 
         post "commission_reports/index"
+
+        post "dmts/sender_details"
+        post "dmts/verify_aadhaar_otp"
+        post "dmts/dmt_transactions"
 
       end
 

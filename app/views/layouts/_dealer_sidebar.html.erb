@@ -1,4 +1,4 @@
-<aside class="w-80 bg-indigo-700 text-white flex flex-col">
+<aside class="w-80 bg-indigo-700 text-white flex flex-col" data-controller="superadmindropdown">
   <div class="p-4 text-2xl font-bold border-b border-indigo-600 flex items-center space-x-2">
     <%= image_tag "logo.png", alt: "Logo", class: "h-11 w-auto bg-white rounded-full" %>
     <span>Dealer Portal</span>
@@ -7,7 +7,23 @@
     <a href="/dealer/dashboards/index" class="flex text-lg font-medium items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-600"><i class="fa fa-home"></i>Home</a>
 
     <a href="/dealer/retailers/index" class="flex text-lg font-medium items-center gap-3 px-3 py-2 rounded-lg hover:bg-indigo-600"><i class="fa-solid fa-bars"></i>Retailer</a>
-    <a href="#" class="flex items-center gap-3 px-3 text-lg font-medium py-2 rounded-lg hover:bg-indigo-600"><i class="fa fa-credit-card"></i> Payment</a>
+    <div class="w-full relative">
+      <button 
+        class="flex items-center gap-3 text-lg font-medium px-3 py-2 rounded-lg hover:bg-indigo-600 w-full"
+        data-action="click->superadmindropdown#toggle"
+        data-menu="payment">
+        <i class="fa fa-credit-card"></i>
+        <span>Payment</span>
+        <i class="fa fa-caret-down ml-[8rem]"></i>
+      </button>
+
+      <div data-superadmindropdown-target="payment" class="mt-1 space-y-1 pl-8 hidden">
+        <a href="#" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Set Commission</a>
+        <a href="#" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Create</a>
+        <a href="/dealer/payments/index" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">List</a>
+        <a href="#" class="block px-3 py-2 text-lg font-medium rounded-md hover:bg-indigo-500">Gateway</a>
+      </div>
+    </div>
     <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-wallet"></i> Account</a>
     <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-exchange-alt"></i> Money Transfer</a>
     <a href="#" class="flex items-center gap-3 px-3 py-2 text-lg font-medium rounded-lg hover:bg-indigo-600"><i class="fa fa-bolt"></i> Recharge & Bill</a>

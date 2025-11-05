@@ -10,7 +10,6 @@ class Admin::UserServicesController < Admin::BaseController
     # If you want only retailers for the current admin, you can filter here later.
   end
 
-
   def new
     @services = UserService.where(assignee_id: 104).joins(:service).select("services.id, services.title")
     p "=-===========@services==="

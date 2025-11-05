@@ -8,22 +8,29 @@ class Dealer::RetailersController < Dealer::BaseController
   def index
     p "============"
     p current_dealer
-     @retailers = User.joins(:role).where(roles: { title: ["retailer"] } ,parent_id: current_dealer.id).order(created_at: :desc)
+    @retailers = User.joins(:role).where(roles: { title: ["retailer"] } ,parent_id: current_dealer.id).order(created_at: :desc)
   end
 
-  
 
   def new
     @retailer = User.new
   end
 
   def create
-    role_id = params[:user][:role_id]
-    p "==========="
-    p role_id
-    @retailer = User.new(user_params.merge(role_id: role_id, parent_id: current_dealer.id))
+    @user_service = User.new(dealer_params.merge(role_id: 5, parent_id: current_dealer.id))
 
-    if @retailer.save
+    if @user_service.save
+      service_ids = Array(params[:user][:service_ids]).map(&:to_i)
+      assigner = current_dealer
+
+      service_ids.each do |sid|
+        UserService.find_or_create_by!(
+          assigner: assigner,
+          assignee: @user_service,
+          service_id: sid
+        )
+      end
+
       redirect_to dealer_retailers_path, notice: "Retailer created successfully."
     else
       render :new, status: :unprocessable_entity
@@ -70,7 +77,7 @@ class Dealer::RetailersController < Dealer::BaseController
     @retailer = User.find(params[:id])
   end
 
-  def retailer_params
+  def dealer_params
     params.require(:user).permit(:first_name,
                                  :last_name,
                                  :email,

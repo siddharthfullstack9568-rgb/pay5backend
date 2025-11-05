@@ -4,7 +4,7 @@ class Dealer::PaymentsController < Dealer::BaseController
   # before_action :authenticate_user!
 
   def index
-    user_id = 136
+    user_id = current_dealer
     # Get all fund requests requested by user 136
     fund_requests = FundRequest.where(requested_by: user_id)
 
@@ -16,13 +16,13 @@ class Dealer::PaymentsController < Dealer::BaseController
   end
 
   def approved
-    super_admin_id = User.find(136)
-    fund_requests = FundRequest.where(requested_by: super_admin_id)
+    current_dealer = current_dealer
+    fund_requests = FundRequest.where(requested_by: current_dealer)
     pin = params[:pin]&.join
     Rails.logger.info "Entered PIN: #{pin}"
 
     # Verify admin PIN
-    if super_admin_id.set_pin == pin
+    if current_dealer.set_pin == pin
       transaction = WalletTransaction.find(params[:id])
       Rails.logger.info "Transaction: #{transaction.inspect}"
 
