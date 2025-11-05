@@ -40,7 +40,7 @@ class Api::V1::Customer::RechargesController < Api::V1::Customer::BaseController
       :mobile_number, :operator, :amount, :service_product,
       :transaction_type, :consumer_name, :subscriber_or_vc_number,
       :bill_no, :landline_no, :consumer_no, :account_no, :bank,
-      :ifsc_code, :pan, :card_number
+      :ifsc_code, :pan, :card_number, :state
     )
   end
 
