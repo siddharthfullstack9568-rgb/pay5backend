@@ -20,7 +20,8 @@ class Api::V1::Customer::RechargesController < Api::V1::Customer::BaseController
       status: transaction.status,
       user_id: transaction.user_id,
       mobile: transaction.mobile,
-      date: transaction.created_at
+      date: transaction.created_at,
+      state: transaction.state
     }, status: :created
 
   rescue ActiveRecord::RecordNotFound

@@ -32,7 +32,8 @@ class RechargeService
         bank: @params[:bank],
         ifsc_code: @params[:ifsc_code],
         pan: @params[:pan],
-        card_number: @params[:card_number]
+        card_number: @params[:card_number],
+        state: @params[:state]
       )
 
       # ⚡ Commission creation removed as requested
