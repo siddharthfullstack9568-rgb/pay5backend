@@ -12,6 +12,7 @@
     <h4 class="text-xl font-bold text-fuchsia-700">
       <%#= Wallet.find_by(user_id: current_user.id)&.balance.to_f %>0
     </h4>
+    <a href="/dealer/wallets/index" class="cursor-pointer bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-lg">My Wallet</a>
 
     <!-- Notification -->
     <button>
@@ -21,7 +22,10 @@
     <!-- Admin Dropdown -->
           <div data-action="click@window->dropdown#close" class="relative">
             <button data-action="click->dropdown#toggle" class="flex items-center gap-2 focus:outline-none">
+
+
               <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center">M</div>
+
               <span class="font-medium">Dealer</span>
               <i class="fa fa-chevron-down text-gray-500"></i>
             </button>

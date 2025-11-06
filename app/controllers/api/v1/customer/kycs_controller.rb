@@ -165,6 +165,27 @@ class Api::V1::Customer::KycsController < Api::V1::Customer::BaseController
     end
   end
 
+  def pan_image_upload
+    required_params = [:pan_card_image]
+    missing_params = required_params.select { |p| params[p].blank? }
+    if missing_params.any?
+      render json: {
+        code: 422,
+        message: "Missing parameters: #{missing_params.join(', ')}",
+        success: false
+      } and return
+    end
+
+    pan_card_image = params[:pan_card_image]
+
+    current_user.update(
+      kyc_status: "pending",
+      pan_card_image: pan_card_image,
+    )
+
+    render json: { code: 200, message: "Documents uploaded successfully. Pending review.", success: true }
+  end
+
 
   def selfie
     required_params = [:image]

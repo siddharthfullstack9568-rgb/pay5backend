@@ -38,6 +38,12 @@ Rails.application.routes.draw do
     post "retailers/create", to: "retailers#create", as: :retailer_create
     post "retailers/:id/update_status", to: "retailers#update_status", as: :retailer_update_status
 
+    get "wallets/index"
+    get "wallets/add_fund"
+    post "wallets/add_fund"
+    post "wallets/create_fund"
+
+
     get "payments/index"
     post "payments/approved"
     post "payments/reject_payment_request"
@@ -142,6 +148,7 @@ Rails.application.routes.draw do
         post "kycs/manual_aadhaar_upload", to: "kycs#manual_aadhaar_upload"
         post "kycs/pencard_otp", to: "kycs#pencard_otp"
         post "kycs/verify_pencard_otp", to: "kycs#verify_pencard_otp"
+        post "kycs/pan_image_upload"
         post "kycs/selfie", to: "kycs#selfie"
         get "kycs/kyc_details", to: "kycs#kyc_details"
         post "kycs/submit_kyc_details", to: "kycs#submit_kyc_details"

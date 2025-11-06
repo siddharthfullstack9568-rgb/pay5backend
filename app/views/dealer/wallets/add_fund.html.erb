@@ -1,0 +1,103 @@
+<div class="w-full mx-auto px-4 py-6 bg-blue-50">
+  <div class="w-[1002px] mx-auto bg-white p-5">
+
+    <h2 class="text-2xl font-semibold flex items-center gap-1 mb-6">
+      💰 <span>Add Fund</span>
+    </h2>
+
+    <%= form_with url: dealer_wallets_create_fund_path, local: true, html: { class: "space-y-4" } do |f| %>
+
+      <!-- Deposit Bank -->
+      <div>
+        <div class="flex gap-2">
+          <%= f.label :deposit_bank, "Deposit Bank", class: "block text-gray-700 font-medium mb-1" %>
+          <span class="text-red-500">*</span>
+        </div>
+        <%= f.select :deposit_bank, @banks.map { |b| [b.bank_name, b.id] },
+              { include_blank: "-- Select Bank --" },
+              class: "w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400",
+              required: true %>
+      </div>
+
+      <!-- Your Bank -->
+      <div>
+        <div class="flex gap-2">
+          <%= f.label :your_bank, "Your Bank", class: "block text-gray-700 font-medium mb-1" %>
+          <span class="text-red-500">*</span>
+        </div>
+        <%= f.select :your_bank, ["Axis Bank", "Punjab National Bank", "Union Bank"],
+              { include_blank: "-- Select Your Bank --" },
+              class: "w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400",
+              required: true %>
+      </div>
+
+      <!-- Transaction Type -->
+      <div>
+        <div class="flex gap-2">
+          <%= f.label :transaction_type, "Transaction Type", class: "block text-gray-700 font-medium mb-1" %>
+          <span class="text-red-500">*</span>
+        </div>
+        <%= f.select :transaction_type, ["IMPS", "NEFT", "UPI"],
+              { include_blank: "-- Select Transaction Type --" },
+              class: "w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400",
+              required: true %>
+      </div>
+
+      <!-- Bank Reference No -->
+      <div>
+        <div class="flex gap-2">
+          <%= f.label :bank_reference_no, "Bank Reference No", class: "block text-gray-700 font-medium mb-1" %>
+          <span class="text-red-500">*</span>
+        </div>
+        <%= f.text_field :bank_reference_no,
+              placeholder: "Enter reference number",
+              required: true,
+              class: "w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" %>
+      </div>
+
+      <!-- Amount -->
+      <div>
+        <div class="flex gap-2">
+          <%= f.label :amount, "Amount (₹)", class: "block text-gray-700 font-medium mb-1" %>
+          <span class="text-red-500">*</span>
+        </div>
+        <%= f.number_field :amount,
+              placeholder: "Enter amount",
+              required: true,
+              min: 1,
+              class: "w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" %>
+      </div>
+
+      <!-- Remark -->
+      <div>
+        <%= f.label :remark, "Remark", class: "block text-gray-700 font-medium mb-1" %>
+        <%= f.text_area :remark,
+              placeholder: "Enter remark...",
+              rows: 3,
+              class: "w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" %>
+      </div>
+
+      <!-- Upload File -->
+      <div>
+        <div class="flex gap-2">
+          <%= f.label :receipt_file, "Upload File (Receipt/Proof)", class: "block text-gray-700 font-medium mb-1" %>
+          <span class="text-red-500">*</span>
+        </div>
+        <%= f.file_field :receipt_file,
+              class: "w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400" %>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-end gap-3 pt-4">
+        <button
+          type="button"
+          class="bg-gray-400 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-500 transition">
+          Cancel
+        </button>
+        <%= f.submit "Submit",
+              class: "bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer" %>
+      </div>
+
+    <% end %>
+  </div>
+</div>

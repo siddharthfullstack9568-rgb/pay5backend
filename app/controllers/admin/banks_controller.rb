@@ -5,6 +5,8 @@ class Admin::BanksController < Admin::BaseController
 
   # GET /admin/banks
   def index
+    p "============current_admin"
+    p current_admin
     @banks = Bank.where(user_id: current_admin.id).order(created_at: :desc)
   end
 

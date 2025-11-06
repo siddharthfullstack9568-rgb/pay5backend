@@ -12,7 +12,6 @@
     <h2 class="text-2xl font-semibold text-center text-indigo-600 mb-6">
       Verify OTP
     </h2>
-    <%=@user_email%>
 
     <%= form_with url: verify_otp_login_sessions_path, method: :post, local: true, id: "otpForm" do |f| %>
 

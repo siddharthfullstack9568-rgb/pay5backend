@@ -1,0 +1,2 @@
+module Dealer::WalletsHelper
+end
