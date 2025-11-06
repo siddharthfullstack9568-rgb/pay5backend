@@ -78,39 +78,16 @@ class Dealer::RetailersController < Dealer::BaseController
   end
 
   def dealer_params
-    params.require(:user).permit(:first_name,
-                                 :last_name,
-                                 :email,
-                                 :phone_number,
-                                 :password,
-                                 :otp,
-                                 :verify_otp,
-                                 :otp_expires_at,
-                                 :country_code,
-                                 :alternative_number,
-                                 :aadhaar_number,
-                                 :pan_card,
-                                 :date_of_birth,
-                                 :gender,
-                                 :business_name,
-                                 :business_owner_type,
-                                 :business_nature_type,
-                                 :business_registration_number,
-                                 :gst_number,
-                                 :pan_number,
-                                 :address,
-                                 :city,
-                                 :state,
-                                 :pincode,
-                                 :landmark,
-                                 :username,
-                                 :scheme,
-                                 :referred_by,
-                                 :bank_name,
-                                 :account_number,
-                                 :ifsc_code,
-                                 :account_holder_name,
-                                 :notes,
-                                 :session_token,)
+    params.require(:user).permit(
+      :first_name, :last_name, :email, :phone_number, :password, :otp, :verify_otp,
+      :otp_expires_at, :country_code, :alternative_number, :aadhaar_number, :pan_card,
+      :date_of_birth, :gender, :business_name, :business_owner_type, :business_nature_type,
+      :business_registration_number, :gst_number, :pan_number, :address, :city, :state,
+      :pincode, :landmark, :username, :scheme, :referred_by, :bank_name, :account_number,
+      :ifsc_code, :account_holder_name, :notes, :session_token, :domin_name, :company_type,
+      :registration_certificate, :role_id, :company_name, :user_admin_id, :confirm_password,
+      :scheme_id, :domain_name, :cin_number, :service_id, :address_proof_photo,
+      :store_shop_photo, :passport_photo, :aadhaar_image, :pan_card_image
+    )
   end
 end

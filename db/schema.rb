@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_11_05_064724) do
+ActiveRecord::Schema[7.2].define(version: 2025_11_05_111424) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -70,6 +70,21 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_05_064724) do
     t.bigint "scheme_id"
     t.index ["scheme_id"], name: "index_commissions_on_scheme_id"
     t.index ["service_product_item_id"], name: "index_commissions_on_service_product_item_id"
+  end
+
+  create_table "dmt_transactions", force: :cascade do |t|
+    t.bigint "dmt_id", null: false
+    t.bigint "user_id", null: false
+    t.string "status"
+    t.string "txn_id"
+    t.string "sender_mobile_number"
+    t.string "bank_name"
+    t.string "account_number"
+    t.string "amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dmt_id"], name: "index_dmt_transactions_on_dmt_id"
+    t.index ["user_id"], name: "index_dmt_transactions_on_user_id"
   end
 
   create_table "dmts", force: :cascade do |t|
@@ -389,6 +404,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_05_064724) do
   add_foreign_key "categories", "services"
   add_foreign_key "commissions", "schemes"
   add_foreign_key "commissions", "service_product_items"
+  add_foreign_key "dmt_transactions", "dmts"
+  add_foreign_key "dmt_transactions", "users"
   add_foreign_key "enquiries", "roles"
   add_foreign_key "fund_requests", "users"
   add_foreign_key "service_product_items", "service_products"

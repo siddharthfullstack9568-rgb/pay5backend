@@ -26,6 +26,8 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
 
 
   def recharge
+    p "=================current_user"
+    p current_user
     hierarchy = current_user.find_hierarchy
 
     required = %i[transaction_type recharge_type mobile_number operator amount service_product_id]

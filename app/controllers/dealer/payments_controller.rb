@@ -16,39 +16,80 @@ class Dealer::PaymentsController < Dealer::BaseController
   end
 
   def approved
-    current_dealer = current_dealer
+    p "=================current_dealer"
+    p current_dealer
+
+    # Fetch the dealer’s fund requests
     fund_requests = FundRequest.where(requested_by: current_dealer)
     pin = params[:pin]&.join
     Rails.logger.info "Entered PIN: #{pin}"
+    p "==========current_dealer===="
+    p current_dealer.id
 
-    # Verify admin PIN
+    # ✅ Step 1: Check if dealer has set a PIN
+    if current_dealer.set_pin.blank?
+      flash[:alert] = "Please set your transaction PIN first."
+      return redirect_to dealer_payments_index_path
+    end
+
+    # ✅ Step 2: Verify entered PIN
     if current_dealer.set_pin == pin
-      transaction = WalletTransaction.find(params[:id])
-      Rails.logger.info "Transaction: #{transaction.inspect}"
+      transaction = WalletTransaction.find_by(id: params[:id])
+
+      unless transaction
+        flash[:alert] = "Transaction not found."
+        return redirect_to dealer_payments_index_path
+      end
 
       wallet = transaction.wallet
-      parent_wallet = Wallet.find_by(user_id: 136) # parent wallet object
-      p "==============-------------parent_walletparent_wallet"
-      parent_wallet.update!(balance: parent_wallet.balance.to_f - transaction.amount)
-      # Ensure parent has enough balance for debit
-      if transaction.mode == "debit" && parent_wallet.balance < transaction.amount
-        flash[:alert] = "Insufficient parent wallet balance"
-        redirect_to dealer_payments_index_path and return
+      parent_wallet = Wallet.find_by(user_id: 136) # parent wallet (hardcoded or from hierarchy)
+
+      unless parent_wallet
+        flash[:alert] = "Parent wallet not found."
+        return redirect_to dealer_payments_index_path
       end
 
+      # ✅ Check parent balance before debit
+      if transaction.mode == "debit" && parent_wallet.balance.to_f < transaction.amount.to_f
+        flash[:alert] = "Insufficient parent wallet balance."
+        return redirect_to dealer_payments_index_path
+      end
+
+      # ✅ Perform transaction safely
       ActiveRecord::Base.transaction do
         wallet.update!(balance: wallet.balance + transaction.amount)
+        parent_wallet.update!(balance: parent_wallet.balance.to_f - transaction.amount)
         transaction.update!(status: "success")
-        fund_requests.update(status: "success")
+        fund_requests.update_all(status: "success")
       end
 
-      flash[:notice] = "Transaction approved successfully"
+      flash[:notice] = "Transaction approved successfully."
     else
-      flash[:alert] = "Invalid PIN"
+      flash[:alert] = "Invalid PIN."
     end
 
     redirect_to dealer_payments_index_path
   end
+
+  def reject_payment_request
+    fund_request = FundRequest.find(params[:id])
+
+    if fund_request.update(
+        status: "rejected",
+        reject_note: params[:reject_note],
+        approved_by: current_dealer.id,
+        approved_at: Time.current
+      )
+
+      # ✅ Update related wallet transactions too
+      WalletTransaction.where(fund_request_id: fund_request.id).update_all(status: "rejected")
+
+      redirect_to dealer_payments_index_path, notice: "Fund request rejected successfully."
+    else
+      redirect_to dealer_payments_index_path, alert: "Failed to reject the fund request."
+    end
+  end
+
 
 
   def set_pin
@@ -113,7 +154,7 @@ class Dealer::PaymentsController < Dealer::BaseController
 
   def verify_mpin_otp
     p "================== verify_mpin_otp"
-   p params[:email]
+    p params[:email]
     @user = User.find_by(email: params[:email])
     p "============users verify_mpin_otp"
     p @user
@@ -123,8 +164,8 @@ class Dealer::PaymentsController < Dealer::BaseController
         @user.email_otp == params[:otp] &&
         @user.email_otp_verified_at.present? &&
 
-      # ✅ Clear OTP fields after successful verification
-      @user.update(email_otp: nil, email_otp_verified_at: nil)
+        # ✅ Clear OTP fields after successful verification
+        @user.update(email_otp: nil, email_otp_verified_at: nil)
 
       flash[:notice] = "OTP verified successfully."
       redirect_to dealer_payments_forgot_mpin_path(email: @user.email)

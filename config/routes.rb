@@ -39,12 +39,17 @@ Rails.application.routes.draw do
     post "retailers/:id/update_status", to: "retailers#update_status", as: :retailer_update_status
 
     get "payments/index"
+    post "payments/approved"
+    post "payments/reject_payment_request"
     get "payments/set_pin"
     post "payments/set_pin_update"
     get "payments/forgot_mpin"
     post "payments/send_mpin_otp"
     get "payments/verify_mpin"
     post "payments/verify_mpin_otp"
+
+    get "reports/index"
+    get "reports/report_filter"
 
     get "reset_passwords/reset_password"
     post "reset_passwords/reset_password"
@@ -203,6 +208,7 @@ Rails.application.routes.draw do
         post "dmts/sender_details"
         post "dmts/verify_aadhaar_otp"
         post "dmts/dmt_transactions"
+        post "dmts/dmt_transaction_verify"
 
       end
 
