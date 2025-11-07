@@ -14,6 +14,10 @@
          </a>
         </div>
       </div>
+      <% flash.each do |key, message| %>
+  <p><%= key %>: <%= message %></p>
+<% end %>
+
 	<div class="w-[1470px] relative overflow-x-auto shadow-md sm:rounded-lg pr-5 mt-8">
 		<table class="w-full text-sm text-left text-gray-600">
       <thead class="text-xs uppercase bg-gray-100 text-gray-700">
@@ -153,3 +157,36 @@
 		</table>
 	</div>
 </div>
+
+
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  // Turbo load event (works even with Turbo navigation)
+  document.addEventListener("turbo:load", function() {
+    const noticeMessage = "<%= j(flash[:notice].to_s) %>";
+    const alertMessage  = "<%= j(flash[:alert].to_s) %>";
+
+    if (noticeMessage) {
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: noticeMessage,
+        confirmButtonText: "OK",
+        confirmButtonColor: "#2563EB"
+      });
+    } else if (alertMessage) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: alertMessage,
+        confirmButtonText: "OK",
+        confirmButtonColor: "#DC2626"
+      });
+    }
+  });
+</script>
+</body>
+</html>
+

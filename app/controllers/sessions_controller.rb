@@ -14,7 +14,12 @@ class SessionsController < ApplicationController
       # Only allow active users
       otp = rand(100000..999999).to_s
       user.update(email_otp: otp, email_otp_verified_at: 10.minutes.from_now)
-      UserMailer.send_email_otp(user, otp).deliver_now
+      # UserMailer.send_email_otp(user, otp).deliver_later
+      if user.status
+        Thread.new do
+          UserMailer.send_email_otp(user, otp).deliver_now
+        end
+      end
 
       redirect_to otp_sessions_path(email: user.email)
     else
@@ -34,9 +39,9 @@ class SessionsController < ApplicationController
     user = User.find_by(email: params[:email])
 
     if user.present? &&
-       user.email_otp == params[:otp] &&
-       user.email_otp_verified_at.present? &&
-       user.email_otp_verified_at > Time.current
+        user.email_otp == params[:otp] &&
+        user.email_otp_verified_at.present? &&
+        user.email_otp_verified_at > Time.current
 
       # ✅ Role-based session isolation
       role_key = "#{user.role.title.downcase}_id"

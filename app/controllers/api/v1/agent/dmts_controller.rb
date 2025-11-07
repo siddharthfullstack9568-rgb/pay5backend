@@ -35,7 +35,7 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
   def dmt_transactions
     required = %i[
     receiver_mobile_number account_number confirm_account_number
-    ifsc_code bank_name amount
+    ifsc_code bank_name
   ]
     missing = required.select { |p| params[p].blank? }
 
@@ -94,6 +94,28 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
       render json: { success: false, message: "Transaction failed: #{e.message}" }, status: :unprocessable_entity
     end
   end
+
+  def update_dmt_transaction
+    required = %i[id amount]
+    missing = required.select { |p| params[p].blank? }
+
+    if missing.any?
+      return render json: { success: false, message: "Missing: #{missing.join(', ')}" }, status: :bad_request
+    end
+
+    dmt_transaction = Dmt.find_by(id: params[:id])
+
+    if dmt_transaction.nil?
+      return render json: { success: false, message: "Transaction not found" }, status: :not_found
+    end
+
+    if dmt_transaction.update(amount: params[:amount])
+      render json: { success: true, message: "Transaction updated successfully", data: dmt_transaction }, status: :ok
+    else
+      render json: { success: false, message: dmt_transaction.errors.full_messages.join(", ") }, status: :unprocessable_entity
+    end
+  end
+
 
 
   def dmt_transaction_verify

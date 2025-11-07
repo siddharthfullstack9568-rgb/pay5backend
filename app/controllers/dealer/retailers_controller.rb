@@ -58,7 +58,9 @@ class Dealer::RetailersController < Dealer::BaseController
 
     # Send mail only if the account is active now
     if @retailer.status
-      UserMailer.status_updated(@retailer).deliver_now
+      Thread.new do
+        UserMailer.status_updated(@retailer).deliver_now
+      end
     end
 
     redirect_to dealer_retailers_path, notice: "Retailer status updated successfully."

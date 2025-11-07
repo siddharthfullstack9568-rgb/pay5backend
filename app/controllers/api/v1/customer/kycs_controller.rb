@@ -116,7 +116,7 @@ class Api::V1::Customer::KycsController < Api::V1::Customer::BaseController
         kyc_status: "pending"
       )
 
-      render json: { code: 200, message: "OTP sent to PAN registered mobile", success: true }
+      render json: { code: 200, message: "Next pan card image upload", success: true }
     else
       render json: { code: 400, message: response[:error], success: false }
     end

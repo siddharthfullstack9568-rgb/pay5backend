@@ -2,6 +2,11 @@ class Dealer::WalletsController < Dealer::BaseController
   layout "dealer"
 
   def index
+    @wallet_balance = Wallet.find_by(user_id: current_dealer.id)&.balance || 0.0
+    p "===============wallet_balance"
+    p @wallet_balance
+    @fund_request = FundRequest.where(user_id: current_dealer.id)
+
   end
 
   def add_fund

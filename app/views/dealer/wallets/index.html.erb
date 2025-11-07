@@ -1,15 +1,24 @@
-<div class="w-full mx-auto px-6 py-12 bg-blue-50">
-  <div class="w-[1000px] mx-auto">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Wallet</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-50 min-h-screen">
+
+  <div class="w-[1100px] mx-auto px-6 py-12">
     <!-- Wallet Card -->
     <div class="bg-[#4f6df5] text-white rounded-2xl shadow-lg p-5 flex justify-between items-center">
       <div>
         <h2 class="text-xl font-semibold">My Wallet</h2>
         <p class="text-sm text-white/80 mt-1">Last updated: 2025-07-01 10:30 AM</p>
-        <p class="mt-3 text-sm text-red-300 font-medium">Failed to fetch wallet balance</p>
+        <p class="mt-3 text-2xl font-medium"><%=@wallet_balance%></p>
       </div>
       <div class="flex gap-3">
-        <a href="<%=dealer_wallets_add_fund_path%>"class="bg-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition cursor-pointer">Add Funds</a>
-        <a class="bg-purple-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-600 transition">Withdraw Funds</a>
+        <a href="<%= dealer_wallets_add_fund_path %>" class="bg-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition cursor-pointer">Add Funds</a>
+        <a href="#" class="bg-purple-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-600 transition">Withdraw Funds</a>
       </div>
     </div>
 
@@ -29,74 +38,106 @@
       </div>
     </div>
 
-    <!-- Transaction History -->
-    <div class="bg-white shadow-md rounded-xl w-full max-w-4xl p-6">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">
-      Transaction History
-    </h2>
+    <!-- Transaction History (Stimulus Controlled Tabs) -->
+    <div data-controller="fundtabs" class="bg-white shadow-md rounded-xl w-full mt-6 p-6">
+      <!-- Tabs -->
+      <div class="flex border-b mb-6">
+        <button data-fundtabs-target="button" data-action="click->fundtabs#switch" data-tab="credit"
+          class="flex-1 text-center py-3 font-semibold text-indigo-600 border-b-4 border-indigo-600">
+          Credit History
+        </button>
+        <button data-fundtabs-target="button" data-action="click->fundtabs#switch" data-tab="debit"
+          class="flex-1 text-center py-3 font-semibold text-gray-500 hover:bg-gray-50">
+          Debit History
+        </button>
+        <button data-fundtabs-target="button" data-action="click->fundtabs#switch" data-tab="fund"
+          class="flex-1 text-center py-3 font-semibold text-gray-500 hover:bg-gray-50">
+          Fund Request History
+        </button>
+      </div>
 
-    <div class="overflow-x-auto">
-      <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
-        <thead class="bg-indigo-600 text-white">
-          <tr>
-            <th class="py-3 px-4 text-left text-sm font-semibold">#</th>
-            <th class="py-3 px-4 text-left text-sm font-semibold">Description</th>
-            <th class="py-3 px-4 text-left text-sm font-semibold">Date & Time</th>
-            <th class="py-3 px-4 text-right text-sm font-semibold">Amount (₹)</th>
-            <th class="py-3 px-4 text-center text-sm font-semibold">Status</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100 text-gray-700">
-          <tr class="hover:bg-gray-50 transition">
-            <td class="py-3 px-4">1</td>
-            <td class="py-3 px-4 font-medium flex items-center gap-2">
-              💰 Commission Payout
-            </td>
-            <td class="py-3 px-4 text-sm text-gray-500">2025-06-30 09:00 AM</td>
-            <td class="py-3 px-4 text-right text-green-600 font-semibold">+₹5,000</td>
-            <td class="py-3 px-4 text-center">
-              <span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full">Success</span>
-            </td>
-          </tr>
+      <!-- Credit Table -->
+      <div id="credit" data-fundtabs-target="content" class="tab-content">
+        <div class="overflow-x-auto">
+          <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+            <thead class="bg-gray-100 text-gray-700">
+              <tr>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Txn ID</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Mobile</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Amount</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Date</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Status</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Reason</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-gray-700">
+              <tr class="hover:bg-gray-50 transition">
+                <td class="py-3 px-4">22</td>
+                <td class="py-3 px-4">323243434343</td>
+                <td class="py-3 px-4 text-green-600 font-medium">₹11.0</td>
+                <td class="py-3 px-4 text-sm text-gray-500">11/4/2025, 6:42:47 PM</td>
+                <td class="py-3 px-4"><span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full">success</span></td>
+                <td class="py-3 px-4 text-sm">Reason 2</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-          <tr class="hover:bg-gray-50 transition">
-            <td class="py-3 px-4">2</td>
-            <td class="py-3 px-4 font-medium flex items-center gap-2">
-              🏦 Transfer to Bank
-            </td>
-            <td class="py-3 px-4 text-sm text-gray-500">2025-06-29 03:15 PM</td>
-            <td class="py-3 px-4 text-right text-red-500 font-semibold">-₹1,200</td>
-            <td class="py-3 px-4 text-center">
-              <span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full">Success</span>
-            </td>
-          </tr>
+      <!-- Debit Table -->
+      <div id="debit" data-fundtabs-target="content" class="tab-content hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+            <thead class="bg-gray-100 text-gray-700">
+              <tr>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Txn ID</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Mobile</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Amount</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Date</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Status</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Reason</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-gray-700">
+              <tr class="hover:bg-gray-50 transition">
+                <td class="py-3 px-4">15</td>
+                <td class="py-3 px-4">9876543210</td>
+                <td class="py-3 px-4 text-red-600 font-medium">-₹500.0</td>
+                <td class="py-3 px-4 text-sm text-gray-500">11/4/2025, 5:40:00 PM</td>
+                <td class="py-3 px-4"><span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full">success</span></td>
+                <td class="py-3 px-4 text-sm">Withdrawal</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-          <tr class="hover:bg-gray-50 transition">
-            <td class="py-3 px-4">3</td>
-            <td class="py-3 px-4 font-medium flex items-center gap-2">
-              👥 Referral Bonus
-            </td>
-            <td class="py-3 px-4 text-sm text-gray-500">2025-06-28 01:10 PM</td>
-            <td class="py-3 px-4 text-right text-green-600 font-semibold">+₹2,000</td>
-            <td class="py-3 px-4 text-center">
-              <span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full">Success</span>
-            </td>
-          </tr>
-
-          <tr class="hover:bg-gray-50 transition">
-            <td class="py-3 px-4">4</td>
-            <td class="py-3 px-4 font-medium flex items-center gap-2">
-              💡 Bill Payment
-            </td>
-            <td class="py-3 px-4 text-sm text-gray-500">2025-06-27 11:45 AM</td>
-            <td class="py-3 px-4 text-right text-red-500 font-semibold">-₹500</td>
-            <td class="py-3 px-4 text-center">
-              <span class="bg-red-100 text-red-700 text-xs font-medium px-2 py-1 rounded-full">Failed</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
- 
+      <!-- Fund Table -->
+      <div id="fund" data-fundtabs-target="content" class="tab-content hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+            <thead class="bg-gray-100 text-gray-700">
+              <tr>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Request ID</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Bank</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Amount</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Date</th>
+                <th class="py-3 px-4 text-left text-sm font-semibold border-b">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-gray-700">
+              <tr class="hover:bg-gray-50 transition">
+                <td class="py-3 px-4">101</td>
+                <td class="py-3 px-4">HDFC Bank</td>
+                <td class="py-3 px-4 text-green-600 font-medium">₹1,000</td>
+                <td class="py-3 px-4 text-sm text-gray-500">11/3/2025, 3:45:00 PM</td>
+                <td class="py-3 px-4"><span class="bg-yellow-100 text-yellow-700 text-xs font-medium px-2 py-1 rounded-full">pending</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
+</body>
+</html>

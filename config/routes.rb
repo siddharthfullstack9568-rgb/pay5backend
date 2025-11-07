@@ -216,6 +216,7 @@ Rails.application.routes.draw do
         post "dmts/verify_aadhaar_otp"
         post "dmts/dmt_transactions"
         post "dmts/dmt_transaction_verify"
+        post "dmts/update_dmt_transaction"
 
       end
 
