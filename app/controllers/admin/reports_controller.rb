@@ -4,7 +4,6 @@ class Admin::ReportsController < Admin::BaseController
 # before_action :authenticate_user!
   def index
     @services = Service.all
-
     # Transaction counts grouped by service_product_id for users under current_admin
     transaction_counts = Transaction
     .joins(service_product: { category: :service })    # join the service chain

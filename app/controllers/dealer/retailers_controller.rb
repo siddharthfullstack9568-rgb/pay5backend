@@ -38,15 +38,46 @@ class Dealer::RetailersController < Dealer::BaseController
   end
 
   def edit
+    @services = UserService.where(assignee_id: current_dealer.parent_id).joins(:service).select("services.id, services.title")
   end
 
   def update
-    if @retailer.update(retailer_params)
+    if @retailer.update(dealer_params)
+      # Convert checked service IDs to integers
+      service_ids = Array(params[:user][:service_ids]).map(&:to_i)
+      assigner = current_dealer
+      @user_service = @retailer  # Define this properly
+
+      # Fetch existing assigned service IDs
+      existing_ids = UserService.where(
+        assigner: assigner,
+        assignee: @user_service
+      ).pluck(:service_id)
+
+      # Delete unselected services
+      (existing_ids - service_ids).each do |sid|
+        UserService.where(
+          assigner: assigner,
+          assignee: @user_service,
+          service_id: sid
+        ).destroy_all
+      end
+
+      # Add newly selected services
+      (service_ids - existing_ids).each do |sid|
+        UserService.create!(
+          assigner: assigner,
+          assignee: @user_service,
+          service_id: sid
+        )
+      end
+
       redirect_to dealer_retailers_path, notice: "Retailer updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
   end
+
 
   def update_status
     @retailer = User.find(params[:id])

@@ -168,11 +168,35 @@ class Dealer::PaymentsController < Dealer::BaseController
         @user.update(email_otp: nil, email_otp_verified_at: nil)
 
       flash[:notice] = "OTP verified successfully."
-      redirect_to dealer_payments_forgot_mpin_path(email: @user.email)
+      redirect_to dealer_payments_set_pin_agin_path(email: @user.email)
     else
       flash[:alert] = "Invalid or expired OTP."
       redirect_to dealer_payments_verify_mpin_path(email: params[:email])
     end
+  end
+
+   def set_pin_agin
+
+  end
+
+  def set_pin_agin_update
+    if params[:set_pin].present? && params[:confirm_pin].present?
+      # Step 2: Check if new and confirm PIN match
+      if params[:set_pin] == params[:confirm_pin]
+        if current_dealer.update(set_pin: params[:set_pin])
+          flash[:notice] = "PIN updated successfully"
+        else
+          flash[:alert] = current_dealer.errors.full_messages.to_sentence
+        end
+      else
+        flash[:alert] = "New PIN and Confirm PIN do not match"
+      end
+
+    else
+      flash[:alert] = "All fields (Old PIN, New PIN, Confirm PIN) are required"
+    end
+
+    redirect_to dealer_payments_set_pin_path
   end
 
 

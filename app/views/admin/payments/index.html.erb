@@ -114,7 +114,7 @@
                     Approved
                   </button>
 
-                    <button onclick="openRejectModal(<%= fund.id %>)" class="bg-red-600 text-white px-4 py-2 rounded-md">
+                    <button onclick="openRejectModal(<%= fund.fund_request.id %>)" class="bg-red-600 text-white px-4 py-2 rounded-md">
                   Reject
                 </button>
 
@@ -154,7 +154,11 @@
           Enter 6 Digit Wallet PIN
         </p>
 
-        <%= form_with url: admin_payments_approved_path, method: :post, local: true, class: "space-y-5" do %>
+<%= form_with url: admin_payments_approved_path, 
+              method: :post, 
+              local: true, 
+              data: { turbo: false }, 
+              class: "space-y-5" do %>
           <!-- Hidden Transaction ID -->
           <input type="hidden" name="id" data-verify-target="transactionId">
 

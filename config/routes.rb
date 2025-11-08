@@ -53,9 +53,12 @@ Rails.application.routes.draw do
     post "payments/send_mpin_otp"
     get "payments/verify_mpin"
     post "payments/verify_mpin_otp"
+    get "payments/set_pin_agin"
+    post "payments/set_pin_agin_update"
 
     get "reports/index"
     get "reports/report_filter"
+    get "dmts/index"
 
     get "reset_passwords/reset_password"
     post "reset_passwords/reset_password"
@@ -71,6 +74,7 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
+    get "dmts/index"
     get "enquery/index"
     get "accounts/index"
     get "accounts/new"
@@ -212,12 +216,14 @@ Rails.application.routes.draw do
 
         post "commission_reports/index"
 
+        get "dmts/dmt_transactions_list"
         post "dmts/sender_details"
         post "dmts/verify_aadhaar_otp"
         post "dmts/dmt_transactions"
         post "dmts/dmt_transaction_verify"
         post "dmts/update_dmt_transaction"
-
+        post "dmts/benfisries_dmt_transaction"
+        post "dmts/beneficiary_fetch"
       end
 
     end

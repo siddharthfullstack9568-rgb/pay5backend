@@ -5,6 +5,8 @@ class Admin::PaymentsController < Admin::BaseController
   before_action :verify_pin_before_action, only: [:approved]
 
   def index
+    p "-------------"
+    p current_admin
     fund_requests = FundRequest.where(requested_by: current_admin.id)
     @fund_transactions = WalletTransaction.where(fund_request_id: fund_requests.pluck(:id))
     @fund_transactions = @fund_transactions.order(created_at: :desc)
@@ -53,6 +55,10 @@ class Admin::PaymentsController < Admin::BaseController
         if @transaction.mode == "credit"
           wallet.update!(balance: wallet.balance.to_f + @transaction.amount.to_f)
           parent_wallet.update!(balance: remaining_balance)
+        elsif @transaction.mode == "fund"
+          wallet.update!(balance: wallet.balance.to_f + @transaction.amount.to_f)
+          @transaction.fund_request.update!(status: "success")
+          parent_wallet.update!(balance: remaining_balance)
         elsif @transaction.mode == "debit"
           wallet.update!(balance: wallet.balance.to_f - @transaction.amount.to_f)
         end
@@ -80,7 +86,7 @@ class Admin::PaymentsController < Admin::BaseController
 
       # ✅ Update related wallet transactions too
       WalletTransaction.where(fund_request_id: fund_request.id).update_all(status: "rejected")
-
+      fund_request.update!(status: "rejected")
       redirect_to admin_payments_index_path, notice: "Fund request rejected successfully."
     else
       redirect_to admin_payments_index_path, alert: "Failed to reject the fund request."

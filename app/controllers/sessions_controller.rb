@@ -15,7 +15,7 @@ class SessionsController < ApplicationController
       otp = rand(100000..999999).to_s
       user.update(email_otp: otp, email_otp_verified_at: 10.minutes.from_now)
       # UserMailer.send_email_otp(user, otp).deliver_later
-      if user.status
+      if user
         Thread.new do
           UserMailer.send_email_otp(user, otp).deliver_now
         end

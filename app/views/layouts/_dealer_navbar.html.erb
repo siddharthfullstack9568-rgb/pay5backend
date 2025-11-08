@@ -10,9 +10,9 @@
   <div class="flex items-center gap-6">
     <!-- Wallet Balance -->
     <h4 class="text-xl font-bold text-fuchsia-700">
-      <%#= Wallet.find_by(user_id: current_user.id)&.balance.to_f %>0
+      <%= @wallet_balance %>0
     </h4>
-    <a href="/dealer/wallets/index" class="cursor-pointer bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-lg">My Wallet</a>
+    <a href="<%=dealer_wallets_index_path(mode: "fund")%>" class="cursor-pointer bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-lg">My Wallet</a>
 
     <!-- Notification -->
     <button>

@@ -1,18 +1,18 @@
 class Admin::RechargesAndBillsController < Admin::BaseController
   layout "admin"
- # before_action :require_admin_login
-# before_action :authenticate_user!
- def index
-  if params[:scheme].present?
-    @grouped_commissions = Commission
+  # before_action :require_admin_login
+  # before_action :authenticate_user!
+  def index
+    if params[:scheme].present?
+      @grouped_commissions = Commission
       .includes(service_product_item: :service_product)
       .where(scheme_id: params[:scheme])
       .select('DISTINCT ON (service_product_item_id) commissions.*')
       .group_by { |c| c.service_product_item.service_product.company_name }
-  else
-    @grouped_commissions = {}
+    else
+      @grouped_commissions = {}
+    end
   end
-end
 
 
   def amdmin_commission_set

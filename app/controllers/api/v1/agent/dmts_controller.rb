@@ -1,6 +1,17 @@
 class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
   protect_from_forgery with: :null_session
 
+  def dmt_transactions_list
+    dmts = DmtTransaction.where(user_id: current_user.id)
+
+    render json: {
+      code: 200,
+      message: "Successfully fetched DMT transactions",
+      dmts: dmts
+    }, status: :ok
+  end
+
+
   def sender_details
     required = %i[sender_name sender_mobile_number sender_aadhar_number]
     missing = required.select { |p| params[p].blank? }
@@ -32,6 +43,31 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
     end
   end
 
+  def beneficiary_fetch
+    if params[:mobile].blank?
+      return render json: { success: false, message: "Missing: mobile" }, status: :bad_request
+    end
+
+    # ✅ Find the latest DMT record for this mobile where beneficiaries_status = true
+    dmt = Dmt.where(receiver_mobile_number: params[:mobile], beneficiaries_status: true)
+    .order(created_at: :desc)
+    .first
+
+    if dmt.present?
+      render json: {
+        code: 200,
+        success: true,
+        message: "Beneficiary details fetched successfully.",
+        data: dmt.as_json(only: [:bank_name, :account_number, :confirm_account_number, :ifsc_code, :receiver_name])
+      }, status: :ok
+    else
+      render json: { success: false, message: "No beneficiary found for this mobile number." }, status: :not_found
+    end
+  end
+
+
+
+
   def dmt_transactions
     required = %i[
     receiver_mobile_number account_number confirm_account_number
@@ -49,11 +85,12 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
     end
 
     amount = params[:amount].to_f
+    beneficiaries_status = params[:beneficiary].present? && params[:beneficiary].to_s == "true"
 
     ActiveRecord::Base.transaction do
       # ✅ Create DMT record
       dmt = Dmt.create!(
-        sender_name: params[:sender_name],
+        sender_full_name: params[:sender_name],
         sender_mobile_number: params[:sender_mobile_number],
         sender_aadhar_number: params[:sender_aadhar_number],
         receiver_name: params[:receiver_name],
@@ -64,13 +101,16 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
         bank_name: params[:bank_name],
         branch_name: params[:branch_name],
         datetime: Time.current,
-        status: "pending"
+        status: "pending",
+        parent_id: current_user.parent_id,
+        amount: params[:amount],
+        beneficiaries_status: beneficiaries_status
       )
 
       # ✅ Generate unique transaction ID
       txn_id = "TXN#{SecureRandom.hex(6).upcase}"
 
-      # ✅ Create related DMT Transaction with all details
+      # ✅ Create related DMT Transaction
       dmt_transaction = DmtTransaction.create!(
         dmt_id: dmt.id,
         user_id: current_user.id,
@@ -84,16 +124,18 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
 
       render json: {
         success: true,
-        message: "Beneficiary DMT transaction created successfully.",
+        message: beneficiaries_status ? "Beneficiary DMT transaction created successfully." : "DMT transaction created successfully.",
         data: {
           dmt: dmt,
           dmt_transaction: dmt_transaction
         }
       }, status: :created
+
     rescue => e
       render json: { success: false, message: "Transaction failed: #{e.message}" }, status: :unprocessable_entity
     end
   end
+
 
   def update_dmt_transaction
     required = %i[id amount]
