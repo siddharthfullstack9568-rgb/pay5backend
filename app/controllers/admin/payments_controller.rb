@@ -38,7 +38,6 @@ class Admin::PaymentsController < Admin::BaseController
     pin = params[:pin]&.join # Combine array to string
     p "=============pinpin"
     p pin
-
     if current_admin.set_pin == pin
       @transaction = WalletTransaction.find(params[:id])
       parent_wallet = Wallet.find_by(user_id: current_admin.id) # parent wallet object

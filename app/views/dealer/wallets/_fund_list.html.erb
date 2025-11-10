@@ -31,7 +31,7 @@
             <span class="bg-red-100 text-yellow-700 text-xs font-medium px-2 py-1 rounded-full"><%= request.status %></span>
           <%end%>
         </td>
-        <td class="py-3 px-4 text-sm"><%#= request.reason.presence || "—" %></td>
+        <td class="py-3 px-4 text-sm"><%= request.reject_note%></td>
       </tr>
       <% end %>
     </tbody>

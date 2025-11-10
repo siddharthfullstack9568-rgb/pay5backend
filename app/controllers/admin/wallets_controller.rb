@@ -46,7 +46,7 @@ class Admin::WalletsController < Admin::BaseController
     )
 
     if @fund_request.save
-      # Find or create wallet for current dealer
+      # Find or create wallet for current admin
       wallet = Wallet.find_or_create_by(user_id: current_admin.id) do |w|
         w.balance = 0
       end
@@ -66,7 +66,7 @@ class Admin::WalletsController < Admin::BaseController
         description: "Fund request created by user #{current_admin.id}"
       )
 
-      redirect_to dealer_wallets_index_path(mode: "fund"), notice: "Fund request submitted successfully!"
+      redirect_to admin_wallets_index_path(mode: "fund"), notice: "Fund request submitted successfully!"
     else
       @banks = Bank.where(user_id: current_admin.parent_id)
       render :add_fund, status: :unprocessable_entity

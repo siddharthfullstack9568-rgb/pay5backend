@@ -14,31 +14,70 @@ class Superadmin::PaymentsController < Superadmin::BaseController
     Rails.logger.info @fund_transactions.inspect
   end
 
-  def approved
-    super_admin_id = current_superadmin.id
-    fund_requests = FundRequest.where(requested_by: super_admin_id)
-    pin = params[:pin]&.join
-    Rails.logger.info "Entered PIN: #{pin}"
+  # def approved
+  #   super_admin_id = current_superadmin
+  #   fund_requests = FundRequest.where(requested_by: super_admin_id)
+  #   pin = params[:pin]&.join
+  #   Rails.logger.info "Entered PIN: #{pin}"
 
-    # Verify admin PIN
-    if super_admin_id.set_pin == pin
-      transaction = WalletTransaction.find(params[:id])
-      Rails.logger.info "Transaction: #{transaction.inspect}"
+  #   # Verify admin PIN
+  #   if super_admin_id.set_pin == pin
+  #     transaction = WalletTransaction.find(params[:id])
+  #     Rails.logger.info "Transaction: #{transaction.inspect}"
 
-      wallet = transaction.wallet
+  #     wallet = transaction.wallet
+  #     parent_wallet = Wallet.find_by(user_id: current_superadmin.id) # parent wallet object
+  #     p "==============-------------parent_walletparent_wallet"
+  #     parent_wallet.update!(balance: parent_wallet.balance.to_f - transaction.amount)
+  #     # Ensure parent has enough balance for debit
+  #     if transaction.mode == "debit" && parent_wallet.balance < transaction.amount
+  #       flash[:alert] = "Insufficient parent wallet balance"
+  #       redirect_to superadmin_payments_index_path and return
+  #     end
+
+  #     ActiveRecord::Base.transaction do
+  #       wallet.update!(balance: wallet.balance + transaction.amount)
+  #       transaction.update!(status: "success")
+  #       fund_requests.update(status: "success")
+  #     end
+
+  #     flash[:notice] = "Transaction approved successfully"
+  #   else
+  #     flash[:alert] = "Invalid PIN"
+  #   end
+
+  #   redirect_to superadmin_payments_index_path
+  # end
+
+   def approved
+    pin = params[:pin]&.join # Combine array to string
+    p "=============pinpin"
+    p pin
+    if current_superadmin.set_pin == pin
+      @transaction = WalletTransaction.find(params[:id])
       parent_wallet = Wallet.find_by(user_id: current_superadmin.id) # parent wallet object
-      p "==============-------------parent_walletparent_wallet"
-      parent_wallet.update!(balance: parent_wallet.balance.to_f - transaction.amount)
-      # Ensure parent has enough balance for debit
-      if transaction.mode == "debit" && parent_wallet.balance < transaction.amount
-        flash[:alert] = "Insufficient parent wallet balance"
-        redirect_to superadmin_payments_index_path and return
+      wallet = @transaction.wallet
+
+      if parent_wallet.balance.to_f < @transaction.amount.to_f
+        flash[:alert] = "Balance is low"
+        return redirect_to superadmin_payments_index_path
       end
 
+      remaining_balance = parent_wallet.balance.to_f - @transaction.amount.to_f
+
       ActiveRecord::Base.transaction do
-        wallet.update!(balance: wallet.balance + transaction.amount)
-        transaction.update!(status: "success")
-        fund_requests.update(status: "success")
+        if @transaction.mode == "credit"
+          wallet.update!(balance: wallet.balance.to_f + @transaction.amount.to_f)
+          parent_wallet.update!(balance: remaining_balance)
+        elsif @transaction.mode == "fund"
+          wallet.update!(balance: wallet.balance.to_f + @transaction.amount.to_f)
+          @transaction.fund_request.update!(status: "success")
+          parent_wallet.update!(balance: remaining_balance)
+        elsif @transaction.mode == "debit"
+          wallet.update!(balance: wallet.balance.to_f - @transaction.amount.to_f)
+        end
+
+        @transaction.update!(status: "success")
       end
 
       flash[:notice] = "Transaction approved successfully"
@@ -48,6 +87,46 @@ class Superadmin::PaymentsController < Superadmin::BaseController
 
     redirect_to superadmin_payments_index_path
   end
+
+
+
+  # def reject_payment_request
+  #   fund_request = FundRequest.find(params[:id])
+
+  #   if fund_request.update(
+  #       status: "rejected",
+  #       reject_note: params[:reject_note],
+  #       approved_by: current_superadmin.id,
+  #       approved_at: Time.current
+  #     )
+
+  #     # ✅ Update related wallet transactions too
+  #     WalletTransaction.where(fund_request_id: fund_request.id).update_all(status: "rejected")
+
+  #     redirect_to superadmin_fund_requests_path, notice: "Fund request rejected successfully."
+  #   else
+  #     redirect_to superadmin_fund_requests_path, alert: "Failed to reject the fund request."
+  #   end
+  # end
+
+  #  def reject_payment_request
+  #   fund_request = FundRequest.find(params[:id])
+
+  #   if fund_request.update(
+  #       status: "rejected",
+  #       reject_note: params[:reject_note],
+  #       approved_by: current_superadmin.id,
+  #       approved_at: Time.current
+  #     )
+
+  #     # ✅ Update related wallet transactions too
+  #     WalletTransaction.where(fund_request_id: fund_request.id).update_all(status: "rejected")
+  #     fund_request.update!(status: "rejected")
+  #     redirect_to superadmin_payments_index_path, notice: "Fund request rejected successfully."
+  #   else
+  #     redirect_to superadmin_payments_index_path, alert: "Failed to reject the fund request."
+  #   end
+  # end
 
   def reject_payment_request
     fund_request = FundRequest.find(params[:id])
@@ -61,10 +140,10 @@ class Superadmin::PaymentsController < Superadmin::BaseController
 
       # ✅ Update related wallet transactions too
       WalletTransaction.where(fund_request_id: fund_request.id).update_all(status: "rejected")
-
-      redirect_to superadmin_fund_requests_path, notice: "Fund request rejected successfully."
+      fund_request.update!(status: "rejected")
+      redirect_to superadmin_payments_index_path, notice: "Fund request rejected successfully."
     else
-      redirect_to superadmin_fund_requests_path, alert: "Failed to reject the fund request."
+      redirect_to superadmin_payments_index_path, alert: "Failed to reject the fund request."
     end
   end
 
