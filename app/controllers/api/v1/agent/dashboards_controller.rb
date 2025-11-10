@@ -2,7 +2,7 @@ class Api::V1::Agent::DashboardsController < Api::V1::Agent::BaseController
   protect_from_forgery with: :null_session
 
   def index
-    transactions = Transaction.where(user_id: current_user.id)
+    transactions = Transaction.where(user_id: current_user.id).order(created_at: :desc)
 
     # Calculate wallet balance dynamically
     wallet_balance = Wallet.where(user_id: current_user.id).pluck(:balance).sum
@@ -31,7 +31,7 @@ class Api::V1::Agent::DashboardsController < Api::V1::Agent::BaseController
         { category: "Insurance", percent: 31 },
         { category: "Loans", percent: 23 }
       ],
-      transactions: transactions
+      transactions: transactions.limit(10)
     }
   end
 
