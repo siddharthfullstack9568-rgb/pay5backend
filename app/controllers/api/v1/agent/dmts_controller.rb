@@ -10,7 +10,7 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
     render json: {
       code: 200,
       message: "Successfully fetched DMT transactions",
-      data: dmt_transactions.map do |txn|
+      dmts: dmt_transactions.map do |txn|
         {
           id: txn.id,
           txn_id: txn.txn_id,
