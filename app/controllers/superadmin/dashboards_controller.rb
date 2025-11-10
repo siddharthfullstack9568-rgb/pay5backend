@@ -4,6 +4,9 @@ class Superadmin::DashboardsController < Superadmin::BaseController
   # before_action -> { authorize_role(:superadmin) }
 
   def index
+    @balance = Wallet.where(user_id: current_superadmin).pluck(:balance).sum
+    p "=====================@balance"
+    p @balance
     @total_users = User.where(role_id: 5).count
     @total_transcations = Transaction.all.count
     @users = User.where(role_id: 5)

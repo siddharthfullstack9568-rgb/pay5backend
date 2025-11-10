@@ -1,4 +1,4 @@
-class Superadmin::AccountsController < ApplicationController
+class Superadmin::AccountsController < Superadmin::BaseController
 
   def index
     @account_transaction = AccountTransaction.where(parent_id: 136, txn_type: "Credit").order(created_at: :desc)

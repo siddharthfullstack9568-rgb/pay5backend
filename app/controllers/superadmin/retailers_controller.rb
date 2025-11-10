@@ -1,4 +1,4 @@
-class Superadmin::RetailersController < ApplicationController
+class Superadmin::RetailersController < Superadmin::BaseController
   before_action :set_retailer, only: [:show, :edit, :update, :destroy]
 
   def index

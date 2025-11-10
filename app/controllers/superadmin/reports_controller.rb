@@ -1,4 +1,4 @@
-class Superadmin::ReportsController < ApplicationController
+class Superadmin::ReportsController < Superadmin::BaseController
   def index
   end
 end

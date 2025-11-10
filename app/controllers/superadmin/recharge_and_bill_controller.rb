@@ -1,16 +1,45 @@
-class Superadmin::RechargeAndBillController < ApplicationController
+class Superadmin::RechargeAndBillController < Superadmin::BaseController
 
-  def index
-    if params[:scheme].present?
+def index
+  # Check dynamically if Commission table has scheme_id column
+  has_scheme_column = Commission.column_names.include?("scheme_id")
+
+  if has_scheme_column
+    # ✅ Case 1: Commission model has scheme_id — apply filter logic
+    if params[:scheme].present? && params[:scheme] != "ALL"
       @grouped_commissions = Commission
+        .includes(service_product_item: :service_product)
+        .where(scheme_id: params[:scheme])
+        .select('DISTINCT ON (service_product_item_id) commissions.*')
+        .group_by { |c| c.service_product_item.service_product.company_name }
+    else
+      @grouped_commissions = Commission
+        .includes(service_product_item: :service_product)
+        .select('DISTINCT ON (service_product_item_id) commissions.*')
+        .group_by { |c| c.service_product_item.service_product.company_name }
+    end
+
+  else
+    # ❌ Case 2: Commission has no scheme_id — update Scheme table instead
+    if params[:scheme].present? && params[:scheme] != "ALL"
+      selected_scheme = Scheme.find_by(id: params[:scheme])
+      if selected_scheme
+        # Example: mark this scheme active or update a flag/column
+        Scheme.update_all(active: false) # optional line — resets all
+        selected_scheme.update(active: true)
+        flash[:notice] = "✅ Scheme updated to #{selected_scheme.scheme_name}"
+      else
+        flash[:alert] = "⚠️ Selected scheme not found."
+      end
+    end
+
+    # Show all commissions by default
+    @grouped_commissions = Commission
       .includes(service_product_item: :service_product)
-      .where(scheme_id: params[:scheme])
       .select('DISTINCT ON (service_product_item_id) commissions.*')
       .group_by { |c| c.service_product_item.service_product.company_name }
-    else
-      @grouped_commissions = {}
-    end
   end
+end
 
 
   def commission_set

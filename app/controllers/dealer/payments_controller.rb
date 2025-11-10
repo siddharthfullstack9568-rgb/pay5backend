@@ -5,10 +5,9 @@ class Dealer::PaymentsController < Dealer::BaseController
 
   def index
     user_id = current_dealer
-    # Get all fund requests requested by user 136
+
     fund_requests = FundRequest.where(requested_by: user_id)
 
-    # Get all wallet transactions linked to these fund requests
     @fund_transactions = WalletTransaction.where(fund_request_id: fund_requests.pluck(:id)).order(created_at: :desc)
 
     Rails.logger.info "==================@fund_transactions"
@@ -42,7 +41,7 @@ class Dealer::PaymentsController < Dealer::BaseController
       end
 
       wallet = transaction.wallet
-      parent_wallet = Wallet.find_by(user_id: 136) # parent wallet (hardcoded or from hierarchy)
+      parent_wallet = Wallet.find_by(user_id: current_dealer.id) # parent wallet (hardcoded or from hierarchy)
 
       unless parent_wallet
         flash[:alert] = "Parent wallet not found."
@@ -50,7 +49,7 @@ class Dealer::PaymentsController < Dealer::BaseController
       end
 
       # ✅ Check parent balance before debit
-      if transaction.mode == "debit" && parent_wallet.balance.to_f < transaction.amount.to_f
+      if transaction.mode == "fund" && parent_wallet.balance.to_f < transaction.amount.to_f
         flash[:alert] = "Insufficient parent wallet balance."
         return redirect_to dealer_payments_index_path
       end
@@ -175,7 +174,7 @@ class Dealer::PaymentsController < Dealer::BaseController
     end
   end
 
-   def set_pin_agin
+  def set_pin_agin
 
   end
 

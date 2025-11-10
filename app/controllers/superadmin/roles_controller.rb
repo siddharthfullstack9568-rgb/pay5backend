@@ -1,4 +1,4 @@
-class Superadmin::RolesController < ApplicationController
+class Superadmin::RolesController < Superadmin::BaseController
   def index
   end
 end

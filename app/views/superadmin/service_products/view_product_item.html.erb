@@ -25,11 +25,11 @@
           <td class="px-6 py-4"><%=procuts.name%></td>
           <td class="px-6 py-4"><%=procuts.service_product.company_name%></td>
           <td class="flex px-6 py-4 justify-center gap-2">
-            <a href="<%= edit_superadmin_service_product_path(id: procuts, service_id: @service_id) %>" 
+            <a href="<%= prodcut_item_edit_superadmin_service_product_path(id: procuts, service_id: @service_id) %>" 
                  class="px-3 py-1 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition">
                 Edit
               </a>
-          <%= button_to "Delete", superadmin_service_products_path(id: procuts, service_id: @service_id), 
+          <%= button_to "Delete", prodcut_item_destroy_superadmin_service_product_path(id: procuts, service_id: @service_id), 
               method: :delete, 
               data: { turbo_confirm: "Are you sure you want to delete this category?" }, 
               class: "px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition" %>

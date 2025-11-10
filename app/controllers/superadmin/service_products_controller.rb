@@ -54,7 +54,7 @@ class Superadmin::ServiceProductsController < Superadmin::BaseController
 
   def view_product_item
     @service_product_id = params[:id]
-    @service_producut_items = ServiceProductItem.where(service_product_id: @service_product_id)
+    @service_producut_items = ServiceProductItem.where(service_product_id: @service_product_id).order(created_at: :desc)
     p "==============ServiceProductItem"
     p @service_producut_items
   end
@@ -66,9 +66,47 @@ class Superadmin::ServiceProductsController < Superadmin::BaseController
   end
 
   def prodcut_item_create
-    @service_product_item = ServiceProductItem.create!(service_product_id: params[:id], name: params[:company_name])
-    redirect_to view_product_item_superadmin_service_product_path(id: @service_product_item.service_product_id)
+    ActiveRecord::Base.transaction do
+      @service_product_item = ServiceProductItem.create!(
+        service_product_id: params[:id],
+        name: params[:company_name]
+      )
+
+      Commission.create!(
+        service_product_item_id: @service_product_item.id
+      )
+    end
+
+    redirect_to view_product_item_superadmin_service_product_path(id: @service_product_item.service_product_id),
+      notice: "Product item and commission created successfully."
+  rescue ActiveRecord::RecordInvalid => e
+    # Rollback hota hai automatically if exception occurs
+    flash[:alert] = "Failed to create product item or commission: #{e.message}"
+    redirect_back(fallback_location: superadmin_service_products_path)
   end
+
+  def prodcut_item_edit
+    @service_product_item = ServiceProductItem.find(params[:id])
+  end
+
+  def prodcut_item_update
+    @service_product_item = ServiceProductItem.find(params[:id])
+
+    if @service_product_item.update(name: params[:service_product_item][:company_name])
+      redirect_to view_product_item_superadmin_service_product_path(id: @service_product_item.service_product_id),
+        notice: "Service product updated successfully"
+    else
+      render :prodcut_item_edit, status: :unprocessable_entity
+    end
+  end
+
+  def prodcut_item_destroy
+    @service_product_item = ServiceProductItem.find(params[:id])
+    @service_product_item.destroy
+    redirect_to view_product_item_superadmin_service_product_path(id: @service_product_item.service_product_id),
+      notice: "Service product item deleted successfully"
+  end
+
 
   private
 

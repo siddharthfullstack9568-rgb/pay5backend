@@ -3,73 +3,119 @@ class Admin::RechargesAndBillsController < Admin::BaseController
   # before_action :require_admin_login
   # before_action :authenticate_user!
   def index
-    if params[:scheme].present?
+    # Check dynamically if Commission table has scheme_id column
+    has_scheme_column = Commission.column_names.include?("scheme_id")
+
+    if has_scheme_column
+      # ✅ Case 1: Commission model has scheme_id — apply filter logic
+      if params[:scheme].present? && params[:scheme] != "ALL"
+        @grouped_commissions = Commission
+        .includes(service_product_item: :service_product)
+        .where(scheme_id: params[:scheme])
+        .select('DISTINCT ON (service_product_item_id) commissions.*')
+        .group_by { |c| c.service_product_item.service_product.company_name }
+      else
+        @grouped_commissions = Commission
+        .includes(service_product_item: :service_product)
+        .select('DISTINCT ON (service_product_item_id) commissions.*')
+        .group_by { |c| c.service_product_item.service_product.company_name }
+      end
+
+    else
+      # ❌ Case 2: Commission has no scheme_id — update Scheme table instead
+      if params[:scheme].present? && params[:scheme] != "ALL"
+        selected_scheme = Scheme.find_by(id: params[:scheme])
+        if selected_scheme
+          # Example: mark this scheme active or update a flag/column
+          Scheme.update_all(active: false) # optional line — resets all
+          selected_scheme.update(active: true)
+          flash[:notice] = "✅ Scheme updated to #{selected_scheme.scheme_name}"
+        else
+          flash[:alert] = "⚠️ Selected scheme not found."
+        end
+      end
+
+      # Show all commissions by default
       @grouped_commissions = Commission
       .includes(service_product_item: :service_product)
-      .where(scheme_id: params[:scheme])
       .select('DISTINCT ON (service_product_item_id) commissions.*')
       .group_by { |c| c.service_product_item.service_product.company_name }
-    else
-      @grouped_commissions = {}
     end
   end
-
 
   def amdmin_commission_set
-    if params[:scheme].blank?
-      redirect_to admin_recharges_and_bills_index_path, alert: "Please select a scheme before submitting commissions."
-      return
-    end
+  if params[:scheme].blank?
+    redirect_to admin_recharges_and_bills_index_path, alert: "Please select a scheme before submitting commissions."
+    return
+  end
 
-    commission_type = params[:commission_type]
-    scheme = Scheme.find(params[:scheme])
+  commission_type = params[:commission_type]
+  scheme = Scheme.find(params[:scheme])
 
-    Rails.logger.info "Commission set started for scheme ID #{scheme.id}"
+  Rails.logger.info "Commission set started for scheme ID #{scheme.id}"
 
-    error_messages = []
-    success_count = 0
+  error_messages = []
+  success_count = 0
 
-    params[:commissions].each do |item_id, commission_params|
-      begin
-        item = ServiceProductItem.find(item_id)
+  params[:commissions].each do |item_id, commission_params|
+    begin
+      item = ServiceProductItem.find(item_id)
 
-        # Convert commissions to float and treat blank as 0
-        master_commission = commission_params[:master_commission].to_f
-        dealer_commission = commission_params[:dealer_commission].to_f
-        retailer_commission = commission_params[:retailer_commission].to_f
+      # Convert to float and treat blank as 0
+      master_commission = commission_params[:master_commission].to_f
+      dealer_commission = commission_params[:dealer_commission].to_f
+      retailer_commission = commission_params[:retailer_commission].to_f
 
-        total_commission = master_commission + dealer_commission + retailer_commission
+      total_commission = master_commission + dealer_commission + retailer_commission
 
-        if total_commission <= scheme.commision_rate.to_f
-          # Save commissions only if the total is within the allowed limit
-          save_commission(item, scheme, commission_type, current_admin.role.title, "master", commission_params[:master_commission])
-          save_commission(item, scheme, commission_type, current_admin.role.title, "dealer", commission_params[:dealer_commission])
-          save_commission(item, scheme, commission_type, current_admin.role.title, "retailer", commission_params[:retailer_commission])
+      # 🔥 NEW LINE: Fetch superadmin→admin commission for this item+scheme
+      superadmin_admin_commission = Commission.find_by(
+        service_product_item_id: item.id,
+        scheme_id: scheme.id,
+        from_role: "superadmin",
+        to_role: "admin"
+      )&.value.to_f
 
-          success_count += 1
-          Rails.logger.info "Commissions saved for item #{item.name}"
-        else
-          message = "For item #{item.name}, total commission (#{total_commission}) exceeds scheme limit (#{scheme.commision_rate})."
+      # 🔥 NEW CONDITION:
+      if current_admin.role.title == "admin"
+        if total_commission > superadmin_admin_commission
+          message = "For item #{item.name}, total commission (#{total_commission}) exceeds superadmin limit (#{superadmin_admin_commission})."
           error_messages << message
           Rails.logger.warn message
+          next
         end
-      rescue ActiveRecord::RecordNotFound
-        message = "Service product item with ID #{item_id} not found."
-        error_messages << message
-        Rails.logger.error message
-      rescue => e
-        message = "For item #{item_id}, error: #{e.message}"
-        error_messages << message
-        Rails.logger.error message
       end
-    end
 
-    if error_messages.any?
-      redirect_to admin_recharges_and_bills_index_path, alert: error_messages.join(", ")
-    else
-      redirect_to admin_recharges_and_bills_index_path, notice: "#{success_count} item(s) commissions saved successfully!"
+      # Existing scheme-level limit check
+      if total_commission <= scheme.commision_rate.to_f
+        save_commission(item, scheme, commission_type, current_admin.role.title, "master", commission_params[:master_commission])
+        save_commission(item, scheme, commission_type, current_admin.role.title, "dealer", commission_params[:dealer_commission])
+        save_commission(item, scheme, commission_type, current_admin.role.title, "retailer", commission_params[:retailer_commission])
+        success_count += 1
+        Rails.logger.info "Commissions saved for item #{item.name}"
+      else
+        message = "For item #{item.name}, total commission (#{total_commission}) exceeds scheme limit (#{scheme.commision_rate})."
+        error_messages << message
+        Rails.logger.warn message
+      end
+
+    rescue ActiveRecord::RecordNotFound
+      message = "Service product item with ID #{item_id} not found."
+      error_messages << message
+      Rails.logger.error message
+    rescue => e
+      message = "For item #{item_id}, error: #{e.message}"
+      error_messages << message
+      Rails.logger.error message
     end
   end
+
+  if error_messages.any?
+    redirect_to admin_recharges_and_bills_index_path, alert: error_messages.join(", ")
+  else
+    redirect_to admin_recharges_and_bills_index_path, notice: "#{success_count} item(s) commissions saved successfully!"
+  end
+end
 
   def transaction
     user_ids = current_admin.all_descendant_ids << current_admin.id
@@ -97,8 +143,6 @@ class Admin::RechargesAndBillsController < Admin::BaseController
     logger.info "------------ Tr -------------"
     logger.info @tr.to_sql # better than inspecting all records
   end
-
-
 
 
 
