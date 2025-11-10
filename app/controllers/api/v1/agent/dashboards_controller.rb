@@ -3,8 +3,8 @@ class Api::V1::Agent::DashboardsController < Api::V1::Agent::BaseController
 
   def index
     transactions = Transaction.where(user_id: current_user.id, status: "success").order(created_at: :desc)
-
-
+    total_balance = TransactionCommission.where(user_id: current_user.id).pluck(:commission_amount).sum
+   
     # Calculate wallet balance dynamically
     wallet_balance = Wallet.where(user_id: current_user.id).pluck(:balance).sum
 
@@ -23,8 +23,8 @@ class Api::V1::Agent::DashboardsController < Api::V1::Agent::BaseController
     end
 
     render json: {
-      total_balance: transactions.sum { |t| t.amount.to_f },
-      total_expends: 0.0,
+      total_balance: total_balance,
+      total_expends: 300,
       wallet: wallet_balance,
       transaction_trend: transaction_trend.sort_by { |t| Date::ABBR_MONTHNAMES.index(t[:month]) }, # correct order
       revenue_overview: [
