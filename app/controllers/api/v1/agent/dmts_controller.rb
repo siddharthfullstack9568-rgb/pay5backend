@@ -22,7 +22,6 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
           sender_mobile_number: txn.sender_mobile_number,
           account_number: txn.account_number,
           bank_name: txn.bank_name,
-          amount: txn.amount,
 
           # 🔹 Linked Dmt fields
           receiver_name: dmt&.receiver_name,
@@ -33,7 +32,8 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
           branch_name: dmt&.branch_name,
           datetime: dmt&.datetime,
           beneficiaries_status: dmt&.beneficiaries_status,
-          parent_id: dmt&.parent_id
+          parent_id: dmt&.parent_id,
+          amount: dmt.amount,
         }
       end
     }, status: :ok
