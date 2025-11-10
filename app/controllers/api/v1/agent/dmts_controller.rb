@@ -2,14 +2,42 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
   protect_from_forgery with: :null_session
 
   def dmt_transactions_list
-    dmts = DmtTransaction.where(user_id: current_user.id)
+    dmt_transactions = DmtTransaction
+    .includes(:dmt)
+    .where(user_id: current_user.id)
+    .order(created_at: :desc)
 
     render json: {
       code: 200,
       message: "Successfully fetched DMT transactions",
-      dmts: dmts
+      data: dmt_transactions.map do |txn|
+        {
+          id: txn.id,
+          txn_id: txn.txn_id,
+          status: txn.status,
+          amount: txn.amount,
+          created_at: txn.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+          # 🔹 DmtTransaction fields
+          sender_mobile_number: txn.sender_mobile_number,
+          account_number: txn.account_number,
+          bank_name: txn.bank_name,
+
+          # 🔹 Linked Dmt fields (safe navigation used in case dmt missing)
+          receiver_name: txn.dmt&.receiver_name,
+          sender_name: txn.dmt&.sender_name,
+          ifsc_code: txn.dmt&.ifsc_code,
+          sender_aadhar_number: txn.dmt&.sender_aadhar_number,
+          branch_name: txn.dmt&.branch_name,
+          datetime: txn.dmt&.datetime,
+
+          # Optional fields
+          beneficiaries_status: txn.dmt&.beneficiaries_status,
+          parent_id: txn.dmt&.parent_id
+        }
+      end
     }, status: :ok
   end
+
 
 
   def sender_details
