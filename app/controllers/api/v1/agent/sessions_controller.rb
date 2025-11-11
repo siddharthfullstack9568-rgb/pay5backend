@@ -32,7 +32,14 @@ class Api::V1::Agent::SessionsController < ApplicationController
 
       # Send OTP email
       # UserMailer.send_email_otp(user: user, otp: otp).deliver_now
-      UserMailer.send_email_otp(@user, otp).deliver_now
+      Thread.new do
+        begin
+          UserMailer.send_email_otp(@user, otp).deliver_now
+        rescue => e
+          Rails.logger.error("Email OTP send failed for user=#{@user.id}: #{e.message}")
+        end
+      end
+      # UserMailer.send_email_otp(@user, otp).deliver_now
 
       render json: {
         code: 200,

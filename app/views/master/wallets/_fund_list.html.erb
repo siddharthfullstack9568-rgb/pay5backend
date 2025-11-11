@@ -1,0 +1,38 @@
+<table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+  <thead class="bg-gray-100 text-gray-700">
+    <tr>
+      <th class="py-3 px-4 text-left text-sm font-semibold border-b">Txn ID</th>
+      <th class="py-3 px-4 text-left text-sm font-semibold border-b">Mobile</th>
+      <th class="py-3 px-4 text-left text-sm font-semibold border-b">Mode</th>
+      <th class="py-3 px-4 text-left text-sm font-semibold border-b">Date</th>
+      <th class="py-3 px-4 text-left text-sm font-semibold border-b">Account No</th>
+      <th class="py-3 px-4 text-left text-sm font-semibold border-b">Deposit Bank</th>
+      <th class="py-3 px-4 text-left text-sm font-semibold border-b">Amount</th>
+      <th class="py-3 px-4 text-left text-sm font-semibold border-b">Status</th>
+      <th class="py-3 px-4 text-left text-sm font-semibold border-b">Remark</th>
+    </tr>
+    
+    <tbody class="divide-y divide-gray-100 text-gray-700">
+      <% fund_request.each do |request| %>
+      <tr class="hover:bg-gray-50 transition">
+        <td class="py-3 px-4"><%= request.id %></td>
+        <td class="py-3 px-4"><%= request.transaction_type %></td>
+        <td class="py-3 px-4"><%= request.mode %></td>
+        <td class="py-3 px-4 text-sm text-gray-500"><%= request.created_at.strftime("%d/%m/%Y, %I:%M:%S %p") %></td>
+        <td class="py-3 px-4"><%= request.account_number %></td>
+        <td class="py-3 px-4 text-sm text-gray-500"><%=  request.deposit_bank %></td>
+        <td class="py-3 px-4 text-green-600 font-medium">₹<%= request.amount %></td>
+        <td class="py-3 px-4">
+          <% if request.status == "success" %>
+          <span class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full"><%= request.status %></span>
+          <% elsif request.status == "rejected" %>
+          <span class="bg-red-400 text-xs font-medium px-2 py-1 rounded-full"><%= request.status %></span>
+          <% else %>
+            <span class="bg-red-100 text-yellow-700 text-xs font-medium px-2 py-1 rounded-full"><%= request.status %></span>
+          <%end%>
+        </td>
+        <td class="py-3 px-4 text-sm"><%= request.reject_note %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </thead>

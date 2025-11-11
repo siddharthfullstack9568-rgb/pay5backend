@@ -16,18 +16,17 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
 
   def recharge_list
     subcategory_id = params[:subcategory_id] || params.dig(:params, :subcategory_id)
-   p "========subcategory_id========="
-   p subcategory_id
-    recharg_lists = Transaction.where(service_product_id: subcategory_id).order(created_at: :desc)
-   p "=============recharg_lists============="
-   p recharg_lists
+    p "========subcategory_id========="
+    p subcategory_id
+    recharg_lists = Transaction.where(service_product_id: subcategory_id, user_id: current_user.id).order(created_at: :desc)
+    p "=============recharg_lists============="
+    p recharg_lists
     render json: { code: 200, message: "Successfully fetched data", list: recharg_lists }
   end
 
 
   def recharge
-    p "=================current_user"
-    p current_user
+    Rails.logger.info "================= current_user: #{current_user.id} (#{current_user.role.title})"
     hierarchy = current_user.find_hierarchy
 
     required = %i[transaction_type recharge_type mobile_number operator amount service_product_id]
@@ -39,8 +38,6 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
 
     amount = params[:amount].to_f
     wallet = Wallet.find_by(user_id: current_user.id)
-    parent_wallet = Wallet.find_by(user_id: current_user.parent_id)
-
     unless wallet
       return render json: { success: false, message: "Wallet not found" }, status: :not_found
     end
@@ -50,12 +47,16 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
     end
 
     txn_id = "TXN#{rand(100000..999999)}"
+    service_product_item = ServiceProductItem.find_by(name: params[:operator])
+
+    unless service_product_item
+      return render json: { success: false, message: "Service Product not found" }, status: :not_found
+    end
 
     ActiveRecord::Base.transaction do
-      # Deduct amount from user's wallet
+      # Deduct main recharge amount
       wallet.update!(balance: wallet.balance - amount)
 
-      # Create recharge transaction
       recharge_transaction = Transaction.create!(
         tx_id: txn_id,
         operator: params[:operator],
@@ -77,103 +78,84 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
         card_number: params[:card_number]
       )
 
-      # ==== Commission for hierarchy users (admin & superadmin) ====
+      # === Get commission rates ===
+      scheme_id = current_user.scheme_id
+      scheme = Scheme.find(scheme_id)
+      scheme_commission = scheme.commision_rate.to_f
+
+      admin_commission = Commission.joins(:service_product_item)
+      .where(scheme_id:, service_product_items: { name: params[:operator] }, to_role: "admin")
+      .pluck(:value).last.to_f
+
+      master_commission_val = Commission.joins(:service_product_item)
+      .where(scheme_id:, service_product_items: { name: params[:operator] }, to_role: "master")
+      .pluck(:value).last.to_f
+
+      dealer_commission_val = Commission.joins(:service_product_item)
+      .where(scheme_id:, service_product_items: { name: params[:operator] }, to_role: "dealer")
+      .pluck(:value).last.to_f
+
+      retailer_commission_val = Commission.joins(:service_product_item)
+      .where(scheme_id:, service_product_items: { name: params[:operator] }, to_role: "retailer")
+      .pluck(:value).last.to_f
+
+      # === Calculate differential commissions ===
+      superadmin_commission = scheme_commission - admin_commission
+      master_commission = admin_commission - master_commission_val
+      dealer_commission = master_commission_val - dealer_commission_val
+      retailer_commission = dealer_commission_val - retailer_commission_val
+
+      # === Convert percentages to actual commission amounts ===
+      commission_map = {
+        superadmin: (superadmin_commission / 100) * amount,
+        admin: (master_commission / 100) * amount,
+        master: (dealer_commission / 100) * amount,
+        dealer: (retailer_commission / 100) * amount,
+        retailer: (retailer_commission_val / 100) * amount
+      }
+
+      Rails.logger.info "Commission breakdown for TXN#{txn_id}: #{commission_map}"
+
+      # === Distribute commissions to hierarchy ===
       hierarchy.each do |user|
-        Rails.logger.info "Hierarchy user: #{user.id} (#{user.role.title})"
+        role = user.role.title.to_sym
+        next unless commission_map.key?(role)
 
-        # Get admin commission %
+        commission_amount = commission_map[role]
+        next if commission_amount <= 0
 
-        admin_commission = Commission.where(scheme_id: current_user.scheme_id)
-        .joins(:service_product_item).where( service_product_item: { name: params[:operator] }, to_role: "admin").pluck(:value).last.to_f
+        user_wallet = Wallet.find_by(user_id: user.id)
+        next unless user_wallet
 
+        # Update wallet
+        user_wallet.update!(balance: user_wallet.balance + commission_amount)
 
-        scheme = Scheme.where(id: current_user.scheme_id)
+        # Log in transaction_commission
+        TransactionCommission.create!(
+          transaction_id: recharge_transaction.id,
+          user_id: user.id,
+          commission_amount: commission_amount,
+          role: role,
+          service_product_item_id: service_product_item.id
+        )
 
-
-        scheme_commission = scheme.last.commision_rate.to_f
-        p "===========scheme_commission"
-        p scheme_commission
-
-
-        superadmin_commission = scheme_commission - admin_commission
-        p "=========superadmin_admin_first=========="
-        p superadmin_commission
-        p "======================params[:operator]    =  #{params[:operator]}"
-       p params[:operator]
-
-        retailer_commission = Commission.where(scheme_id: current_user.scheme_id)
-        .joins(:service_product_item).where( service_product_item: { name: params[:operator] }, to_role: "retailer").pluck(:value).last.to_f
-
-        p "=======retailer_commission_for_schemeretailer_commission_for_scheme====="
-        p retailer_commission
-
-        admin_commission_first = admin_commission - retailer_commission
-        p "============admin_commission_first==========="
-        p admin_commission_first
-
-
-
-        admin_commission_result = (admin_commission_first / 100) * amount
-        superadmin_commission_result = (superadmin_commission / 100) * amount
-
-        p "------------===========-superadmin_commission result------------------"
-        p superadmin_commission_result
-        p "============admin_commission_resultadmin_commission_result================"
-        p admin_commission_result
-
-        # ==== Admin Commission ====
-        if user.role.title == "admin"
-          TransactionCommission.create!(
-            transaction_id: recharge_transaction.id,
-            user_id: user.id,
-            commission_amount: admin_commission_result,
-            role: "admin",
-            service_product_item_id: 1
-          )
-
-          # Update admin wallet (only if direct parent)
-          if user.id == current_user.parent_id
-            parent_wallet.update!(balance: parent_wallet.balance + admin_commission_result)
-          end
-        end
-
-        # ==== Superadmin Commission (static) ====
-        if user.role.title == "superadmin"
-          TransactionCommission.create!(
-            transaction_id: recharge_transaction.id,
-            user_id: user.id,
-            commission_amount: superadmin_commission_result,
-            role: "superadmin",
-            service_product_item_id: 1
-          )
-
-          # Update superadmin wallet (agar chaiye to)
-          superadmin_wallet = Wallet.find_by(user_id: user.id)
-          superadmin_wallet.update!(balance: superadmin_wallet.balance + superadmin_commission_result) if superadmin_wallet
-        end
+        Rails.logger.info "[Commission] #{role.to_s.upcase} (User #{user.id}) credited ₹#{commission_amount.round(2)} for TXN#{txn_id}"
       end
 
-      # ==== Retailer Commission for current user ====
-      retailer_commission = Commission.where(scheme_id: current_user.scheme_id)
-      .joins(:service_product_item)
-      .where(service_product_item: { name: params[:operator] }, to_role: "retailer")
-      .pluck(:value)
-      .last.to_f
+      # === Retailer (current_user) also earns commission ===
+      retailer_wallet = wallet
+      retailer_commission_result = commission_map[:retailer]
+      retailer_wallet.update!(balance: retailer_wallet.balance + retailer_commission_result)
 
-      retailer_commission_result = (retailer_commission / 100) * amount
-      p "==============retailer_commissionretailer_commission==============="
-      p retailer_commission_result
-
-      transaction_commission = TransactionCommission.create!(
+      TransactionCommission.create!(
         transaction_id: recharge_transaction.id,
         user_id: current_user.id,
         commission_amount: retailer_commission_result,
         role: "retailer",
-        service_product_item_id: 1
+        service_product_item_id: service_product_item.id
       )
 
-      # Add retailer commission to current user's wallet
-      wallet.update!(balance: wallet.balance + transaction_commission.commission_amount)
+      Rails.logger.info "[Commission] RETAILER (User #{current_user.id}) credited ₹#{retailer_commission_result.round(2)} for TXN#{txn_id}"
     end
 
     render json: {
@@ -192,6 +174,7 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
       }
     }, status: :ok
   end
+
 
 
   # private

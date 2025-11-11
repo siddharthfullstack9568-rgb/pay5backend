@@ -43,79 +43,128 @@ class Admin::RechargesAndBillsController < Admin::BaseController
     end
   end
 
-  def amdmin_commission_set
-  if params[:scheme].blank?
-    redirect_to admin_recharges_and_bills_index_path, alert: "Please select a scheme before submitting commissions."
-    return
-  end
+    def commission_set
+    if params[:scheme].blank?
+      redirect_to admin_recharge_and_bill_index_path, alert: "Please select a scheme before submitting commissions."
+      return
+    end
 
-  commission_type = params[:commission_type]
-  scheme = Scheme.find(params[:scheme])
+    commission_type = params[:commission_type]
+    scheme = Scheme.find(params[:scheme])
 
-  Rails.logger.info "Commission set started for scheme ID #{scheme.id}"
+    Rails.logger.info "Commission set started for scheme ID #{scheme.id}"
 
-  error_messages = []
-  success_count = 0
+    error_messages = []
+    success_count = 0
 
-  params[:commissions].each do |item_id, commission_params|
-    begin
+    params[:commissions].each do |item_id, commission_params|
       item = ServiceProductItem.find(item_id)
 
-      # Convert to float and treat blank as 0
-      master_commission = commission_params[:master_commission].to_f
-      dealer_commission = commission_params[:dealer_commission].to_f
-      retailer_commission = commission_params[:retailer_commission].to_f
+      total_commission = [
+        commission_params[:admin_commission],
+        commission_params[:master_commission],
+        commission_params[:dealer_commission],
+        commission_params[:retailer_commission]
+      ].reject(&:blank?).map(&:to_f).sum
 
-      total_commission = master_commission + dealer_commission + retailer_commission
-
-      # 🔥 NEW LINE: Fetch superadmin→admin commission for this item+scheme
-      superadmin_admin_commission = Commission.find_by(
-        service_product_item_id: item.id,
-        scheme_id: scheme.id,
-        from_role: "superadmin",
-        to_role: "admin"
-      )&.value.to_f
-
-      # 🔥 NEW CONDITION:
-      if current_admin.role.title == "admin"
-        if total_commission > superadmin_admin_commission
-          message = "For item #{item.name}, total commission (#{total_commission}) exceeds superadmin limit (#{superadmin_admin_commission})."
-          error_messages << message
-          Rails.logger.warn message
-          next
-        end
-      end
-
-      # Existing scheme-level limit check
       if total_commission <= scheme.commision_rate.to_f
-        save_commission(item, scheme, commission_type, current_admin.role.title, "master", commission_params[:master_commission])
-        save_commission(item, scheme, commission_type, current_admin.role.title, "dealer", commission_params[:dealer_commission])
-        save_commission(item, scheme, commission_type, current_admin.role.title, "retailer", commission_params[:retailer_commission])
-        success_count += 1
-        Rails.logger.info "Commissions saved for item #{item.name}"
-      else
-        message = "For item #{item.name}, total commission (#{total_commission}) exceeds scheme limit (#{scheme.commision_rate})."
-        error_messages << message
-        Rails.logger.warn message
-      end
+        begin
+          save_commission(item, scheme, commission_type, "admin", "admin", commission_params[:admin_commission])
+          save_commission(item, scheme, commission_type, "admin", "master", commission_params[:master_commission])
+          save_commission(item, scheme, commission_type, "admin", "dealer", commission_params[:dealer_commission])
+          save_commission(item, scheme, commission_type, "admin", "retailer", commission_params[:retailer_commission])
 
-    rescue ActiveRecord::RecordNotFound
-      message = "Service product item with ID #{item_id} not found."
-      error_messages << message
-      Rails.logger.error message
-    rescue => e
-      message = "For item #{item_id}, error: #{e.message}"
-      error_messages << message
-      Rails.logger.error message
+          success_count += 1
+        rescue => e
+          error_messages << "For item #{item.name}, error: #{e.message}"
+          Rails.logger.error "Commission save error for item #{item.name}: #{e.message}"
+        end
+      else
+        error_messages << "For item #{item.name}, total commission (#{total_commission}) exceeds scheme limit (#{scheme.commision_rate})."
+        Rails.logger.warn "Commission total exceeded for item #{item.name}: total #{total_commission}, limit #{scheme.commision_rate}"
+      end
+    end
+
+    if error_messages.any?
+      redirect_to admin_recharges_and_bills_index_path(scheme: scheme.id), alert: error_messages.join(", ")
+    else
+      redirect_to admin_recharges_and_bills_index_path(scheme: scheme.id), notice: "#{success_count} item(s) commissions saved successfully!"
     end
   end
 
-  if error_messages.any?
-    redirect_to admin_recharges_and_bills_index_path, alert: error_messages.join(", ")
-  else
-    redirect_to admin_recharges_and_bills_index_path, notice: "#{success_count} item(s) commissions saved successfully!"
-  end
-end
+#   def amdmin_commission_set
+#   if params[:scheme].blank?
+#     redirect_to admin_recharges_and_bills_index_path, alert: "Please select a scheme before submitting commissions."
+#     return
+#   end
+
+#   commission_type = params[:commission_type]
+#   scheme = Scheme.find(params[:scheme])
+
+#   Rails.logger.info "Commission set started for scheme ID #{scheme.id}"
+
+#   error_messages = []
+#   success_count = 0
+
+#   params[:commissions].each do |item_id, commission_params|
+#     begin
+#       item = ServiceProductItem.find(item_id)
+
+#       # Convert to float and treat blank as 0
+#       master_commission = commission_params[:master_commission].to_f
+#       dealer_commission = commission_params[:dealer_commission].to_f
+#       retailer_commission = commission_params[:retailer_commission].to_f
+
+#       total_commission = master_commission + dealer_commission + retailer_commission
+
+#       # 🔥 NEW LINE: Fetch superadmin→admin commission for this item+scheme
+#       superadmin_admin_commission = Commission.find_by(
+#         service_product_item_id: item.id,
+#         scheme_id: scheme.id,
+#         from_role: "superadmin",
+#         to_role: "admin"
+#       )&.value.to_f
+
+#       # 🔥 NEW CONDITION:
+#       if current_admin.role.title == "admin"
+#         if total_commission > superadmin_admin_commission
+#           message = "For item #{item.name}, total commission (#{total_commission}) exceeds superadmin limit (#{superadmin_admin_commission})."
+#           error_messages << message
+#           Rails.logger.warn message
+#           next
+#         end
+#       end
+
+#       # Existing scheme-level limit check
+#       if total_commission <= scheme.commision_rate.to_f
+#         save_commission(item, scheme, commission_type, current_admin.role.title, "master", commission_params[:master_commission])
+#         save_commission(item, scheme, commission_type, current_admin.role.title, "dealer", commission_params[:dealer_commission])
+#         save_commission(item, scheme, commission_type, current_admin.role.title, "retailer", commission_params[:retailer_commission])
+#         success_count += 1
+#         Rails.logger.info "Commissions saved for item #{item.name}"
+#       else
+#         message = "For item #{item.name}, total commission (#{total_commission}) exceeds scheme limit (#{scheme.commision_rate})."
+#         error_messages << message
+#         Rails.logger.warn message
+#       end
+
+#     rescue ActiveRecord::RecordNotFound
+#       message = "Service product item with ID #{item_id} not found."
+#       error_messages << message
+#       Rails.logger.error message
+#     rescue => e
+#       message = "For item #{item_id}, error: #{e.message}"
+#       error_messages << message
+#       Rails.logger.error message
+#     end
+#   end
+
+#   if error_messages.any?
+#     redirect_to admin_recharges_and_bills_index_path, alert: error_messages.join(", ")
+#   else
+#     redirect_to admin_recharges_and_bills_index_path, notice: "#{success_count} item(s) commissions saved successfully!"
+#   end
+# end
 
   def transaction
     user_ids = current_admin.all_descendant_ids << current_admin.id

@@ -1,28 +1,26 @@
 class Master::BaseController < ApplicationController
- helper_method :current_master_user, :logged_in?
+  before_action :require_master
+  before_action :set_wallet_balance
 
-  def current_master_user
-    @current_user ||= User.find_by(id: session[:master_user_id]) if session[:master_user_id]
+  helper_method :current_master
+
+  private
+
+  def current_master
+    @current_master ||= User.find_by(id: session["master_id"])
   end
 
-  def logged_master_in?
-    current_user.present?
-  end
-
-  def require_master_login
-    unless logged_in?
-      redirect_to master_sessions_login_path, alert: "Please log in first"
+  def require_master
+    unless current_master&.role&.title&.downcase == "master"
+      redirect_to login_sessions_path, alert: "Access denied!"
     end
   end
 
-
-    { modern: 
-  {
-    safari: 17.2,
-    chrome: 120,
-    firefox: 121,
-    opera: 106,
-    ie: false
-  }
-}
+  def set_wallet_balance
+    if current_master
+      @balance = Wallet.where(user_id: current_master.id).sum(:balance)
+    else
+      @balance = 0
+    end
+  end
 end

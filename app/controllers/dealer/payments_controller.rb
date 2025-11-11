@@ -14,57 +14,101 @@ class Dealer::PaymentsController < Dealer::BaseController
     Rails.logger.info @fund_transactions.inspect
   end
 
+  # def approved
+  #   p "=================current_dealer"
+  #   p current_dealer
+
+  #   # Fetch the dealer’s fund requests
+  #   fund_requests = FundRequest.where(requested_by: current_dealer)
+  #   pin = params[:pin]&.join
+  #   Rails.logger.info "Entered PIN: #{pin}"
+  #   p "==========current_dealer===="
+  #   p current_dealer.id
+
+  #   # ✅ Step 1: Check if dealer has set a PIN
+  #   if current_dealer.set_pin.blank?
+  #     flash[:alert] = "Please set your transaction PIN first."
+  #     return redirect_to dealer_payments_index_path
+  #   end
+
+  #   # ✅ Step 2: Verify entered PIN
+  #   if current_dealer.set_pin == pin
+  #     transaction = WalletTransaction.find_by(id: params[:id])
+
+  #     unless transaction
+  #       flash[:alert] = "Transaction not found."
+  #       return redirect_to dealer_payments_index_path
+  #     end
+
+  #     wallet = transaction.wallet
+  #     parent_wallet = Wallet.find_by(user_id: current_dealer.id) # parent wallet (hardcoded or from hierarchy)
+
+  #     unless parent_wallet
+  #       flash[:alert] = "Parent wallet not found."
+  #       return redirect_to dealer_payments_index_path
+  #     end
+
+  #     # ✅ Check parent balance before debit
+  #     if transaction.mode == "fund" && parent_wallet.balance.to_f < transaction.amount.to_f
+  #       flash[:alert] = "Insufficient parent wallet balance."
+  #       return redirect_to dealer_payments_index_path
+  #     end
+
+  #     # ✅ Perform transaction safely
+  #     ActiveRecord::Base.transaction do
+  #       wallet.update!(balance: wallet.balance + transaction.amount)
+  #       parent_wallet.update!(balance: parent_wallet.balance.to_f - transaction.amount)
+  #       transaction.update!(status: "success")
+  #       fund_requests.update_all(status: "success")
+  #     end
+
+  #     flash[:notice] = "Transaction approved successfully."
+  #   else
+  #     flash[:alert] = "Invalid PIN."
+  #   end
+
+  #   redirect_to dealer_payments_index_path
+  # end
+
   def approved
-    p "=================current_dealer"
+    pin = params[:pin]&.join # Combine array to string
+    p "=============pinpin"
+    p pin
+    p "===========current_dealer"
     p current_dealer
-
-    # Fetch the dealer’s fund requests
-    fund_requests = FundRequest.where(requested_by: current_dealer)
-    pin = params[:pin]&.join
-    Rails.logger.info "Entered PIN: #{pin}"
-    p "==========current_dealer===="
-    p current_dealer.id
-
-    # ✅ Step 1: Check if dealer has set a PIN
-    if current_dealer.set_pin.blank?
-      flash[:alert] = "Please set your transaction PIN first."
-      return redirect_to dealer_payments_index_path
-    end
-
-    # ✅ Step 2: Verify entered PIN
     if current_dealer.set_pin == pin
-      transaction = WalletTransaction.find_by(id: params[:id])
-
-      unless transaction
-        flash[:alert] = "Transaction not found."
+      @transaction = WalletTransaction.find(params[:id])
+      parent_wallet = Wallet.find_by(user_id: current_dealer.id) # parent wallet object
+      wallet = @transaction.wallet
+      p "===========transaction amount"
+      p @transaction.amount.to_f
+      p "==============parent_wallet amount"
+      p parent_wallet.balance.to_f
+      if parent_wallet.balance.to_f < @transaction.amount.to_f
+        flash[:alert] = "Balance is low"
         return redirect_to dealer_payments_index_path
       end
 
-      wallet = transaction.wallet
-      parent_wallet = Wallet.find_by(user_id: current_dealer.id) # parent wallet (hardcoded or from hierarchy)
+      remaining_balance = parent_wallet.balance.to_f - @transaction.amount.to_f
 
-      unless parent_wallet
-        flash[:alert] = "Parent wallet not found."
-        return redirect_to dealer_payments_index_path
-      end
-
-      # ✅ Check parent balance before debit
-      if transaction.mode == "fund" && parent_wallet.balance.to_f < transaction.amount.to_f
-        flash[:alert] = "Insufficient parent wallet balance."
-        return redirect_to dealer_payments_index_path
-      end
-
-      # ✅ Perform transaction safely
       ActiveRecord::Base.transaction do
-        wallet.update!(balance: wallet.balance + transaction.amount)
-        parent_wallet.update!(balance: parent_wallet.balance.to_f - transaction.amount)
-        transaction.update!(status: "success")
-        fund_requests.update_all(status: "success")
+        if @transaction.mode == "credit"
+          wallet.update!(balance: wallet.balance.to_f + @transaction.amount.to_f)
+          parent_wallet.update!(balance: remaining_balance)
+        elsif @transaction.mode == "fund"
+          wallet.update!(balance: wallet.balance.to_f + @transaction.amount.to_f)
+          @transaction.fund_request.update!(status: "success")
+          parent_wallet.update!(balance: remaining_balance)
+        elsif @transaction.mode == "debit"
+          wallet.update!(balance: wallet.balance.to_f - @transaction.amount.to_f)
+        end
+
+        @transaction.update!(status: "success")
       end
 
-      flash[:notice] = "Transaction approved successfully."
+      flash[:notice] = "Transaction approved successfully"
     else
-      flash[:alert] = "Invalid PIN."
+      flash[:alert] = "Invalid PIN"
     end
 
     redirect_to dealer_payments_index_path

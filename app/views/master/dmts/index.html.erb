@@ -1,0 +1,80 @@
+<div class="w-full mx-auto px-8 py-8 bg-blue-50">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">DMT Request List</h1>
+  </div>
+
+  <!-- Filter Form -->
+  <div class="bg-white shadow-md rounded-lg p-4 mb-6">
+    <%= form_with url: master_dmts_index_path, method: :get, local: true, class: "flex flex-wrap gap-4 items-end" do %>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Sender Name</label>
+       <%= text_field_tag :sender_name, params[:sender_name], 
+        class: "w-48 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400", 
+        placeholder: "Enter sender name" %>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Sender Mobile Number</label>
+        <%= text_field_tag :sender_mobile_number, params[:sender_mobile_number], class: "w-48 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400",placeholder: "Enter mobile number" %>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Start Date</label>
+        <%= date_field_tag :start_date, params[:start_date], class: "w-40 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400" %>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">End Date</label>
+        <%= date_field_tag :end_date, params[:end_date], class: "w-40 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400" %>
+      </div>
+
+      <div>
+        <%= submit_tag "Filter", class: "bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition" %>
+      </div>
+
+      <div class="mb-2">
+        <%= link_to "Reset", master_dmts_index_path, class: "bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Table -->
+  <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+    <table class="w-full text-sm text-left text-gray-600">
+      <thead class="text-xs uppercase bg-gray-100 text-gray-700">
+        <tr>
+          <th class="px-6 py-3">ID</th>
+          <th class="px-6 py-3">Sender name</th>
+          <th class="px-6 py-3">Sender mobile number</th>
+          <th class="px-6 py-3">Sender aadhar number</th>
+          <th class="px-6 py-3">Receiver mobile number</th>
+          <th class="px-6 py-3">Receiver Name</th>
+          <th class="px-6 py-3">Amount</th>
+          <th class="px-6 py-3">Bank</th>
+          <th class="px-6 py-3">Date & Time</th>
+          <th class="px-6 py-3 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @dmts.each do |dmt| %>
+          <tr class="bg-white border-b hover:bg-gray-50">
+            <td class="px-6 py-4 font-medium text-gray-900"><%= dmt.id %></td>
+            <td class="px-6 py-4"><%= dmt.sender_name %></td>
+            <td class="px-6 py-4"><%= dmt.sender_mobile_number %></td>
+            <td class="px-6 py-4"><%= dmt.sender_aadhar_number %></td>
+            <td class="px-6 py-4"><%= dmt.receiver_mobile_number %></td>
+            <td class="px-6 py-4"><%= dmt.receiver_name %></td>
+            <td class="px-6 py-4"><%= dmt.amount %></td>
+            <td class="px-6 py-4"><%= dmt.bank_name %></td>
+            <td class="px-6 py-4"><%= dmt.created_at.strftime("%d/%m/%y %H:%M") %></td>
+            <td class="px-6 py-4 text-center">
+              <button class="px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition">
+                Delete
+              </button>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

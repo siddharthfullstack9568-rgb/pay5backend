@@ -1,0 +1,207 @@
+<!-- Filters -->
+<div class="bg-white p-4 rounded shadow flex flex-col md:flex-row items-start md:items-center gap-4">
+  <!-- Scheme dropdown -->
+
+
+<%= form_with url: master_recharges_and_bills_index_path, 
+              method: :get, 
+              local: true, 
+              id: "schemeFilterForm",
+              data: { turbo: false } do %>
+
+  <select name="scheme" id="schemeSelect" class="border rounded px-3 py-2">
+    <option value="ALL" <%= "selected" if params[:scheme].blank? || params[:scheme] == "ALL" %>>All</option>
+    <% Scheme.all.each do |scheme| %>
+      <option value="<%= scheme.id %>" <%= "selected" if params[:scheme].to_s == scheme.id.to_s %>>
+        <%= scheme.scheme_name %>
+      </option>
+    <% end %>
+  </select>
+
+  <button id="submitFilter"
+          class="px-3 py-2 rounded-xl text-white bg-blue-600"
+          type="submit">
+    Submit
+  </button>
+<% end %>
+
+</div>
+
+<!-- Commission Table -->
+<% if @grouped_commissions.present? %>
+  <% @grouped_commissions.each do |category, items| %>
+    <div class="bg-white p-6 rounded-lg shadow-md mt-6">
+      <h2 class="text-lg font-semibold mb-4"><%= category %></h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+          <thead>
+            <tr class="bg-gray-100 text-left text-sm font-medium text-gray-700">
+              <th class="px-4 py-2 border">Service Name</th>
+              <th class="px-4 py-2 border">Company Name</th>
+              <th class="px-4 py-2 border">Commission Type</th>
+              <th class="px-4 py-2 border">Scheme</th>
+              <th class="px-4 py-2 border">Master Commission</th>
+              <th class="px-4 py-2 border">Dealer Commission</th>
+              <th class="px-4 py-2 border">Retailer Commission</th>
+              <th class="px-4 py-2 border text-center">Action</th>
+            </tr>
+          </thead>
+
+          <tbody class="text-sm text-gray-700">
+            <% items.each do |item| %>
+              <%= form_with url: master_recharges_and_bills_commission_set_path,
+                            method: :post,
+                            local: true,
+                            data: { turbo: false } do %>
+
+                <!-- Hidden scheme_id (auto updated via JS later) -->
+                <%= hidden_field_tag :scheme, params[:scheme] %>
+
+                <input type="hidden" name="item_id" value="<%= item.service_product_item.id %>">
+
+                <tr>
+                  <td class="px-4 py-2 border"><%= item.service_product_item.service_product.company_name%></td>
+                  <td class="px-4 py-2 border"><%= item.service_product_item.name %></td>
+
+                  <td class="px-4 py-2 border">
+                    <select name="commission_type" class="border rounded px-2 py-1 w-full text-sm">
+                      <option value="commission" <%= "selected" if item.commission_type == "commission" %>>Commission</option>
+                      <option value="flat" <%= "selected" if item.commission_type == "flat" %>>Flat</option>
+                    </select>
+                  </td>
+                  <td class="px-4 py-2 border">
+                    <select name="scheme" id="schemeSelect" class="border rounded px-3 py-2">
+                    <option value="ALL" <%= "selected" if params[:scheme].blank? || params[:scheme] == "ALL" %>>All</option>
+                    <% Scheme.all.each do |scheme| %>
+                      <option value="<%= scheme.id %>" <%= "selected" if params[:scheme].to_s == scheme.id.to_s %>>
+                        <%= scheme.scheme_name %>
+                      </option>
+                    <% end %>
+                  </select>
+                  </td>
+
+
+                  <td class="px-4 py-2 border">
+                   <%= text_field_tag "commissions_display[#{item.service_product_item.id}][master_commission]",
+                        Commission.find_by(service_product_item_id: item.service_product_item.id, to_role: "master")&.value,
+                        placeholder: "%",
+                        class: "w-full border rounded px-2 py-1 text-sm bg-gray-100 cursor-not-allowed",
+                        readonly: true %>
+                  </td>
+
+
+                  <td class="px-4 py-2 border">
+                    <%= text_field_tag "commissions[#{item.service_product_item.id}][dealer_commission]",
+                        Commission.find_by(service_product_item_id: item.service_product_item.id, to_role: "dealer")&.value,
+                        placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+                  </td>
+
+                  <td class="px-4 py-2 border">
+                    <%= text_field_tag "commissions[#{item.service_product_item.id}][retailer_commission]",
+                        Commission.find_by(service_product_item_id: item.service_product_item.id, to_role: "retailer")&.value,
+                        placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
+                  </td>
+
+                  <td class="px-4 py-2 border text-center">
+                    <%= submit_tag "Submit",
+                        class: "bg-blue-600 text-white px-3 py-2 rounded cursor-pointer" %>
+                  </td>
+                </tr>
+
+              <% end %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <p class="text-gray-500 mt-4">No commissions found for this scheme.</p>
+<% end %>
+
+
+<% if flash.any? %>
+  <div id="flashModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-xl p-6 relative">
+      <!-- Close Button -->
+      <% flash.each do |key, message| %>
+        <div class="mb-4 p-4 rounded-lg 
+                    <%= key == 'notice' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' %>">
+          <%= message %>
+        </div>
+      <% end %>
+
+      <div class="flex justify-center">
+        <button onclick="document.getElementById('flashModal').remove()" 
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+
+</div>
+
+<!-- ✅ Pure JavaScript logic -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const schemeSelect = document.getElementById("schemeSelect");
+    const allForms = document.querySelectorAll("form");
+    const submitFilter = document.getElementById("submitFilter");
+
+    function updateSchemeForAllForms() {
+      const selectedScheme = schemeSelect.value;
+      const hiddenInputs = document.querySelectorAll("input[name='scheme']");
+
+      hiddenInputs.forEach(input => input.value = selectedScheme);
+
+      // Enable/disable buttons based on scheme selection
+      const allSubmitButtons = document.querySelectorAll("input[type='submit']");
+      allSubmitButtons.forEach(button => {
+        if (selectedScheme) {
+          button.disabled = false;
+          button.classList.remove("opacity-50", "cursor-not-allowed");
+        } else {
+          button.disabled = true;
+          button.classList.add("opacity-50", "cursor-not-allowed");
+        }
+      });
+
+      // Also toggle filter button
+      if (selectedScheme) {
+        submitFilter.disabled = false;
+        submitFilter.classList.remove("opacity-50", "cursor-not-allowed");
+      } else {
+        submitFilter.disabled = true;
+        submitFilter.classList.add("opacity-50", "cursor-not-allowed");
+      }
+    }
+
+    schemeSelect.addEventListener("change", updateSchemeForAllForms);
+
+    // Block form submission without a scheme
+    allForms.forEach(form => {
+      form.addEventListener("submit", function (event) {
+        if (!schemeSelect.value) {
+          event.preventDefault();
+          alert("⚠️ Please select a scheme before submitting the form.");
+        }
+      });
+    });
+  });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const schemeSelect = document.getElementById("schemeSelect");
+
+    // Auto-submit when user changes dropdown
+    schemeSelect.addEventListener("change", () => {
+      document.getElementById("schemeFilterForm").submit();
+    });
+  });
+</script>
+

@@ -1,0 +1,50 @@
+<% icons = {
+  "BBPS Payment"      => "https://cdn-icons-png.flaticon.com/512/3602/3602145.png",
+  "Travel & Stay"     => "https://cdn-icons-png.flaticon.com/512/584/584092.png",
+  "Loan & Credit Card"=> "https://cdn-icons-png.flaticon.com/512/929/929564.png",
+  "Insurance"         => "https://cdn-icons-png.flaticon.com/512/684/684831.png",
+  "Investment"        => "https://cdn-icons-png.flaticon.com/512/3135/3135706.png",
+  "Entertainment"     => "https://cdn-icons-png.flaticon.com/512/4208/4208972.png",
+  "Electric Vehicle"  => "https://cdn-icons-png.flaticon.com/512/3202/3202926.png",
+  "DMT"               => "https://cdn-icons-png.flaticon.com/512/3135/3135673.png"
+} %>
+
+<div class="w-[95%] max-w-8xl p-2 bg-white rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.4)] ml-[35px] mt-10">
+  <!-- Title -->
+  <h2 class="text-lg font-medium text-blue-600 mb-6">Reports</h2>
+
+  <!-- Grid Cards -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+  <% @services_with_counts.each do |item| %>
+    <% service_title = item[:service].title %>
+    <% service_path = service_title == "DMT" ? master_dmts_index_path : master_reports_report_filter_path(id: item[:service].id) %>
+
+    <a href="<%= service_path %>">
+      <div class="flex flex-col items-center justify-center bg-gradient-to-b from-white to-blue-50 border rounded-xl shadow-sm p-6 cursor-pointer hover:shadow-md hover:scale-105 transition-all">
+        <img src="<%= icons[service_title] || 'https://cdn-icons-png.flaticon.com/512/565/565547.png' %>"
+             alt="<%= service_title %>"
+             class="w-12 h-12 mb-3">
+        <p class="text-gray-700 font-medium"><%= service_title %></p>
+        <p class="font-bold text-lg mt-1"><%= item[:transactions_count] %></p>
+      </div>
+    </a>
+  <% end %>
+
+  <!-- Commission Card -->
+  <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-indigo-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-100 hover:border-indigo-300 transition-all cursor-pointer hover:scale-105">
+    <div class="mb-3 p-3 bg-indigo-100 rounded-full">
+      <img src="<%= asset_path 'commission.jpeg' %>" alt="Commission Report" class="w-10 h-10">
+    </div>
+    <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">
+      Commission Report
+    </span>
+    <span class="mt-1 text-lg font-semibold text-indigo-900">
+      <%= TransactionCommission.where(user_id: current_master.id).pluck(:commission_amount).compact.sum.to_f %>
+    </span>
+  </div>
+</div>
+
+
+</div>
+
+</div>

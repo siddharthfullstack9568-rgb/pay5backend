@@ -82,27 +82,27 @@
                   </select>
                   </td>
 
-                  <td class="px-4 py-2 border">
+                   <td class="px-4 py-2 border">
                     <%= text_field_tag "commissions[#{item.service_product_item.id}][admin_commission]",
-                        Commission.find_by(service_product_item_id: item.service_product_item.id, to_role: "admin")&.value,
+                        (val = Commission.find_by(service_product_item_id: item.service_product_item.id, to_role: "admin")&.value) == 0 ? "%" : val,
                         placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
                   </td>
 
                   <td class="px-4 py-2 border">
                     <%= text_field_tag "commissions[#{item.service_product_item.id}][master_commission]",
-                        Commission.find_by(service_product_item_id: item.service_product_item.id, to_role: "master")&.value,
+                        (val = Commission.find_by(service_product_item_id: item.service_product_item.id, to_role: "master")&.value) == 0 ? "%" : val,
                         placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
                   </td>
 
                   <td class="px-4 py-2 border">
                     <%= text_field_tag "commissions[#{item.service_product_item.id}][dealer_commission]",
-                        Commission.find_by(service_product_item_id: item.service_product_item.id, to_role: "dealer")&.value,
+                        (val = Commission.find_by(service_product_item_id: item.service_product_item.id, to_role: "dealer")&.value) == 0 ? "%" : val,
                         placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
                   </td>
 
                   <td class="px-4 py-2 border">
                     <%= text_field_tag "commissions[#{item.service_product_item.id}][retailer_commission]",
-                        Commission.find_by(service_product_item_id: item.service_product_item.id, to_role: "retailer")&.value,
+                        (val = Commission.find_by(service_product_item_id: item.service_product_item.id, to_role: "retailer")&.value) == 0 ? "%" : val,
                         placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm" %>
                   </td>
 

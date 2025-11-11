@@ -1,6 +1,8 @@
-class Superadmin::AdminsController < ApplicationController
+class Superadmin::AdminsController < Superadmin::BaseController
 
   def index
+          @balance = Wallet.where(user_id: current_superadmin.id).sum(:balance)
+
     @users = User
     .joins(:role)
     .where(roles: { title: "admin" })

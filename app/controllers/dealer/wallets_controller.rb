@@ -8,7 +8,7 @@ class Dealer::WalletsController < Dealer::BaseController
     case params[:mode]
     when "fund"
       # Fund request transactions
-      @fund_request = FundRequest.where(mode: "fund").order(created_at: :desc)
+      @fund_request = FundRequest.where(mode: "fund", user_id: current_dealer.id).order(created_at: :desc)
 
     when "credit"
       # Credit transactions

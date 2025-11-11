@@ -41,6 +41,7 @@ class Admin::UserServicesController < Admin::BaseController
 
   def edit
     @services = UserService.where(assignee_id: 104).joins(:service).select("services.id, services.title")
+    p @services
   end
 
   def update

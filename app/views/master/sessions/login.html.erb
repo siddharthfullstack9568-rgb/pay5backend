@@ -25,7 +25,7 @@
     <!-- Right Side -->
     <div class="flex-1 flex flex-col justify-center p-10">
       <div class="text-center text-3xl font-semibold text-indigo-500 mb-2">
-        Master Login
+        master Login
       </div>
 
       <!-- Tabs -->
@@ -42,9 +42,8 @@
         </button>
       </div>
 
-      <!-- Username & Password Login -->
     <%= form_with url: master_sessions_create_path, method: :post do |f| %>
-        <div class="text-center mb-4">
+          <div class="text-center mb-4">
             <% if flash[:alert] %>
               <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
                 <%= flash[:alert] %>
@@ -74,7 +73,7 @@
           />
         </div>
         <div class="flex justify-end items-center mt-3 mb-3">
-          <a href="forgot-password.html" class="cursor-pointer text-indigo-600 hover:underline text-sm font-medium">
+          <a href="/master/sessions/forgot_page" class="cursor-pointer text-indigo-600 hover:underline text-sm font-medium">
             Forgot Password?
           </a>
         </div>

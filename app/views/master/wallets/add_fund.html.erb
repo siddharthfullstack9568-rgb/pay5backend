@@ -1,0 +1,112 @@
+<div class="w-full mx-auto px-4 py-6 bg-blue-50">
+  <div class="w-[1002px] mx-auto bg-white p-5">
+    <h2 class="text-2xl font-semibold flex items-center gap-1 mb-6">
+    💰 <span>Add Fund</span>
+    </h2>
+    <%= form_with url: master_wallets_create_fund_path, local: true, html: { class: "space-y-4" } do |f| %>
+    <input type="hidden" value="fund" name="mode">
+    <!-- Deposit Bank -->
+    <div class="mb-2">
+      <div data-controller="bank">
+        <div class="flex gap-2">
+          <%= f.label :deposit_bank, "Deposit Bank", class: "block text-gray-700 font-medium mb-1" %>
+          <span class="text-red-500">*</span>
+        </div>
+        <select
+          name="<%= f.object_name %>deposit_bank"
+          id="deposit_bank"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          required
+          data-action="change->bank#update"
+          >
+          <option value="">-- Select Bank --</option>
+          <% @banks.each do |b| %>
+          <option
+            value="<%= b.bank_name %>"
+            data-account-number="<%= b.account_number %>"
+            data-ifsc="<%= b.ifsc_code %>"
+            >
+            <%= b.bank_name %>
+          </option>
+          <% end %>
+        </select>
+        <!-- ✅ Hidden field to send selected account number -->
+        <%= f.hidden_field :account_number, id: "selected_account_number", data: { bank_target: "hiddenField" } %>
+        <div data-bank-target="info" class="mt-3 text-gray-700"></div>
+      </div>
+      <!-- Your Bank -->
+      <div class="mb-3">
+        <div class="flex gap-2">
+          <%= f.label :your_bank, "Your Bank", class: "block text-gray-700 font-medium mb-1" %>
+          <span class="text-red-500">*</span>
+        </div>
+        <%= f.select :your_bank, ["Axis Bank", "Punjab National Bank", "Union Bank"],
+        { include_blank: "-- Select Your Bank --" },
+        class: "w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400",
+        required: true %>
+      </div>
+      <!-- Transaction Type -->
+      <div  class="mb-3">
+        <div class="flex gap-2">
+          <%= f.label :transaction_type, "Transaction Type", class: "block text-gray-700 font-medium mb-1" %>
+          <span class="text-red-500">*</span>
+        </div>
+        <%= f.select :transaction_type, ["IMPS", "NEFT", "UPI"],
+        { include_blank: "-- Select Transaction Type --" },
+        class: "w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400",
+        required: true %>
+      </div>
+      <!-- Bank Reference No -->
+      <div  class="mb-3">
+        <div class="flex gap-2">
+          <%= f.label :bank_reference_no, "Bank Reference No", class: "block text-gray-700 font-medium mb-1" %>
+          <span class="text-red-500">*</span>
+        </div>
+        <%= f.text_field :bank_reference_no,
+        placeholder: "Enter reference number",
+        required: true,
+        class: "w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" %>
+      </div>
+      <!-- Amount -->
+      <div  class="mb-3">
+        <div class="flex gap-2">
+          <%= f.label :amount, "Amount (₹)", class: "block text-gray-700 font-medium mb-1" %>
+          <span class="text-red-500">*</span>
+        </div>
+        <%= f.number_field :amount,
+        placeholder: "Enter amount",
+        required: true,
+        min: 1,
+        class: "w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" %>
+      </div>
+      <!-- Remark -->
+      <div  class="mb-3">
+        <%= f.label :remark, "Remark", class: "block text-gray-700 font-medium mb-1" %>
+        <%= f.text_area :remark,
+        placeholder: "Enter remark...",
+        rows: 3,
+        class: "w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" %>
+      </div>
+      <!-- Upload File -->
+      <div>
+        <div class="flex gap-2">
+          <%= f.label :receipt_file, "Upload File (Receipt/Proof)", class: "block text-gray-700 font-medium mb-1" %>
+          <span class="text-red-500">*</span>
+        </div>
+        <%= f.file_field :receipt_file,
+        class: "w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400" %>
+      </div>
+      <!-- Buttons -->
+      <div class="flex justify-end gap-3 pt-4">
+        <a
+          href="<%=master_wallets_index_path(mode: "fund")%>"
+          type="button"
+          class="bg-gray-400 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-500 transition">
+          Cancel
+        </a>
+        <%= f.submit "Submit",
+        class: "bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition cursor-pointer" %>
+      </div>
+      <% end %>
+    </div>
+  </div>

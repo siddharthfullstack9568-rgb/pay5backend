@@ -58,6 +58,10 @@ Rails.application.routes.draw do
     get "payments/set_pin_agin"
     post "payments/set_pin_agin_update"
 
+    get "recharges_and_bills/index"
+    get "recharges_and_bills/transaction"
+    post "recharges_and_bills/commission_set"
+
     get "reports/index"
     get "reports/report_filter"
     get "dmts/index"
@@ -68,11 +72,83 @@ Rails.application.routes.draw do
   end
 
   namespace :master do
+    get "dmts/index"
+    get "enquery/index"
+    get "accounts/index"
+    get "accounts/new"
+    post "accounts/add_credit"
+    get "accounts/debit_index"
+    post "accounts/add_debit"
+
+    get "reports/index"
+    get "reports/report_filter"
+
+    get "payments/index"
+    post "payments/approved"
+    get "payments/verify_pin"
+
+    get "payments/set_pin"
+    post "payments/set_pin_update"
+    get "payments/forgot_mpin"
+    post "payments/send_mpin_otp"
+    get "payments/verify_mpin"
+    post "payments/verify_mpin_otp"
+    get "payments/set_pin_agin"
+    post "payments/set_pin_agin_update"
+
+    post "payments/reject_payment_request"
+
+    get "wallets/index"
+    get "wallets/add_fund"
+    post "wallets/add_fund"
+    post "wallets/create_fund"
+
+
     get "sessions/login"
     post "sessions/create"
     delete "sessions/destroy"
+    get "sessions/forgot_page"
     get "dashboards/index"
-    get "users/index"
+    post "sessions/forgot_email"
+    get "sessions/opt_page"
+    post "sessions/verify_otp"
+    get "sessions/set_password"
+    post "sessions/set_password"
+    get "sessions/otp"
+    post "sessions/verify_otp_login"
+
+    get "reset_passwords/reset_page"
+    post "reset_passwords/reset_password"
+    post "reset_passwords/forget_password"
+    post "reset_passwords/main_forget_password"
+
+    get "schemes/index"
+    post "schemes/create", to: "schemes#create", as: :admin_scheme_create
+    post "schemes/update", to: "schemes#update", as: :admin_scheme_update
+    resources :schemes, only: [:destroy]
+
+    resources :banks
+
+    # get "user_services/index"
+    # get "user_services/new"
+    get "user_services/view_blance"
+    get "user_services/set_pin"
+    post "user_services/set_pin_update"
+
+    resources :user_services
+
+    get "collect_moneys/index"
+    get "collect_moneys/new"
+    post "collect_moneys/create"
+
+    get "recharges_and_bills/index"
+    get "recharges_and_bills/transaction"
+    post "recharges_and_bills/commission_set"
+
+
+    post "user_services/create", to: "user_services#create", as: :user_services_create
+    post "user_services/:id/update_status", to: "user_services#update_status", as: :retailer_update_status
+    # resources :user_services
   end
 
   namespace :admin do
@@ -137,7 +213,7 @@ Rails.application.routes.draw do
 
     get "recharges_and_bills/index"
     get "recharges_and_bills/transaction"
-    post "recharges_and_bills/amdmin_commission_set"
+    post "recharges_and_bills/commission_set"
 
 
     post "user_services/create", to: "user_services#create", as: :user_services_create

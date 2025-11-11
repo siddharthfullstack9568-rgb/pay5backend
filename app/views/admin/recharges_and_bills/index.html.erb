@@ -3,7 +3,7 @@
   <!-- Scheme dropdown -->
 
 
-<%= form_with url: admin_recharges_and_bills_index_path, 
+<%= form_with url: admin_recharges_and_bills_commission_set_path, 
               method: :get, 
               local: true, 
               id: "schemeFilterForm",
@@ -51,7 +51,7 @@
 
           <tbody class="text-sm text-gray-700">
             <% items.each do |item| %>
-              <%= form_with url: admin_recharges_and_bills_amdmin_commission_set_path,
+              <%= form_with url: admin_recharges_and_bills_commission_set_path,
                             method: :post,
                             local: true,
                             data: { turbo: false } do %>
@@ -82,12 +82,11 @@
                   </select>
                   </td>
 
-                 <td class="px-4 py-2 border">
-  <%= text_field_tag "commissions[#{item.service_product_item.id}][admin_commission]",
-      Commission.find_by(service_product_item_id: item.service_product_item.id, to_role: "admin")&.value,
-      placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm", disabled: true %>
-</td>
-
+                   <td class="px-4 py-2 border">
+                    <%= text_field_tag "commissions[#{item.service_product_item.id}][admin_commission]",
+                        Commission.find_by(service_product_item_id: item.service_product_item.id, to_role: "admin")&.value,
+                        placeholder: "%", class: "w-full border rounded px-2 py-1 text-sm", disabled: true %>
+                  </td>
 
                   <td class="px-4 py-2 border">
                     <%= text_field_tag "commissions[#{item.service_product_item.id}][master_commission]",
