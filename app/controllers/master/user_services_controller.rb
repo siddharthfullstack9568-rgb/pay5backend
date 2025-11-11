@@ -11,7 +11,7 @@ class Master::UserServicesController < Master::BaseController
   end
 
   def new
-    @services = UserService.where(assignee_id: 104).joins(:service).select("services.id, services.title")
+    @services = UserService.where(assignee_id: current_master.parent_id).joins(:service).select("services.id, services.title")
     p "=-===========@services==="
     p @services
     @user_service = User.new
@@ -41,7 +41,7 @@ class Master::UserServicesController < Master::BaseController
   end
 
   def edit
-    @services = UserService.where(assignee_id: 104).joins(:service).select("services.id, services.title")
+    @services = UserService.where(assignee_id: current_master.parent_id).joins(:service).select("services.id, services.title")
   end
 
   def update

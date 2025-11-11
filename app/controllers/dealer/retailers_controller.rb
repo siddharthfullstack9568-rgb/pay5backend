@@ -13,6 +13,7 @@ class Dealer::RetailersController < Dealer::BaseController
 
 
   def new
+    @services = UserService.where(assignee_id: current_dealer.parent_id).joins(:service).select("services.id, services.title")
     @retailer = User.new
   end
 
