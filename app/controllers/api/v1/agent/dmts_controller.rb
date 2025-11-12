@@ -210,14 +210,16 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
       return render json: { success: false, message: "Invalid PIN" }, status: :unauthorized
     end
 
-    # Identify wallet owner (change logic if you debit retailer)
-    wallet = Wallet.find_by(user_id: current_user.parent_id)
+    wallet = Wallet.find_by(user_id: current_user.id)
     unless wallet
       return render json: { success: false, message: "Wallet not found" }, status: :not_found
     end
 
-    p "==============amout"
-    p dmt_transaction.amount
+    p "============== walletamout"
+    p wallet.balance.to_f
+
+    p "=================== dmt_transaction amount"
+    p dmt_transaction.amount.to_f
 
     # Check sufficient balance
     if wallet.balance.to_f < dmt_transaction.amount.to_f
@@ -226,10 +228,13 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
 
     # Perform transaction safely
     ActiveRecord::Base.transaction do
-      # Deduct wallet amount
-      wallet.update!(balance: wallet.balance - dmt_transaction.amount)
+      wallet.lock!
 
-      # Update DMT transaction
+      if wallet.balance.to_f < dmt_transaction.amount.to_f
+        raise ActiveRecord::Rollback, "Insufficient wallet balance after lock"
+      end
+
+      wallet.update!(balance: wallet.balance.to_f - dmt_transaction.amount.to_f)
       dmt_transaction.update!(status: "success")
     end
 
