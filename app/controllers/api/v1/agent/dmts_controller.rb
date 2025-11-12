@@ -39,6 +39,11 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
     }, status: :ok
   end
 
+  def beneficiary_list
+    baneficiaries = Dmt.where(beneficiaries_status: true)
+    render json: {code: 200, message: "Successfully list show",  baneficiaries: baneficiaries}
+  end
+
 
 
 
