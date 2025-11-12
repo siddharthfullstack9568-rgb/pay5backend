@@ -219,10 +219,10 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
     p wallet.balance.to_f
 
     p "=================== dmt_transaction amount"
-    p dmt_transaction.amount.to_f
+    p dmt_transaction.dmt.amount.to_f
 
     # Check sufficient balance
-    if wallet.balance.to_f < dmt_transaction.amount.to_f
+    if wallet.balance.to_f < dmt_transaction.dmt.amount.to_f
       return render json: { success: false, message: "Insufficient wallet balance" }, status: :unprocessable_entity
     end
 
@@ -234,7 +234,7 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
         raise ActiveRecord::Rollback, "Insufficient wallet balance after lock"
       end
 
-      wallet.update!(balance: wallet.balance.to_f - dmt_transaction.amount.to_f)
+      wallet.update!(balance: wallet.balance.to_f - dmt_transaction.dmt.amount.to_f)
       dmt_transaction.update!(status: "success")
     end
 
