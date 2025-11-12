@@ -14,17 +14,16 @@ Rails.application.routes.draw do
     post :forgot_email,         action: :forgot_email,       as: :forgot_email_sessions
 
     # OTP Verification (for forgot password)
-    get  :otp_verify,           action: :otp_verify,         as: :otp_verify_sessions
+    get  :opt_page,           action: :opt_page,         as: :opt_page_sessions
     post :verify_otp,           action: :verify_otp,         as: :verify_otp_sessions
 
     # Set Password (after forgot OTP verified)
     get  :set_password,         action: :set_password,       as: :set_password_sessions
-    post :set_password_update,  action: :set_password_update,as: :set_password_update_sessions
+    post :set_password,  action: :set_password,as: :set_password_update_sessions
 
     # Logout
     delete :logout,             action: :logout,             as: :logout_sessions
   end
-
 
 
   namespace :dealer do

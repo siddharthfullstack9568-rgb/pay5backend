@@ -11,7 +11,7 @@ class Dealer::ResetPasswordsController < Dealer::BaseController
   end
 
   def reset_password
-    @user = current_user
+    @user = current_dealer
     p "==================user"
     p @user
     p "===========old password #{params[:old_password]} and password #{params[:password].inspect}"

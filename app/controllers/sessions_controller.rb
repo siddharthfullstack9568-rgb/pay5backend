@@ -64,13 +64,31 @@ class SessionsController < ApplicationController
   def forgot
   end
 
+  # def forgot_email
+  #   user = User.find_by(email: params[:email])
+  #   if user.present?
+  #     otp = rand(100000..999999).to_s
+  #     user.update(email_otp: otp, email_otp_verified_at: 10.minutes.from_now)
+  #     UserMailer.forgot_email(user, otp).deliver_now
+  #     redirect_to otp_verify_sessions_path(email: user.email)
+  #   else
+  #     flash[:alert] = "Email not found."
+  #     redirect_to forgot_sessions_path
+  #   end
+  # end
+
   def forgot_email
-    user = User.find_by(email: params[:email])
-    if user.present?
-      otp = rand(100000..999999).to_s
-      user.update(email_otp: otp, email_otp_verified_at: 10.minutes.from_now)
-      UserMailer.forgot_email(user, otp).deliver_now
-      redirect_to otp_verify_sessions_path(email: user.email)
+    @user = User.find_by(email: params[:email])
+    if @user
+      otp = rand(100000..999999)
+
+      @user.update(email_otp: otp, email_otp_verified_at: 10.minutes.from_now)
+
+      UserMailer.with(user: @user, otp: otp).forgot_email.deliver_now
+
+      flash[:notice] = "OTP sent to your email."
+      session[:superadmin_user_id] = nil
+      redirect_to opt_page_sessions_path(email: @user.email)
     else
       flash[:alert] = "Email not found."
       redirect_to forgot_sessions_path
@@ -80,37 +98,52 @@ class SessionsController < ApplicationController
   # ================================
   # VERIFY OTP (Forgot Password)
   # ================================
-  def otp_verify
-    @user_email = params[:email]
+  def opt_page
+    @email = params[:email]
   end
 
   def verify_otp
-    user = User.find_by(email: params[:email])
-    if user && user.email_otp == params[:otp] && user.email_otp_verified_at > Time.current
-      redirect_to set_password_sessions_path(email: user.email)
+    @email = params[:email]
+    p "==========email"
+    p @email
+    @user = User.find_by(email: @email)
+    p @user
+
+    if @user && @user.email_otp == params[:otp] && @user.email_otp_verified_at > 10.minutes.ago
+      redirect_to set_password_sessions_path(email: @user.email)
     else
-      flash[:alert] = "Invalid or expired OTP"
-      redirect_to otp_verify_sessions_path(email: params[:email])
+      redirect_to opt_page_sessions_path
     end
   end
 
-  # ================================
-  # SET PASSWORD
-  # ================================
+  def set_password_page
+    @email = params[:email]
+    p "================email"
+    p @email
+  end
+
   def set_password
-    @user_email = params[:email]
-  end
+    @email = params[:email]
+    p "================email"
+    p @email
+    @user = User.find_by(email: @email)
+    p "================user"
+    p @user
 
-  def set_password_update
-    user = User.find_by(email: params[:email])
-    if user.present? && params[:password] == params[:password_confirmation]
-      user.update(password: params[:password], email_otp: nil, email_otp_verified_at: nil)
-      flash[:notice] = "Password updated successfully."
-      redirect_to login_sessions_path
-    else
-      flash[:alert] = "Password mismatch."
-      redirect_to set_password_sessions_path(email: params[:email])
+    if params[:password].present? && params[:password_confirmation].present?
+      p "================user"
+      p @user
+      if params[:password] == params[:password_confirmation]
+        @user.update(password: params[:password])
+        flash[:notice] = "Password updated successfully."
+        redirect_to login_sessions_path and return
+      else
+        flash[:alert] = "Passwords do not match."
+        render :set_password and return
+      end
     end
+
+    # This will render the form by default (for GET request)
   end
 
   # ================================
