@@ -196,34 +196,58 @@ class Api::V1::Agent::DmtsController < Api::V1::Agent::BaseController
 
 
   def dmt_transaction_verify
-    p current_user.id
     if params[:pin].blank?
       return render json: { success: false, message: "PIN is required" }, status: :bad_request
     end
 
-    dmt_transaction = DmtTransaction.where(dmt_id: params[:id]).last
+    dmt_transaction = DmtTransaction.find_by(dmt_id: params[:id])
     unless dmt_transaction
       return render json: { success: false, message: "DMT Transaction not found" }, status: :not_found
     end
 
-    # ✅ Verify user's PIN
-    if current_user.set_pin.to_s == params[:pin].to_s
-      # ✅ Update transaction status to "success"
-      dmt_transaction.update(status: "success")
-
-      render json: {
-        code: "200",
-        success: true,
-        message: "PIN verified successfully. Transaction marked as success.",
-        data: {
-          transaction: dmt_transaction,
-          bank_name: dmt_transaction.bank_name
-        }
-      }, status: :ok
-    else
-      render json: { success: false, message: "Invalid PIN" }, status: :unauthorized
+    # Verify user PIN
+    unless current_user.set_pin.to_s == params[:pin].to_s
+      return render json: { success: false, message: "Invalid PIN" }, status: :unauthorized
     end
+
+    # Identify wallet owner (change logic if you debit retailer)
+    wallet = Wallet.find_by(user_id: current_user.parent_id)
+    unless wallet
+      return render json: { success: false, message: "Wallet not found" }, status: :not_found
+    end
+
+    p "==============amout"
+    p dmt_transaction.amount
+
+    # Check sufficient balance
+    if wallet.balance.to_f < dmt_transaction.amount.to_f
+      return render json: { success: false, message: "Insufficient wallet balance" }, status: :unprocessable_entity
+    end
+
+    # Perform transaction safely
+    ActiveRecord::Base.transaction do
+      # Deduct wallet amount
+      wallet.update!(balance: wallet.balance - dmt_transaction.amount)
+
+      # Update DMT transaction
+      dmt_transaction.update!(status: "success")
+    end
+
+    render json: {
+      code: "200",
+      success: true,
+      message: "PIN verified successfully. Transaction marked as success.",
+      data: {
+        transaction: dmt_transaction,
+        bank_name: dmt_transaction.bank_name,
+        remaining_balance: wallet.balance
+      }
+    }, status: :ok
+
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { success: false, message: "Transaction failed: #{e.message}" }, status: :unprocessable_entity
   end
+
 
 
 end
