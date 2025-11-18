@@ -1,5 +1,5 @@
 class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
-  protect_from_forgery with: :null_session
+  # protect_from_forgery with: :null_session
 
   def verify_pin
     if params[:pin].blank?
@@ -25,7 +25,7 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
   end
 
   def fetch_eko_operators
-    url = URI("https://staging.eko.in:25004/ekoapi/v2/billpayments/operators?operator_category_id=5")
+    url = URI("https://api.eko.in:25002/ekoicici/v2/billpayments/operators?operator_category_id=5")
 
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
@@ -51,7 +51,7 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
   def fetch_eko_locations
     puts "====== Fetching EKO Locations ======"
 
-    url = URI("https://staging.eko.in:25004/ekoapi/v2/billpayments/operators_location")
+    url = URI("https://api.eko.in:25002/ekoicici/v2/billpayments/operators_location")
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE  # staging SSL fix
@@ -82,7 +82,7 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
 
     return render json: { error: "operator_id and location_id required" } if operator_id.blank? || location_id.blank?
 
-    url = URI("https://staging.eko.in:25004/ekoapi/v1/billpayments/plans?operator_id=#{operator_id}&operator_location_id=#{location_id}")
+    url = URI("https://api.eko.in:25002/ekoicici/v2/billpayments/plans?operator_id=#{operator_id}&operator_location_id=#{location_id}")
 
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
@@ -104,30 +104,18 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
   end
 
   def eko_mobile_recharge
-    puts "====== EKO Mobile Recharge Started ======"
-
-    # Validate required params
-    required_params = %i[operator_id operator_location_id mobile amount reference_id]
-    missing = required_params.select { |p| params[p].blank? }
-
-    if missing.any?
-      return render json: { success: false, message: "Missing: #{missing.join(', ')}" }
-    end
-
-    # Correct EKO STAGING BBPS URL
-    url = URI("https://staging.eko.in:25004/ekoicici/billpayments/transaction")
+    url = URI("https://api.eko.in:25002/ekoicici/v1/billpayments/transaction")
 
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-    request = Net::HTTP::Post.new(url)
-    request["developer_key"] = ENV["EKO_DEV_KEY"]
-    request["secret-key"] = ENV["EKO_SECRET_KEY"]
-    request["secret-key-timestamp"] = Time.now.to_i.to_s
-    request["Content-Type"] = "application/x-www-form-urlencoded"
+    req = Net::HTTP::Post.new(url)
+    req["developer_key"] = ENV["EKO_DEV_KEY"]
+    req["secret-key"] = ENV["EKO_SECRET_KEY"]
+    req["secret-key-timestamp"] = Time.now.to_i.to_s
+    req["Content-Type"] = "application/x-www-form-urlencoded"
 
-    form_body = {
+    form_data = {
       service_code: 5,
       operator_id: params[:operator_id],
       operator_location_id: params[:operator_location_id],
@@ -138,29 +126,17 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
       reference_id: params[:reference_id]
     }
 
-    request.set_form_data(form_body)
+    req.set_form_data(form_data)
 
-    puts "====== FORM DATA SENT ======"
-    puts form_body.inspect
-
-    begin
-      response = http.request(request)
-    rescue => e
-      return render json: { success: false, message: e.message }
-    end
-
-    puts "====== RAW RESPONSE ======"
-    puts response
-
+    response = http.request(req)
     parsed = JSON.parse(response.body) rescue { raw: response.body }
-      
+
     render json: {
       code: response.code,
       success: parsed["response_status_id"] == 0,
       data: parsed
     }
   end
-
 
 
 
