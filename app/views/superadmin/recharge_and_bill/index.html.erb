@@ -72,7 +72,7 @@
                     </select>
                   </td>
                   <td class="px-4 py-2 border">
-                    <select name="scheme" id="schemeSelect" class="border rounded px-3 py-2">
+                    <select name="scheme" id="schemeSelect" class="border rounded px-3 py-2" required>
                     <option value="ALL" <%= "selected" if params[:scheme].blank? || params[:scheme] == "ALL" %>>All</option>
                     <% Scheme.all.each do |scheme| %>
                       <option value="<%= scheme.id %>" <%= "selected" if params[:scheme].to_s == scheme.id.to_s %>>

@@ -24,6 +24,168 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
     render json: { code: 200, message: "Successfully fetched data", list: recharg_lists }
   end
 
+  def fetch_operator
+    puts "================= FETCH OPERATOR API CALLED ================"
+
+    if params[:mobile_number].blank?
+      return render json: { success: false, message: "Mobile number is required" }
+    end
+
+    puts "Mobile Number Received: #{params[:mobile_number]}"
+
+    url = URI("https://api.eko.in:25002/ekoicici/v2/bill_fetch")
+    puts "URL: #{url}"
+
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+
+    request = Net::HTTP::Post.new(url)
+    request["developer_key"] = ENV["EKO_DEV_KEY"]
+    request["secret_key"]     = ENV["EKO_SECRET_KEY"]
+    request["Content-Type"]   = "application/json"
+
+    puts "========== HEADERS SENT =========="
+    puts "developer_key: #{request['developer_key']}"
+    puts "secret_key: #{request['secret_key']}"
+    puts "Content-Type: #{request['Content-Type']}"
+
+    request_body = {
+      # initiator_id: "9212094999",
+      user_code: "38130001",
+      customer_identifier: params[:mobile_number],
+      service: 1,
+      type: 2
+    }
+
+    request.body = request_body.to_json
+
+    puts "========== BODY SENT =========="
+    puts JSON.pretty_generate(request_body)
+
+    puts "========== HITTING EKO API =========="
+
+    begin
+      response = http.request(request)
+      puts "========== RAW RESPONSE =========="
+      puts "Status Code: #{response.code}"
+      puts "Body: #{response.body}"
+    rescue => e
+      puts "========== REQUEST ERROR =========="
+      puts e.message
+      return render json: { error: true, message: e.message }
+    end
+
+    # Parse JSON safely
+    begin
+      parsed = JSON.parse(response.body)
+    rescue
+      parsed = { raw: response.body }
+    end
+
+    puts "========== PARSED RESPONSE =========="
+    puts parsed
+
+    render json: {
+      code: response.code,
+      data: parsed
+    }
+  end
+
+
+  def fetch_eko_user_info
+  puts "============fetch_eko_user_info"
+
+  url = URI("https://api.eko.in:25002/ekoicici/api_key_info")
+
+  http = Net::HTTP.new(url.host, url.port)
+  http.use_ssl = true
+
+  request = Net::HTTP::Post.new(url)
+  request['developer_key'] = "753595f07a59eb5a52341538fad5a63d"
+  request['secret-key']    = "854313b5-a37a-445a-8bc5-a27f4f0fe56a"
+  request['Content-Type']  = "application/json"
+
+  request.body = {
+    initiator_id: "9212094999"
+  }.to_json
+
+  response = http.request(request)
+
+  puts "==============response"
+  puts response.code
+  puts response.body
+
+  begin
+    parsed = JSON.parse(response.body)
+  rescue
+    parsed = { raw: response.body }
+  end
+
+  render json: {
+    status: response.code,
+    data: parsed
+  }
+end
+
+
+
+
+
+
+
+
+  def fetch_plans
+    if params[:operator_code].blank? || params[:circle_code].blank?
+      return render json: { success: false, message: "operator_code & circle_code required" }, status: :bad_request
+    end
+
+    url = URI("https://api.eko.in/ekoapi/v1/plan-list")
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+
+    req = Net::HTTP::Post.new(url)
+    req["developer_key"] = ENV["EKO_DEV_KEY"]
+    req["secret_key"] = ENV["EKO_SECRET_KEY"]
+    req["Content-Type"] = "application/json"
+
+    req.body = {
+      initiator_id: "IN10001",
+      service: 1,
+      operator_code: params[:operator_code],
+      circle_code: params[:circle_code]
+    }.to_json
+
+    response = http.request(req)
+    data = JSON.parse(response.body) rescue {}
+
+    render json: {
+      code: response.code,
+      plans: data["data"] || data
+    }
+  end
+
+  def fetch_bill
+    url = URI("https://api.eko.in/ekoapi/v2/bill_fetch")
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+
+    req = Net::HTTP::Post.new(url)
+    req["developer_key"] = "753595f07a59eb5a52341538fad5a63d"
+    req["secret_key"] = "854313b5-a37a-445a-8bc5-a27f4f0fe56a"
+    req["Content-Type"] = "application/json"
+
+    req.body = {
+      initiator_id: "IN10001",
+      biller_id: params[:biller_id],
+      account: params[:mobile_number],
+      user_code: "AG1234"
+    }.to_json
+
+    response = http.request(req)
+    render json: response.body
+  end
+
+
 
   def recharge
     Rails.logger.info "================= current_user: #{current_user.id} (#{current_user.role.title})"
@@ -50,7 +212,7 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
     service_product_item = ServiceProductItem.find_by(name: params[:operator])
 
     unless service_product_item
-      return render json: { success: false, message: "Service Product not found" }, status: :not_found
+      return render json: { success: false, message: "Service Product Item not found" }, status: :not_found
     end
 
     ActiveRecord::Base.transaction do

@@ -9,7 +9,7 @@ class Superadmin::PaymentsController < Superadmin::BaseController
     p fund_requests
     # Get all wallet transactions linked to these fund requests
     @fund_transactions = WalletTransaction.where(fund_request_id: fund_requests.pluck(:id)).order(created_at: :desc)
-    p @fund_transactions.last.status
+    p @fund_transactions.last&.status
     Rails.logger.info "==================@fund_transactions"
     Rails.logger.info @fund_transactions.inspect
   end

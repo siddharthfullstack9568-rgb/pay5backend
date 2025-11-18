@@ -269,6 +269,9 @@ Rails.application.routes.draw do
         post "recharges/recharge"
         post "recharges/recharge_list"
         post "recharges/verify_pin"
+        post "fetch_operator", to: "recharges#fetch_operator"
+        post "fetch_plans", to: "recharges#fetch_plans"
+        post "recharges/fetch_eko_user_info"
 
         get "wallets/balance"
         post "wallets/create"

@@ -69,3 +69,4 @@ gem "chartkick"
 gem "groupdate"
 gem "cloudinary"
 gem 'pagy'
+gem 'httparty'
