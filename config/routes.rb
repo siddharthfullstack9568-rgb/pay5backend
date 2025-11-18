@@ -269,7 +269,11 @@ Rails.application.routes.draw do
         post "recharges/recharge"
         post "recharges/recharge_list"
         post "recharges/verify_pin"
-        post "fetch_operator", to: "recharges#fetch_operator"
+        post "fetch_eko_operators", to: "recharges#fetch_eko_operators"
+        post "fetch_eko_locations", to: "recharges#fetch_eko_locations"
+        post "fetch_eko_plans", to: "recharges#fetch_eko_plans"
+        post "eko_mobile_recharge", to: "recharges#eko_mobile_recharge"
+
         post "fetch_plans", to: "recharges#fetch_plans"
         post "recharges/fetch_eko_user_info"
 

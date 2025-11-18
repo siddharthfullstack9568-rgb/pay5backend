@@ -24,108 +24,180 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
     render json: { code: 200, message: "Successfully fetched data", list: recharg_lists }
   end
 
-  def fetch_operator
-    puts "================= FETCH OPERATOR API CALLED ================"
+  def fetch_eko_operators
+    url = URI("https://staging.eko.in:25004/ekoapi/v2/billpayments/operators?operator_category_id=5")
 
-    if params[:mobile_number].blank?
-      return render json: { success: false, message: "Mobile number is required" }
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    request = Net::HTTP::Get.new(url)
+    request["developer_key"] = ENV["EKO_DEV_KEY"]
+    request["secret-key"]    = ENV["EKO_SECRET_KEY"]
+    request["secret-key-timestamp"] = Time.now.to_i.to_s
+
+    response = http.request(request)
+    parsed = JSON.parse(response.body) rescue {}
+
+    # 🟢 Filter only operator_category == 5 (Mobile Prepaid)
+    mobile_prepaid_ops = parsed["data"].select { |op| op["operator_category"] == 5 }
+
+    render json: {
+      status: response.code,
+      operators: mobile_prepaid_ops
+    }
+  end
+
+  def fetch_eko_locations
+    puts "====== Fetching EKO Locations ======"
+
+    url = URI("https://staging.eko.in:25004/ekoapi/v2/billpayments/operators_location")
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE  # staging SSL fix
+
+    request = Net::HTTP::Get.new(url)
+    request["developer_key"] = ENV["EKO_DEV_KEY"]
+    request["secret_key"]    = ENV["EKO_SECRET_KEY"]  # <-- FIXED
+    request["secret-key-timestamp"] = Time.now.to_i.to_s
+    request["Content-Type"] = "application/json"
+
+    begin
+      response = http.request(request)
+    rescue => e
+      return render json: { error: true, message: e.message }
     end
 
-    puts "Mobile Number Received: #{params[:mobile_number]}"
+    parsed = JSON.parse(response.body) rescue { raw: response.body }
 
-    url = URI("https://api.eko.in:25002/ekoicici/v2/bill_fetch")
-    puts "URL: #{url}"
+    render json: {
+      code: response.code,
+      locations: parsed["data"]
+    }
+  end
+
+  def fetch_eko_plans
+    operator_id = params[:operator_id]
+    location_id = params[:location_id]
+
+    return render json: { error: "operator_id and location_id required" } if operator_id.blank? || location_id.blank?
+
+    url = URI("https://staging.eko.in:25004/ekoapi/v1/billpayments/plans?operator_id=#{operator_id}&operator_location_id=#{location_id}")
+
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    request = Net::HTTP::Get.new(url)
+    request["developer_key"] = ENV["EKO_DEV_KEY"]
+    request["secret-key"] = ENV["EKO_SECRET_KEY"]
+    request["secret-key-timestamp"] = Time.now.to_i.to_s
+    request["Content-Type"] = "application/json"
+
+    response = http.request(request)
+    parsed = JSON.parse(response.body) rescue { raw: response.body }
+
+    render json: {
+      code: response.code,
+      plans: parsed["data"]
+    }
+  end
+
+  def eko_mobile_recharge
+    puts "====== EKO Mobile Recharge Started ======"
+
+    # Validate required params
+    required_params = %i[operator_id operator_location_id mobile amount reference_id]
+    missing = required_params.select { |p| params[p].blank? }
+
+    if missing.any?
+      return render json: { success: false, message: "Missing: #{missing.join(', ')}" }
+    end
+
+    # Correct EKO STAGING BBPS URL
+    url = URI("https://staging.eko.in:25004/ekoicici/billpayments/transaction")
+
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    request = Net::HTTP::Post.new(url)
+    request["developer_key"] = ENV["EKO_DEV_KEY"]
+    request["secret-key"] = ENV["EKO_SECRET_KEY"]
+    request["secret-key-timestamp"] = Time.now.to_i.to_s
+    request["Content-Type"] = "application/x-www-form-urlencoded"
+
+    form_body = {
+      service_code: 5,
+      operator_id: params[:operator_id],
+      operator_location_id: params[:operator_location_id],
+      customer_account_number: params[:mobile],
+      amount: params[:amount],
+      initiator_id: "9212094999",
+      user_code: "38130001",
+      reference_id: params[:reference_id]
+    }
+
+    request.set_form_data(form_body)
+
+    puts "====== FORM DATA SENT ======"
+    puts form_body.inspect
+
+    begin
+      response = http.request(request)
+    rescue => e
+      return render json: { success: false, message: e.message }
+    end
+
+    puts "====== RAW RESPONSE ======"
+    puts response
+
+    parsed = JSON.parse(response.body) rescue { raw: response.body }
+      
+    render json: {
+      code: response.code,
+      success: parsed["response_status_id"] == 0,
+      data: parsed
+    }
+  end
+
+
+
+
+  def fetch_eko_user_info
+    puts "============fetch_eko_user_info"
+
+    url = URI("https://api.eko.in:25002/ekoicici/api_key_info")
 
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
 
     request = Net::HTTP::Post.new(url)
-    request["developer_key"] = ENV["EKO_DEV_KEY"]
-    request["secret_key"]     = ENV["EKO_SECRET_KEY"]
-    request["Content-Type"]   = "application/json"
+    request['developer_key'] = "753595f07a59eb5a52341538fad5a63d"
+    request['secret-key']    = "854313b5-a37a-445a-8bc5-a27f4f0fe56a"
+    request['Content-Type']  = "application/json"
 
-    puts "========== HEADERS SENT =========="
-    puts "developer_key: #{request['developer_key']}"
-    puts "secret_key: #{request['secret_key']}"
-    puts "Content-Type: #{request['Content-Type']}"
+    request.body = {
+      initiator_id: "9212094999"
+    }.to_json
 
-    request_body = {
-      # initiator_id: "9212094999",
-      user_code: "38130001",
-      customer_identifier: params[:mobile_number],
-      service: 1,
-      type: 2
-    }
+    response = http.request(request)
 
-    request.body = request_body.to_json
+    puts "==============response"
+    puts response.code
+    puts response.body
 
-    puts "========== BODY SENT =========="
-    puts JSON.pretty_generate(request_body)
-
-    puts "========== HITTING EKO API =========="
-
-    begin
-      response = http.request(request)
-      puts "========== RAW RESPONSE =========="
-      puts "Status Code: #{response.code}"
-      puts "Body: #{response.body}"
-    rescue => e
-      puts "========== REQUEST ERROR =========="
-      puts e.message
-      return render json: { error: true, message: e.message }
-    end
-
-    # Parse JSON safely
     begin
       parsed = JSON.parse(response.body)
     rescue
       parsed = { raw: response.body }
     end
 
-    puts "========== PARSED RESPONSE =========="
-    puts parsed
-
     render json: {
-      code: response.code,
+      status: response.code,
       data: parsed
     }
   end
-
-
-  def fetch_eko_user_info
-  puts "============fetch_eko_user_info"
-
-  url = URI("https://api.eko.in:25002/ekoicici/api_key_info")
-
-  http = Net::HTTP.new(url.host, url.port)
-  http.use_ssl = true
-
-  request = Net::HTTP::Post.new(url)
-  request['developer_key'] = "753595f07a59eb5a52341538fad5a63d"
-  request['secret-key']    = "854313b5-a37a-445a-8bc5-a27f4f0fe56a"
-  request['Content-Type']  = "application/json"
-
-  request.body = {
-    initiator_id: "9212094999"
-  }.to_json
-
-  response = http.request(request)
-
-  puts "==============response"
-  puts response.code
-  puts response.body
-
-  begin
-    parsed = JSON.parse(response.body)
-  rescue
-    parsed = { raw: response.body }
-  end
-
-  render json: {
-    status: response.code,
-    data: parsed
-  }
-end
 
 
 
