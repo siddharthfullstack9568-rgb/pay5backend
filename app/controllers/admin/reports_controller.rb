@@ -1,7 +1,7 @@
 class Admin::ReportsController < Admin::BaseController
   layout "admin"
   #before_action :require_admin_login
-# before_action :authenticate_user!
+  # before_action :authenticate_user!
   def index
     @services = Service.all
     # Transaction counts grouped by service_product_id for users under current_admin
@@ -24,35 +24,61 @@ class Admin::ReportsController < Admin::BaseController
 
 
   def report_filter
-  @service_id = params[:id]
-  category_id = params[:category_id]
+    service_id  = params[:id]
+    category_id = params[:category_id]
 
-  @categories = Category.where(service_id: @service_id)
-  @service_products = ServiceProduct.where(category_id: category_id)
+    # Category list by service_id
+    categories = Category.where(service_id: service_id)
 
-  # Transactions query बनाते समय includes से associations load कर लो
-  @transactions = Transaction.none
+    # service_products list by category_id
+    service_products = ServiceProduct.where(category_id: category_id)
 
-  if params[:service_product_id].present? || params[:status].present? || (params[:start_date].present? && params[:end_date].present?)
-    @transactions = Transaction.includes(:service_product, :user) # <- eager loading
+    transactions = Transaction.none
 
-    if params[:service_product_id].present?
-      @transactions = @transactions.where(service_product_id: params[:service_product_id])
+    if params[:service_product_id].present? || params[:status].present? || (params[:start_date].present? && params[:end_date].present?)
+
+      transactions = Transaction.includes(:service_product, :user)
+
+      if params[:service_product_id].present?
+        transactions = transactions.where(service_product_id: params[:service_product_id])
+      end
+
+      if params[:status].present?
+        transactions = transactions.where(status: params[:status])
+      end
+
+      if params[:start_date].present? && params[:end_date].present?
+        start_date = Date.parse(params[:start_date]).beginning_of_day
+        end_date   = Date.parse(params[:end_date]).end_of_day
+        transactions = transactions.where(created_at: start_date..end_date)
+      end
+
+      transactions = transactions.order(created_at: :desc)
     end
 
-    if params[:status].present?
-      @transactions = @transactions.where(status: params[:status])
-    end
-
-    if params[:start_date].present? && params[:end_date].present?
-      start_date = Date.parse(params[:start_date]).beginning_of_day
-      end_date   = Date.parse(params[:end_date]).end_of_day
-      @transactions = @transactions.where(created_at: start_date..end_date)
-    end
-
-    @transactions = @transactions.order(created_at: :desc)
+    # Final JSON Response
+    render json: {
+      status: true,
+      message: "Report fetched successfully",
+      categories: categories.as_json(only: [:id, :name]),
+      service_products: service_products.as_json(only: [:id, :company_name]),
+      transactions: transactions.map { |t|
+        {
+          id: t.id,
+          amount: t.amount,
+          status: t.status,
+          created_at: t.created_at,
+          user: {
+            id: t.user.id,
+            name: t.user.name,
+            email: t.user.email
+          },
+          service_product: {
+            id: t.service_product.id,
+            name: t.service_product.company_name
+          }
+        }
+      }
+    }
   end
-end
-
-
 end

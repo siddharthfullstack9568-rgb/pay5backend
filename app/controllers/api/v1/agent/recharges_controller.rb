@@ -25,33 +25,19 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
   end
 
   def fetch_eko_operators
-    url = URI("https://api.eko.in:25002/ekoicici/v2/billpayments/operators?operator_category_id=5")
-
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-    request = Net::HTTP::Get.new(url)
-    request["developer_key"] = ENV["EKO_DEV_KEY"]
-    request["secret-key"]    = ENV["EKO_SECRET_KEY"]
-    request["secret-key-timestamp"] = Time.now.to_i.to_s
-
-    response = http.request(request)
-    parsed = JSON.parse(response.body) rescue {}
-
-    # 🟢 Filter only operator_category == 5 (Mobile Prepaid)
-    mobile_prepaid_ops = parsed["data"].select { |op| op["operator_category"] == 5 }
-
-    render json: {
-      status: response.code,
-      operators: mobile_prepaid_ops
-    }
+    begin
+      result = Eko::OperatorListService.fetch
+      render json: { success: true, data: result }, status: 200
+    rescue => e
+      render json: { success: false, message: e.message }, status: 400
+    end
   end
+
 
   def fetch_eko_locations
     puts "====== Fetching EKO Locations ======"
 
-    url = URI("https://api.eko.in:25002/ekoicici/v2/billpayments/operators_location")
+    url = URI("https://api.eko.in:25002/ekoapi/v2/billpayments/operators_location")
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE  # staging SSL fix
@@ -76,161 +62,58 @@ class Api::V1::Agent::RechargesController < Api::V1::Agent::BaseController
     }
   end
 
-  def fetch_eko_plans
-    operator_id = params[:operator_id]
-    location_id = params[:location_id]
 
-    return render json: { error: "operator_id and location_id required" } if operator_id.blank? || location_id.blank?
-
-    url = URI("https://api.eko.in:25002/ekoicici/v2/billpayments/plans?operator_id=#{operator_id}&operator_location_id=#{location_id}")
-
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-    request = Net::HTTP::Get.new(url)
-    request["developer_key"] = ENV["EKO_DEV_KEY"]
-    request["secret-key"] = ENV["EKO_SECRET_KEY"]
-    request["secret-key-timestamp"] = Time.now.to_i.to_s
-    request["Content-Type"] = "application/json"
-
-    response = http.request(request)
-    parsed = JSON.parse(response.body) rescue { raw: response.body }
-
-    render json: {
-      code: response.code,
-      plans: parsed["data"]
-    }
-  end
-
-  def eko_mobile_recharge
-    url = URI("https://api.eko.in:25002/ekoicici/v1/billpayments/transaction")
-
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
-
-    req = Net::HTTP::Post.new(url)
-    req["developer_key"] = ENV["EKO_DEV_KEY"]
-    req["secret-key"] = ENV["EKO_SECRET_KEY"]
-    req["secret-key-timestamp"] = Time.now.to_i.to_s
-    req["Content-Type"] = "application/x-www-form-urlencoded"
-
-    form_data = {
-      service_code: 5,
-      operator_id: params[:operator_id],
-      operator_location_id: params[:operator_location_id],
-      customer_account_number: params[:mobile],
-      amount: params[:amount],
-      initiator_id: "9212094999",
+  def activate_eko_service
+    result = EkoApiClient.activate_service(
+      service_code: 53,
+      initiator_id: 9212094999,
       user_code: "38130001",
-      reference_id: params[:reference_id]
-    }
-
-    req.set_form_data(form_data)
-
-    response = http.request(req)
-    parsed = JSON.parse(response.body) rescue { raw: response.body }
-
-    render json: {
-      code: response.code,
-      success: parsed["response_status_id"] == 0,
-      data: parsed
-    }
+      latlong: "28.613939,77.209023"
+    )
+    render json: result
   end
 
+  def create
+    mobile = params[:utility_acc_no] || params[:mobile]
+    amount = params[:amount]
+    operator_id = params[:operator_id]
 
-
-  def fetch_eko_user_info
-    puts "============fetch_eko_user_info"
-
-    url = URI("https://api.eko.in:25002/ekoicici/api_key_info")
-
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
-
-    request = Net::HTTP::Post.new(url)
-    request['developer_key'] = "753595f07a59eb5a52341538fad5a63d"
-    request['secret-key']    = "854313b5-a37a-445a-8bc5-a27f4f0fe56a"
-    request['Content-Type']  = "application/json"
-
-    request.body = {
-      initiator_id: "9212094999"
-    }.to_json
-
-    response = http.request(request)
-
-    puts "==============response"
-    puts response.code
-    puts response.body
-
-    begin
-      parsed = JSON.parse(response.body)
-    rescue
-      parsed = { raw: response.body }
+    if mobile.blank? || amount.blank? || operator_id.blank?
+      return render json: { code: 400, message: "mobile, amount & operator_id required", data: [] }
     end
 
+    result = Eko::EkoRechargeService.pay_recharge(mobile, amount, operator_id)
+
     render json: {
-      status: response.code,
-      data: parsed
+      code: result["status"],
+      message: result["message"],
+      data: result
     }
   end
 
+  def plans
+    render json: EkoMobilePlanService.fetch_plans(params[:operator_id], params[:circle_id])
+  end
 
+  def paybill
+    mobile      = params[:mobile]
+    amount      = params[:amount]
+    operator_id = params[:operator_id]
 
-
-
-
-
-
-  def fetch_plans
-    if params[:operator_code].blank? || params[:circle_code].blank?
-      return render json: { success: false, message: "operator_code & circle_code required" }, status: :bad_request
+    if mobile.blank? || amount.blank? || operator_id.blank?
+      return render json: { status: false, message: "mobile, amount & operator_id required" }, status: 400
     end
 
-    url = URI("https://api.eko.in/ekoapi/v1/plan-list")
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
+    client_ref_id = "TXN#{rand(100000..999999)}"
 
-    req = Net::HTTP::Post.new(url)
-    req["developer_key"] = ENV["EKO_DEV_KEY"]
-    req["secret_key"] = ENV["EKO_SECRET_KEY"]
-    req["Content-Type"] = "application/json"
+    response = EkoMobileRechargeService.recharge(
+      mobile: mobile,
+      amount: amount,
+      operator_id: operator_id,
+      client_ref_id: client_ref_id
+    )
 
-    req.body = {
-      initiator_id: "IN10001",
-      service: 1,
-      operator_code: params[:operator_code],
-      circle_code: params[:circle_code]
-    }.to_json
-
-    response = http.request(req)
-    data = JSON.parse(response.body) rescue {}
-
-    render json: {
-      code: response.code,
-      plans: data["data"] || data
-    }
-  end
-
-  def fetch_bill
-    url = URI("https://api.eko.in/ekoapi/v2/bill_fetch")
-    http = Net::HTTP.new(url.host, url.port)
-    http.use_ssl = true
-
-    req = Net::HTTP::Post.new(url)
-    req["developer_key"] = "753595f07a59eb5a52341538fad5a63d"
-    req["secret_key"] = "854313b5-a37a-445a-8bc5-a27f4f0fe56a"
-    req["Content-Type"] = "application/json"
-
-    req.body = {
-      initiator_id: "IN10001",
-      biller_id: params[:biller_id],
-      account: params[:mobile_number],
-      user_code: "AG1234"
-    }.to_json
-
-    response = http.request(req)
-    render json: response.body
+    render json: response
   end
 
 
