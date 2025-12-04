@@ -2,8 +2,8 @@
 module Api
   module V1
     module Agent
-      class ReatailerProfilesController < Api::V1::Agent::BaseController
-        protect_from_forgery with: :null_session
+      class ReatailerProfilesController < Api::V1::Auth::BaseController
+        # protect_from_forgery with: :null_session
         skip_before_action :authenticate_user!, only: [:forget_password, :reset_password, :verfiy_transaction_pin, :main_forget_password]
 
 

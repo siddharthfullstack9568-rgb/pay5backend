@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   end
 
 
+
   namespace :dealer do
     get "sessions/login"
     post "sessions/create"
@@ -221,6 +222,101 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      namespace :admin do
+        get "dashboards/index"
+
+        get  "accounts/credit_logs", to: "accounts#credit_logs"
+        post "accounts/add_credit",  to: "accounts#add_credit"
+
+        get  "accounts/debit_logs",  to: "accounts#debit_logs"
+        post "accounts/add_debit",   to: "accounts#add_debit"
+
+        resources :user_services do
+
+          member do
+            put :update_status
+          end
+          collection do
+            get :service_list
+            get :scheme_list
+            get :role_list
+          end
+        end
+
+        resources :schemes
+        resources :banks
+        resources :wallets, only: [:index, :create] do
+          collection do
+            get :bank
+            get :bank_details
+          end
+        end
+
+        resources :admin_profiles do
+          collection do
+            post "set_pin"
+            post "reset_transaction_pin"
+            post "forget_transaction_pin"
+            post "verfiy_transaction_pin"
+
+            post "set_password"
+            post "forgot_password"
+            post "verify_password_otp"
+            post "forget_password"
+            post "main_forget_password"
+            post "set_mpin"
+          end
+        end
+
+        resources :commissions do
+          collection do
+            post "commission_operator"
+            post "show_commission"
+            get "scheme_list"
+            post "set_commission"
+            post "service_category"
+            post "service_product"
+          end
+        end
+
+        resources :payments do
+          collection do
+            post "index"
+            post "approved"
+            post "reject_payment_request"
+          end
+        end
+
+        post "reports/index"
+        # resources :reports , only: [:index]
+
+
+      end
+    end
+  end
+
+  namespace :api do
+    namespace :v1 do
+      namespace :auth do
+
+        # LOGIN (Admin / Master / Dealer / Agent)
+        post "login", to: "sessions#login"
+
+        # VERIFY OTP
+        post "verify_email", to: "sessions#verify_email"
+
+        # CREATE USER (Retailer / Agent / Dealer)
+        post "register", to: "sessions#create"
+
+        # ROLE LIST
+        get "roles", to: "sessions#role"
+
+      end
+    end
+  end
+
+  namespace :api do
+    namespace :v1 do
       namespace :customer do
         get "locations/index"
 
@@ -253,6 +349,8 @@ Rails.application.routes.draw do
       end
 
       namespace :agent do
+        get "/eko/check_kyc", to: "eko#check_kyc"
+
         get "dashboards/index"
         post "sessions/login"
         post "sessions/create"
@@ -278,7 +376,7 @@ Rails.application.routes.draw do
         post "activate_bbps_service", to: "recharges#activate_bbps_service"
         post "create", to: "recharges#create"
         post "paybill", to: "recharges#paybill"
-        post "plans", to: "recharges#plans"
+        post "fetch_bill", to: "recharges#fetch_bill"
 
         post "fetch_plans", to: "recharges#fetch_plans"
         post "recharges/fetch_eko_user_info"
@@ -351,7 +449,8 @@ Rails.application.routes.draw do
     get "reports/index"
 
     get "commissions/index"
-    post "commissions/commission_set"
+    get "commissions/commission_filter"
+    post "commissions/set_commission"
 
     get "accounts/index"
     get "accounts/new"

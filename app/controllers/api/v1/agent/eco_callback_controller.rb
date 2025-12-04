@@ -1,4 +1,4 @@
-class Api::V1::Agent::EcoCallbackController < Api::V1::Agent::BaseController
+class Api::V1::Agent::EcoCallbackController < Api::V1::Auth::BaseController
   skip_before_action :verify_authenticity_token
 
   def bbps
@@ -30,7 +30,7 @@ class Api::V1::Agent::EcoCallbackController < Api::V1::Agent::BaseController
       # 💥 Commission DISTRIBUTION here
       CommissionService.distribute(txn)
 
-      Rails.logger.info "BBPS SUCCESS → Commission Completed → TXN #{txn.tx_id}"
+      Rails.logger.info "  #{txn.tx_id}"
 
     when "FAILED"
       return head :ok if txn.status == "FAILED"

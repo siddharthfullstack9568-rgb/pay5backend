@@ -4,6 +4,12 @@ class Superadmin::DashboardsController < Superadmin::BaseController
   # before_action -> { authorize_role(:superadmin) }
 
   def index
+
+    # result = EkoBalanceService.fetch_balance
+    # p "=========wallet_balance"
+    # render json: result
+
+
     @balance = Wallet.where(user_id: current_superadmin).pluck(:balance).sum
     p "=====================@balance"
     p @balance
@@ -21,4 +27,5 @@ class Superadmin::DashboardsController < Superadmin::BaseController
     .group(:user_id)
     .sum(:commission_amount)
   end
+
 end

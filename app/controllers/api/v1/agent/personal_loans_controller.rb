@@ -1,5 +1,5 @@
-class Api::V1::Agent::PersonalLoansController < Api::V1::Agent::BaseController
-  protect_from_forgery with: :null_session
+class Api::V1::Agent::PersonalLoansController < Api::V1::Auth::BaseController
+  # protect_from_forgery with: :null_session
 
   def persoanl_loan_list
     persoanl_loans = PersonalLoan.all

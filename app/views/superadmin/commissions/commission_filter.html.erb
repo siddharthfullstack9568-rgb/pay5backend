@@ -1,0 +1,113 @@
+<%= turbo_frame_tag "transactions_table" do %>
+<div class="flex-1 px-4 mb-10 bg-blue-50">
+  <div class="max-w-8xl mx-auto mt-4">
+
+    <!-- Filters -->
+    <div class="bg-white p-4 rounded shadow flex flex-col md:flex-row items-start md:items-center gap-4">
+      <%= form_with url: superadmin_commissions_commission_filter_path, method: :get, local: true, data: { turbo_frame: "transactions_table" } do %>
+        <input type="hidden" value="<%= @service_id %>" name="id">
+
+        <!-- Category Filter -->
+        <select name="category_id" class="border rounded-lg px-4 py-2 text-sm focus:ring focus:ring-blue-200" onchange="this.form.submit()">
+          <option value="">Select Category</option>
+          <% @categories.each do |cat| %>
+            <option value="<%= cat.id %>" <%= "selected" if params[:category_id].to_s == cat.id.to_s %>>
+              <%= cat.title %>
+            </option>
+          <% end %>
+        </select>
+
+        <!-- Service Product Filter -->
+        <select name="service_product_id" class="border rounded-lg px-4 py-2 text-sm focus:ring focus:ring-blue-200" onchange="this.form.submit()">
+          <option value="">Select Serivce</option>
+          <% @service_products.each do |sp| %>
+            <option value="<%= sp.id %>" <%= "selected" if params[:service_product_id].to_s == sp.id.to_s %>>
+              <%= sp.company_name %>
+            </option>
+          <% end %>
+        </select>
+
+      <% end %>
+    </div>
+    <!-- Filters End -->
+
+    <!-- table -->
+    <div class="mt-5">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4"><%= @commpany_name&.capitalize %></h2>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+          <thead>
+            <tr class="bg-gray-100 border-b">
+              <th class="p-3 text-left text-sm font-semibold text-gray-700">Service Name</th>
+              <th class="p-3 text-left text-sm font-semibold text-gray-700">Company Name</th>
+              <th class="p-3 text-left text-sm font-semibold text-gray-700">Commission Type</th>
+              <th class="p-3 text-left text-sm font-semibold text-gray-700">Scheme</th>
+              <th class="p-3 text-left text-sm font-semibold text-gray-700">Admin Commission</th>
+              <th class="p-3 text-left text-sm font-semibold text-gray-700">Master Commission</th>
+              <th class="p-3 text-left text-sm font-semibold text-gray-700">Dealer Commission</th>
+              <th class="p-3 text-left text-sm font-semibold text-gray-700">Retailer Commission</th>
+              <th class="p-3 text-left text-sm font-semibold text-gray-700">Action</th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y">
+            <% operators = @result.present? ? @result["data"] : [] %>
+
+            <% if operators.any? %>
+              <% operators.each do |op| %>
+
+                <%= form_with url: superadmin_commissions_set_commission_path, method: :post, data: { turbo_frame: "transactions_table" }, class: "contents" do %>
+
+                  <tr>
+                    <input type="hidden" name="category_id" value="<%= @category_id %>">
+                    <input type="hidden" name="service_product_id" value="<%= params[:service_product_id] %>">
+                    <input type="hidden" name="company_name" value="<%= op["name"] %>">
+
+                    <td class="p-3 text-sm text-gray-700"><%= @commpany_name&.capitalize %></td>
+                    <td class="p-3 text-sm text-gray-700"><%= op["name"] %></td>
+
+                    <td class="p-3">
+                      <select name="commission_type" class="border rounded-md px-3 py-1 w-full bg-white focus:ring-2 focus:ring-blue-300">
+                        <option value="commission">Commission</option>
+                        <option value="surcharge">Surcharge</option>
+                      </select>
+                    </td>
+
+                    <td class="p-3">
+                      <select name="scheme" class="border rounded-md px-3 py-1 w-full bg-white focus:ring-2 focus:ring-blue-300">
+                        <% Scheme.all.each do |sch| %>
+                          <option value="<%= sch.id %>"><%= sch.scheme_name %></option>
+                        <% end %>
+                      </select>
+                    </td>
+
+                    <td class="p-3"><input type="text" name="admin_commission" placeholder="%" class="border rounded-md px-3 py-1 w-full" /></td>
+                    <td class="p-3"><input type="text" name="master_commission" placeholder="%" class="border rounded-md px-3 py-1 w-full" /></td>
+                    <td class="p-3"><input type="text" name="dealer_commission" placeholder="%" class="border rounded-md px-3 py-1 w-full" /></td>
+                    <td class="p-3"><input type="text" name="retailer_commission" placeholder="%" class="border rounded-md px-3 py-1 w-full" /></td>
+
+                    <td class="p-3">
+                      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-md text-sm">
+                        Submit
+                      </button>
+                    </td>
+                  </tr>
+                <% end %>
+
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="9" class="text-center p-4 text-gray-500">
+                  No Operators Found
+                </td>
+              </tr>
+            <% end %>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<% end %>

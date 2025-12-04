@@ -1,24 +1,12 @@
-class Api::V1::Agent::FiltersController < Api::V1::Auth::BaseController
-  # protect_from_forgery with: :null_session
+class Api::V1::Admin::ReportsController < Api::V1::Auth::BaseController
 
-  def category_filter
-    service_id = params[:service_id]
-    categories = Category.where(service_id: service_id)
-    render json: {code: 200, message: "fetch data", categories: categories}
-  end
+  def index
+    admin = current_user
 
-  def service_product
-    category_id = params[:category_id]
-    if category_id.present?
-      service_products = ServiceProduct.where(category_id: category_id)
-      render json: { code: 200, message: "fetch data", service_products: service_products }
-    else
-      render json: { code: 401, message: "category is is missing", service_products: service_products }
-    end
-  end
+    # Include admin + its all children
+    user_ids = admin.children.ids << admin.id
 
-  def service_category_filter
-    transactions = Transaction.where(user_id: current_user.id).order(created_at: :desc)
+    transactions = Transaction.where(user_id: user_ids)
 
     # Filter by service_product_id
     if params[:service_product_id].present? && params[:service_product_id] != "ALL"
@@ -30,15 +18,14 @@ class Api::V1::Agent::FiltersController < Api::V1::Auth::BaseController
       transactions = transactions.where(status: params[:status])
     end
 
-    # Filter by date range
+    # Date filter
     if params[:from_date].present? && params[:to_date].present?
       begin
         start_date = Date.parse(params[:from_date]).beginning_of_day
-        end_date   = Date.parse(params[:to_date]).end_of_day
+        end_date = Date.parse(params[:to_date]).end_of_day
 
         transactions = transactions.where(created_at: start_date..end_date)
       rescue ArgumentError
-        # Handle invalid date formats safely
         Rails.logger.warn "Invalid date format: #{params[:from_date]} - #{params[:to_date]}"
       end
     end
@@ -51,21 +38,15 @@ class Api::V1::Agent::FiltersController < Api::V1::Auth::BaseController
           only: [
             :id, :tx_id, :operator, :transaction_type,
             :account_or_mobile, :amount, :status,
-            :user_id, :consumer_name, :landline_no, :bank, :card_number, :mobile, :consumer_no
+            :user_id, :created_at, :consumer_name
           ]
         ).merge(
-          created_at: t.created_at.strftime("%d/%m/%y %H:%M"),
           consumer_no_Name: t.user.first_name,
-          role: current_user.role&.title,
+          role: t.user.role&.title, # <-- use transaction user role, not admin role
           service_type: t.service_product&.category&.title,
           sub_service: t.service_product&.company_name
         )
       end
     }
-
-
   end
-
-
-
 end

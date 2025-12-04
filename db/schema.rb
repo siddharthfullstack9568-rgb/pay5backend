@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_11_07_174754) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_03_090609) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -200,6 +200,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_07_174754) do
     t.decimal "commision_rate"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_schemes_on_user_id"
   end
 
   create_table "service_product_items", force: :cascade do |t|
@@ -273,6 +275,11 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_07_174754) do
     t.string "receiver_name"
     t.string "card_number"
     t.string "state"
+    t.string "tid"
+    t.decimal "tds", precision: 10, scale: 2
+    t.decimal "commission", precision: 10, scale: 2
+    t.string "status_text"
+    t.string "txstatus_desc"
     t.index ["service_product_id"], name: "index_transactions_on_service_product_id"
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end
@@ -413,6 +420,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_07_174754) do
   add_foreign_key "dmt_transactions", "users"
   add_foreign_key "enquiries", "roles"
   add_foreign_key "fund_requests", "users"
+  add_foreign_key "schemes", "users"
   add_foreign_key "service_product_items", "service_products"
   add_foreign_key "service_products", "categories"
   add_foreign_key "transaction_commissions", "service_product_items"

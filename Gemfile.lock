@@ -151,6 +151,8 @@ GEM
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
     json (2.14.1)
+    jwt (3.1.2)
+      base64
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     logger (1.7.0)
@@ -393,6 +395,7 @@ DEPENDENCIES
   httparty
   importmap-rails
   jbuilder
+  jwt
   pagy
   pg (~> 1.1)
   puma (>= 5.0)
