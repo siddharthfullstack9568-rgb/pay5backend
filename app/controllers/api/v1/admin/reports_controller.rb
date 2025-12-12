@@ -54,7 +54,11 @@ class Api::V1::Admin::ReportsController < Api::V1::Auth::BaseController
           consumer_no_Name: t.user&.first_name,
           role: t.user&.role&.title,
           service_type: t.service_product&.category&.title,
-          sub_service: t.service_product&.company_name
+          sub_service: t.service_product&.company_name,
+          tid: t.tid,
+          tds: t.tsd,
+          commission: t.commission,
+          status_text: t.status_text
         }
       end
     }
