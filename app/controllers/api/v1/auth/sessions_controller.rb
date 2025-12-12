@@ -85,7 +85,7 @@ class Api::V1::Auth::SessionsController < Api::V1::Auth::BaseController
       # Generate JWT Token WITH CORRECT ROLE
       token = JsonWebToken.encode(
         user_id: user.id,
-        role: user.role.title  # <===== FIX HERE
+        role: user.role.title.capitalize  # <===== FIX HERE
       )
 
       return render json: {
