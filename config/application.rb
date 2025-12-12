@@ -12,8 +12,9 @@ module QuickCred
     config.load_defaults 7.2
     # config.active_job.queue_adapter = :sidekiq
     config.time_zone = 'Asia/Kolkata'
-        config.active_record.default_timezone = :utc
-Groupdate.time_zone = "New Delhi"
+    config.active_record.default_timezone = :utc
+    Groupdate.time_zone = "New Delhi"
+    Dotenv::Railtie.load if Rails.env.development? || Rails.env.production?
 
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
