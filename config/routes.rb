@@ -368,6 +368,7 @@ Rails.application.routes.draw do
         post "recharges/recharge_list"
         post "recharges/verify_pin"
         post "fetch_eko_operators", to: "recharges#fetch_eko_operators"
+        get "operators_category", to: "recharges#operators_category"
         get "fetch_eko_locations", to: "recharges#fetch_eko_locations"
         post "fetch_eko_plans", to: "recharges#fetch_eko_plans"
         post "eko_mobile_recharge", to: "recharges#eko_mobile_recharge"
@@ -419,6 +420,10 @@ Rails.application.routes.draw do
         post "dmts/benfisries_dmt_transaction"
         post "dmts/beneficiary_fetch"
         get "dmts/beneficiary_list"
+        post "biometric_ekyc_otp_verify", to: "dmts#biometric_ekyc_otp_verify"
+        post "biometric", to: "dmts#biometric"
+        post "biometric_kyc", to: "dmts#biometric_kyc"
+
       end
 
     end

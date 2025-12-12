@@ -1,6 +1,100 @@
 class Api::V1::Agent::DmtsController < Api::V1::Auth::BaseController
   # protect_from_forgery with: :null_session
 
+  def check_profile
+    response = DmtCustomerService.check_profile(params[:customer_id])
+    render json: response
+  end
+
+  def biometric
+    customer_id  = params[:customer_id]
+    aadhar       = params[:aadhar]
+    user_code    = params[:user_code]
+    initiator_id = params[:initiator_id]
+    piddata = params[:piddata]
+    p "========================="
+    p "============user_code==============="
+    p user_code
+    p "==========initiator_id============"
+    p initiator_id
+    p "-===========piddata========="
+    p piddata
+
+    if piddata.blank?
+      return render json: { status: false, message: "PID data missing" }, status: :bad_request
+    end
+
+    resp = Eko::BiometricEkycService.new(
+      customer_id:  customer_id,
+      aadhar:       aadhar,
+      user_code:    user_code,
+      initiator_id: initiator_id,
+      piddata:      piddata
+    ).call
+
+    render json: {
+      status: resp["status"],
+      message: resp["message"],
+      data: resp
+    }
+  end
+
+  def biometric_kyc
+    p "=============params"
+    customer_id = params[:customer_id]
+    aadhar      = params[:aadhar]
+    piddata     = params[:piddata]
+    p params[:customer_id]
+    p params[:aadhar]
+    if aadhar.blank? || piddata.blank?
+      return render json: {
+        status: 0,
+        message: "Missing Data"
+      }, status: :bad_request
+    end
+    p "===============end"
+    response = EkoBiometricKycService.biometric_kyc(customer_id, aadhar, piddata)
+    render json: response
+  end
+
+  def create
+    payload = {
+      initiator_id: 9962981729,
+      user_code: 20810200,
+      customer_id: params[:customer_id],
+      name: params[:name],
+      dob: params[:dob],
+      residence_address: params[:address]
+    }
+
+    response = DmtCustomerService.create_customer(payload)
+    render json: response
+  end
+
+  def verify_otp
+    payload = {
+      initiator_id: 9962981729,
+      user_code: 20810200,
+      customer_id: params[:customer_id],
+      otp: params[:otp]
+    }
+
+    response = DmtCustomerService.verify_otp(payload)
+    render json: response
+  end
+
+  def biometric_ekyc_otp_verify
+    p "-=============="
+    p biometric_ekyc_otp_verify
+    response = Eko::EkoBiometricEkycService.call(otp_params)
+
+    render json: {
+      message: response["message"],
+      status: response["status"],
+      data: response
+    }, status: :ok
+  end
+
   def dmt_transactions_list
     dmt_transactions = DmtTransaction
     .includes(:dmt)

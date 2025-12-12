@@ -23,7 +23,7 @@ class Api::V1::Admin::SchemesController < Api::V1::Auth::BaseController
 
   # POST /admin/schemes
   def create
-    required = %i[scheme_name scheme_type commision_rate]
+    required = %i[scheme_name scheme_type]
     missing = required.select { |p| params[p].blank? }
 
     if missing.any?

@@ -11,6 +11,8 @@ class User < ApplicationRecord
   has_many :transactions, dependent: :destroy
 
   def all_descendant_ids
+    p "=========all_descendant_ids========="
+    p all_descendant_ids
     children.flat_map { |child| [child.id] + child.all_descendant_ids }
   end
 

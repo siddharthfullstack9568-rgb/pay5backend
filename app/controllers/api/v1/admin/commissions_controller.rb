@@ -75,19 +75,25 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
 
   def show_commission
     service_product_id = params[:service_product_id]
-
     service_product = ServiceProduct.find_by(id: service_product_id)
 
     return render json: { code: 404, message: "Service product not found" }, status: :not_found if service_product.nil?
 
     items = service_product.service_product_items.map do |item|
-      commissions = Commission.where(service_product_item_id: item.id)
-      .select(:id, :from_role, :to_role, :value, :scheme_id)
+      commissions = Commission.where(
+        service_product_item_id: item.id,
+        scheme_id: params[:scheme]
+      ).select(:id, :from_role, :to_role, :value, :scheme_id, :commission_type)
+
+      commissions_admin = Commission.where(
+        service_product_item_id: item.id,
+        scheme_id: current_user.scheme_id
+      ).select(:id, :from_role, :to_role, :value, :scheme_id, :commission_type)
 
       {
         item_id: item.id,
         item_name: item.name,
-        commissions: commissions
+        commissions: (commissions + commissions_admin).uniq
       }
     end
 
@@ -102,9 +108,14 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
 
 
 
+
   def set_commission
     if params[:service_product_id].blank?
       return render json: { code: 400, message: "service_product_id is required" }, status: :bad_request
+    end
+
+    if params[:scheme].blank?
+      return render json: { code: 400, message: "scheme is required" }, status: :bad_request
     end
 
     # Get service item
@@ -116,7 +127,6 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
     # Superadmin commission for this EXACT service_product_item
     superadmin_commission_record = Commission.find_by(
       service_product_item_id: service_item.id,
-      scheme_id: params[:scheme],
       to_role: "admin",
       from_role: "superadmin"
     )
@@ -128,38 +138,62 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
       }, status: :forbidden
     end
 
-    superadmin_commission = superadmin_commission_record.value.to_f
 
-    if superadmin_commission.zero?
-      return render json: { code: 404, message: "Superadmin commission is zero or not valid" }, status: :not_found
-    end
+    service_product_item =  ServiceProductItem.find_by(name: params[:company_name])
+    p "==============service_product_item=============="
+    p service_product_item.name
+
+    admin_commission = Commission.where(
+      scheme_id: current_user.scheme_id,
+      service_product_item_id: service_product_item.id,
+    ).select(:id, :from_role, :to_role, :value, :scheme_id).pluck(:value).last.to_f
+
+    p "========admin_commission====="
+    p admin_commission
+
+    # if superadmin_commission.zero?
+    #   return render json: { code: 404, message: "Superadmin commission is zero or not valid" }, status: :not_found
+    # end
 
     commissions_created = []
 
+    commission_type = params[:commission_type] # "percentage" or "flat"
+
     role_commissions = [
-      { role: "admin",    value: params[:admin_commission] },
       { role: "master",   value: params[:master_commission] },
-      { role: "dealer",   value: params[:dealer_commission] },
+      { role: "dealer",   value: params[:dealer_commision] },
       { role: "retailer", value: params[:retailer_commission] }
     ]
 
-    # Total validation
-    total_commission = role_commissions.sum { |c| c[:value].to_f }
+    # Validate based on commission type
+    if commission_type == "percentage"
+      total_commission = role_commissions.sum { |c| c[:value].to_f }
 
-    if total_commission > superadmin_commission
-      return render json: {
-        code: 422,
-        message: "Total commission (#{total_commission}%) cannot exceed Superadmin limit #{superadmin_commission}%"
-      }, status: :unprocessable_entity
+      if total_commission > admin_commission
+        return render json: {
+          code: 422,
+          message: "Total (#{total_commission}%) cannot exceed Admin limit #{admin_commission}%"
+        }, status: :unprocessable_entity
+      end
+    else # flat type
+      total_flat = role_commissions.sum { |c| c[:value].to_f }
+
+      if total_flat > admin_commission
+        return render json: {
+          code: 422,
+          message: "Total flat (₹#{total_flat}) cannot exceed Admin limit ₹#{admin_commission}"
+        }, status: :unprocessable_entity
+      end
     end
 
+    # Save commissions
     role_commissions.each do |commission_data|
       next if commission_data[:value].blank?
 
       commission = Commission.find_or_initialize_by(
         service_product_item_id: service_item.id,
         scheme_id: params[:scheme],
-        commission_type: params[:commission_type],
+        commission_type: commission_type,
         to_role: commission_data[:role]
       )
 
@@ -169,17 +203,7 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
 
       commissions_created << commission if commission.save
     end
-
-    render json: {
-      code: 200,
-      message: "Commission saved successfully",
-      superadmin_commission_limit: superadmin_commission,
-      distributed_total: total_commission,
-      service_product_item: service_item,
-      commissions: commissions_created
-    }, status: :ok
   end
-
 
 
 

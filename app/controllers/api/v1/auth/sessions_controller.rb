@@ -92,7 +92,7 @@ class Api::V1::Auth::SessionsController < Api::V1::Auth::BaseController
         code: 200,
         message: "Email verified successfully",
         token: token,
-        role: { title: user.role.title },   # <===== FIX HERE
+        role: { title: user.role.title.capitalize },
         user: user
       }
     end

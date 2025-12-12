@@ -36,6 +36,11 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
     }
   end
 
+  def operators_category
+    @details = EkoOperatorService.fetch_operator_details(190)
+    render json: @details
+  end
+
   def fetch_eko_locations
     begin
       result = Eko::OperatorLocationService.fetch
@@ -48,7 +53,7 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
 
   def activate_eko_service
     result = EkoApiClient.activate_service(
-      service_code: 63,
+      service_code: 39,
       initiator_id: 9212094999,
       user_code: "38130001",
       latlong: "28.613939,77.209023"
@@ -75,12 +80,13 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
   end
 
   def fetch_bill
+    p "==========fetch_bill"
     response = EkoMobilePlanService.fetch_bill(
       operator_id:       params[:operator_id],
       utility_acc_no:    params[:utility_acc_no],
-      mobile_no:         params[:confirmation_mobile_no],
+      mobile_number:     params[:mobile_number],
       sender_name:       params[:sender_name],
-      client_ref_id:     SecureRandom.hex(8)
+      client_ref_id:     params[:client_ref_id]
     )
 
     render json: response
@@ -135,7 +141,9 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
     #   mobile: params[:mobile_number],
     #   amount: amount,
     #   operator_id: params[:operator_id],
-    #   client_ref_id: txn_id
+    #   client_ref_id: txn_id,
+    #   card_number: params[:card_number],
+    #   vehicle_no: params[:vehicle_no]
     # )
 
     # puts "======== RAW EKO RESPONSE ========"
@@ -200,20 +208,86 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
 
       # === Commission Calculation ===
       scheme = Scheme.find(current_user.scheme_id)
+      p "=======current_user scheme======="
+      p scheme
       scheme_commission = scheme.commision_rate.to_f
+      p "=========scheme_commission======="
+      p scheme_commission
 
-      commission_values = Commission.joins(:service_product_item)
-      .where(scheme_id: scheme.id, service_product_items: { name: params[:operator] })
-      .pluck(:to_role, :value).to_h.transform_keys(&:to_sym)
-      p "===========commission_values=========="
-      p commission_values
+      retailer_commission = Commission.joins(:service_product_item)
+      .where(
+        scheme_id: scheme.id,
+        to_role: "retailer",
+        service_product_items: { name: params[:operator] }
+      )
+      .pluck(:value)
+      .first
+      .to_f
+
+      p "==========retailer_commission=========="
+      p retailer_commission
+
+      admin_scheme_id = User.find_by(id: current_user.parent_id)
+
+      admin_commission = Commission.joins(:service_product_item)
+      .where(
+        scheme_id: admin_scheme_id.scheme_id,
+        to_role: "admin",
+        service_product_items: { name: params[:operator] }
+      )
+      .pluck(:value)
+      .first
+      .to_f
+      p "==========admin_commission=========="
+      p admin_commission
+
+      p "=======admin_scheme_id.idadmin_scheme_id.idadmin_scheme_id.id======="
+      p admin_scheme_id.id
+
+      master_schemes = Scheme.where(user_id: admin_scheme_id.id)  # returns array
+      p "======master_schemes===="
+      p master_schemes
+
+      user_masters = User.find_by(scheme_id: master_schemes&.pluck(:id), role_id: 6)
+      p "========user_masters=========="
+      p user_masters
+
+      p "=========user_master===user_masters==user_masters=="
+      p user_masters
+
+      master_commission = Commission.joins(:service_product_item)
+      .where(
+        scheme_id: user_masters&.scheme_id,
+        to_role: "master",
+        service_product_items: { name: params[:operator] }
+      )
+      .pluck(:value)
+      .first
+      .to_f
+
+      p "==========master_commission=========="
+      p master_commission
+
+      dealer_commission = Commission.joins(:service_product_item)
+      .where(
+        scheme_id: user_masters&.scheme_id,
+        to_role: "dealer",
+        service_product_items: { name: params[:operator] }
+      )
+      .pluck(:value)
+      .first
+      .to_f
+
+      p "========dealer_commission=========="
+      p dealer_commission
+
 
       commission_map = {
-        superadmin: ((scheme_commission - commission_values[:admin].to_f) / 100) * amount,
-        admin:      ((commission_values[:admin].to_f - commission_values[:master].to_f) / 100) * amount,
-        master:     ((commission_values[:master].to_f - commission_values[:dealer].to_f) / 100) * amount,
-        dealer:     ((commission_values[:dealer].to_f - commission_values[:retailer].to_f) / 100) * amount,
-        retailer:   ((commission_values[:retailer].to_f) / 100) * amount
+        superadmin: ((scheme_commission - admin_commission.to_f) / 100) * amount,
+        admin:      ((admin_commission.to_f - master_commission.to_f) / 100) * amount,
+        master:     ((master_commission.to_f - dealer_commission.to_f) / 100) * amount,
+        dealer:     ((dealer_commission.to_f - retailer_commission.to_f) / 100) * amount,
+        retailer:   ((retailer_commission.to_f) / 100) * amount
       }
 
       Rails.logger.info "Commission Breakdown: #{commission_map}"

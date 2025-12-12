@@ -1,9 +1,12 @@
 <div class="w-[1000px] mx-auto p-6 bg-white shadow-md rounded-xl h-[800px] mt-8 mb-4 overflow-auto">
-  <h2 class="text-2xl font-bold mb-6">Edit User Details</h2>
+  <h2 class="text-2xl font-bold mb-6">Edit User Detailsss</h2>
 
 
-<%= form_with model: @retailer, url: superadmin_retailers_path, local: true, html: { class: "grid grid-cols-1 md:grid-cols-3 gap-6" } do |form| %>
-
+<%#= form_with model: @retailer, url: superadmin_retailers_path, local: true, html: { class: "grid grid-cols-1 md:grid-cols-3 gap-6" } do |form| %>
+<%= form_with model: @retailer,
+                url: superadmin_retailers_path(@retailer),
+                method: :patch,
+                html: { class: "grid grid-cols-1 md:grid-cols-3 gap-6" } do |form| %>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Full Name</label>

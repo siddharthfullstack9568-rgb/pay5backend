@@ -70,3 +70,4 @@ gem "groupdate"
 gem "cloudinary"
 gem 'pagy'
 gem 'jwt'
+gem 'faraday'

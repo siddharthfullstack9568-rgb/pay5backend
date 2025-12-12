@@ -2,43 +2,43 @@ class Api::V1::Admin::PaymentsController < Api::V1::Auth::BaseController
 
   before_action :verify_pin_before_action, only: [:approved]
 
- def index
-  fund_request_ids = FundRequest.where(requested_by: current_user.id).pluck(:id)
+  def index
+    fund_request_ids = FundRequest.where(requested_by: current_user.id).pluck(:id)
 
-  fund_transactions = WalletTransaction
-                        .includes(fund_request: :user)   # <- N+1 fix
-                        .where(fund_request_id: fund_request_ids)
-                        .order(created_at: :desc)
+    fund_transactions = WalletTransaction
+    .includes(fund_request: :user)   # <- N+1 fix
+    .where(fund_request_id: fund_request_ids)
+    .order(created_at: :desc)
 
-  # ---- Filters ----
-  fund_transactions = fund_transactions.where("tx_id ILIKE ?", "%#{params[:transaction_id]}%") if params[:transaction_id].present?
-  fund_transactions = fund_transactions.where("created_at >= ?", params[:start_date].to_date.beginning_of_day) if params[:start_date].present?
-  fund_transactions = fund_transactions.where("created_at <= ?", params[:end_date].to_date.end_of_day) if params[:end_date].present?
+    # ---- Filters ----
+    fund_transactions = fund_transactions.where("tx_id ILIKE ?", "%#{params[:transaction_id]}%") if params[:transaction_id].present?
+    fund_transactions = fund_transactions.where("created_at >= ?", params[:start_date].to_date.beginning_of_day) if params[:start_date].present?
+    fund_transactions = fund_transactions.where("created_at <= ?", params[:end_date].to_date.end_of_day) if params[:end_date].present?
 
-  if params[:status].present? && params[:status] != "All"
-    fund_transactions = fund_transactions.where(status: params[:status].downcase)
-  end
+    if params[:status].present? && params[:status] != "All"
+      fund_transactions = fund_transactions.where(status: params[:status].downcase)
+    end
 
-  if params[:method].present? && params[:method] != "All"
-    fund_transactions = fund_transactions.where(transaction_type: params[:method])
-  end
+    if params[:method].present? && params[:method] != "All"
+      fund_transactions = fund_transactions.where(transaction_type: params[:method])
+    end
 
-  render json: {
-    code: 200,
-    message: "Fund transaction list fetched successfully",
-    data: fund_transactions.as_json(
-      only: [:id, :tx_id, :transaction_type, :status, :amount, :fund_request_id, :created_at, :updated_at],
-      include: {
-        fund_request: {
-          only: [:id, :requested_by, :amount, :payment_method, :status, :deposit_bank, :your_bank, :account_number, :reject_note],
-          include: {
-            user: { only: [:id, :first_name, :last_name, :username, :phone_number] }
+    render json: {
+      code: 200,
+      message: "Fund transaction list fetched successfully",
+      data: fund_transactions.as_json(
+        only: [:id, :tx_id, :transaction_type, :status, :amount, :fund_request_id, :created_at, :updated_at],
+        include: {
+          fund_request: {
+            only: [:id, :requested_by, :amount, :payment_method, :status, :deposit_bank, :your_bank, :account_number, :reject_note],
+            include: {
+              user: { only: [:id, :first_name, :last_name, :username, :phone_number] }
+            }
           }
         }
-      }
-    )
-  }
-end
+      )
+    }
+  end
 
 
   def approved

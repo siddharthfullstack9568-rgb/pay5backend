@@ -26,11 +26,37 @@ class Superadmin::RetailersController < Superadmin::BaseController
   end
 
   def edit
+     @services = UserService.where(assignee_id: 104).joins(:service).select("services.id, services.title")
+    p @services
   end
 
   def update
-    if @retailer.update(retailer_params)
-      redirect_to superadmin_retailers_path, notice: "Retailer updated successfully."
+     if @retailer.update(retailer_params)
+      service_ids = Array(params[:user][:service_ids]).map(&:to_i)
+      assigner = current_admin
+
+      # 1️⃣ Purane records nikaalo (jo already assigned hai)
+      existing_ids = @retailer.user_services.pluck(:service_id)
+
+      # 2️⃣ Delete karo jo ab uncheck ho gaye hain
+      (existing_ids - service_ids).each do |sid|
+        UserService.where(
+          assigner: assigner,
+          assignee: @retailer,
+          service_id: sid
+        ).destroy_all
+      end
+
+      # 3️⃣ Add karo jo naye checked hain
+      (service_ids - existing_ids).each do |sid|
+        UserService.create!(
+          assigner: assigner,
+          assignee: @retailer,
+          service_id: sid
+        )
+      end
+
+      redirect_to admin_user_services_path, notice: "Retailer updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
