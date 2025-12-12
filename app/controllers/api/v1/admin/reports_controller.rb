@@ -56,7 +56,7 @@ class Api::V1::Admin::ReportsController < Api::V1::Auth::BaseController
           service_type: t.service_product&.category&.title,
           sub_service: t.service_product&.company_name,
           tid: t.tid,
-          tds: t.tsd,
+          tds: t.tds,
           commission: t.commission,
           status_text: t.status_text
         }
