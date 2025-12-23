@@ -21,6 +21,8 @@ class User < ApplicationRecord
   has_many :transaction_commissions, dependent: :destroy
   has_many :user_services, foreign_key: :assignee_id, dependent: :destroy
   has_many :banks, dependent: :destroy
+  has_many :fund_requests, dependent: :destroy
+
 
   def find_hierarchy
     hierarchy = []

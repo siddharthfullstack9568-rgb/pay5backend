@@ -27,6 +27,12 @@
           <% end %>
         </select>
 
+        <select name="scheme" class="border rounded-md px-3 py-1 w-full bg-white focus:ring-2 focus:ring-blue-300" onchange="this.form.submit()">
+                        <% Scheme.all.each do |sch| %>
+                          <option value="<%= sch.id %>"><%= sch.scheme_name %></option>
+                        <% end %>
+                      </select>
+
       <% end %>
     </div>
     <!-- Filters End -->

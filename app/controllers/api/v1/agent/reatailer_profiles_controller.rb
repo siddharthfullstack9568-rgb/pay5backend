@@ -11,6 +11,10 @@ module Api
           render json: { code: 200,message: "Users fetched successfully",users: current_user }, status: :ok
         end
 
+        def user_profile
+          render json: { code: 200,message: "Users fetched successfully",users: current_user }, status: :ok
+        end
+
         def set_pin
           if params[:set_pin].present? && params[:confirm_pin].present?
             if params[:set_pin] == params[:confirm_pin]

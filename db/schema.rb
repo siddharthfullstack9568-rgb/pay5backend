@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_03_090609) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_19_112010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -114,7 +114,28 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_03_090609) do
     t.datetime "updated_at", null: false
     t.decimal "amount"
     t.integer "parent_id"
+    t.string "customer_id"
+    t.bigint "recipient_id"
+    t.decimal "fee"
+    t.string "tid"
+    t.decimal "tds"
+    t.decimal "service_tax"
+    t.decimal "commission"
+    t.string "txstatus_desc"
+    t.decimal "collectable_amount"
+    t.bigint "user_id"
     t.index ["parent_id"], name: "index_dmts_on_parent_id"
+    t.index ["user_id"], name: "index_dmts_on_user_id"
+  end
+
+  create_table "eko_banks", force: :cascade do |t|
+    t.string "bank_id"
+    t.string "name"
+    t.string "ifsc_prefix"
+    t.string "bank_code"
+    t.boolean "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "enquiries", force: :cascade do |t|
@@ -380,6 +401,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_03_090609) do
     t.boolean "email_otp_status", default: false, null: false
     t.datetime "email_otp_verified_at"
     t.boolean "set_pin_status", default: false
+    t.string "user_code"
+    t.boolean "eko_onboard_first_step", default: false
+    t.boolean "eko_profile_second_step", default: false
+    t.boolean "eko_status_otp", default: false
+    t.boolean "eko_verify_otp", default: false
+    t.boolean "eko_biometric_kyc", default: false
     t.index ["email"], name: "index_users_on_email"
     t.index ["parent_id"], name: "index_users_on_parent_id"
     t.index ["role_id"], name: "index_users_on_role_id"
@@ -418,6 +445,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_03_090609) do
   add_foreign_key "commissions", "service_product_items"
   add_foreign_key "dmt_transactions", "dmts"
   add_foreign_key "dmt_transactions", "users"
+  add_foreign_key "dmts", "users"
   add_foreign_key "enquiries", "roles"
   add_foreign_key "fund_requests", "users"
   add_foreign_key "schemes", "users"

@@ -398,6 +398,7 @@ Rails.application.routes.draw do
         get "personal_loans/persoanl_loan_list"
 
         resources :reatailer_profiles, only: [:index]
+        get "reatailer_profiles/user_profile"
         post "reatailer_profiles/set_pin"
         post "reatailer_profiles/reset_transaction_pin"
         post "reatailer_profiles/forget_transaction_pin"
@@ -413,13 +414,19 @@ Rails.application.routes.draw do
 
         get "dmts/dmt_transactions_list"
         post "dmts/sender_details"
-        post "dmts/verify_aadhaar_otp"
+        post "dmts/verify_eko_otp"
         post "dmts/dmt_transactions"
         post "dmts/dmt_transaction_verify"
         post "dmts/update_dmt_transaction"
         post "dmts/benfisries_dmt_transaction"
         post "dmts/beneficiary_fetch"
         get "dmts/beneficiary_list"
+        post "dmts/user_onboard"
+        post "dmts/check_profile"
+        post "dmts/create_customer"
+        post "dmts/verify_otp"
+        get "dmts/bank_list"
+        post "dmts/send_ekodmt_otp"
         post "biometric_ekyc_otp_verify", to: "dmts#biometric_ekyc_otp_verify"
         post "biometric", to: "dmts#biometric"
         post "biometric_kyc", to: "dmts#biometric_kyc"

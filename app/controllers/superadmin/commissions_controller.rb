@@ -44,6 +44,34 @@ class Superadmin::CommissionsController < Superadmin::BaseController
       type = "postpaid"
     end
     @result = Eko::OperatorListService.fetch(type)
+
+
+    @service_product = ServiceProduct.find_by(id: params[:service_product_id])
+    p "=================i am commissions"
+    if @service_product.nil?
+      redirect_to service_products_path, alert: "Service product not found"
+      return
+    end
+
+    @items = @service_product.service_product_items.map do |item|
+      commissions_for_scheme = Commission.where(
+        service_product_item_id: item.id,
+        scheme_id: params[:scheme]
+      )
+
+      commissions_for_admin = Commission.where(
+        service_product_item_id: item.id,
+        scheme_id: 16
+      )
+
+      {
+        item: item,
+        commissions: (commissions_for_scheme + commissions_for_admin).uniq
+      }
+    end
+
+    p "=============items"
+    p @items
   end
 
 

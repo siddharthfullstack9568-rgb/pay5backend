@@ -1,6 +1,5 @@
 class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
 
-
   def service_category
     service_id = params[:id]
     if service_id.present?

@@ -1,0 +1,2 @@
+class EkoBank < ApplicationRecord
+end
