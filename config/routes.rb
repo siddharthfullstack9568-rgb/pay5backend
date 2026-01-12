@@ -431,6 +431,13 @@ Rails.application.routes.draw do
         post "biometric", to: "dmts#biometric"
         post "biometric_kyc", to: "dmts#biometric_kyc"
 
+        # bbsp api code
+        post "bbps/bbps_operators"
+        get "bbps/bbps_locations"
+        post "bbps/bbps_fetch_bill"
+
+        #
+
       end
 
     end

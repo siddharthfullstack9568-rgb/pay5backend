@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_19_112010) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_12_053320) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -32,6 +32,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_112010) do
     t.index ["parent_id"], name: "index_account_transactions_on_parent_id"
     t.index ["user_id"], name: "index_account_transactions_on_user_id"
     t.index ["wallet_id"], name: "index_account_transactions_on_wallet_id"
+  end
+
+  create_table "api_clients", force: :cascade do |t|
+    t.string "name"
+    t.string "user_code", null: false
+    t.string "api_key", null: false
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["api_key"], name: "index_api_clients_on_api_key", unique: true
+    t.index ["user_code"], name: "index_api_clients_on_user_code", unique: true
   end
 
   create_table "banks", force: :cascade do |t|
