@@ -68,6 +68,10 @@
             <th class="px-4 py-3 text-left">Transaction ID</th>
             <th class="px-4 py-3 text-left">Requester</th>
             <th class="px-4 py-3 text-left">Amount</th>
+            <th class="px-4 py-3 text-left">Deposit Bank</th>
+            <th class="px-4 py-3 text-left">Deposit Bank ifsc code</th>
+            <th class="px-4 py-3 text-left">Sender Bank</th>
+            <th class="px-4 py-3 text-left">Sender Bank ifsc code</th>
             <th class="px-4 py-3 text-left">Payment Method</th>
             <th class="px-4 py-3 text-left">Date</th>
             <th class="px-4 py-3 text-left">Status</th>
@@ -80,6 +84,10 @@
             <td class="px-4 py-3"><%=fund.wallet_transaction&.tx_id%></td>
             <td class="px-4 py-3"><%=fund.user.first_name%></td>
             <td class="px-4 py-3">₹<%=fund.amount%></td>
+            <td class="px-4 py-3"><%=fund.deposit_account_no%></td>
+            <td class="px-4 py-3"><%=fund.deposit_ifsc_code%></td>
+            <td class="px-4 py-3"><%=fund.your_bank%></td>
+            <td class="px-4 py-3"><%=fund.ifsc_code%></td>
             <td class="px-4 py-3"><%=fund.transaction_type%></td>
             <td class="px-4 py-3"><%= fund.created_at.strftime("%d/%m/%Y") %></td>
             <td class="px-4 py-3">
