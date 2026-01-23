@@ -2,6 +2,7 @@ class Api::V1::Agent::UserServicesController < Api::V1::Auth::BaseController
   # protect_from_forgery with: :null_session
 
   def index
+    p "=dsn,m,mn,mn,mn,mn,mn,n,"
     # current_user को assign हुई services
     service_lists = UserService.where(assignee_id: current_user.id)
     .includes(:service, :assigner)
@@ -9,6 +10,11 @@ class Api::V1::Agent::UserServicesController < Api::V1::Auth::BaseController
 
     # assign हुई services के ids   reda karna hai
     service_ids = service_lists.map(&:service_id).compact
+
+    commission_count = Commission.where(scheme_id: current_user.scheme_id)
+
+    p "====commission_count========="
+    p commission_count
 
     # transaction count निकालना service_id के हिसाब से
     transaction_counts = Transaction.joins(service_product: :category)

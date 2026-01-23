@@ -432,10 +432,15 @@ Rails.application.routes.draw do
         post "biometric_kyc", to: "dmts#biometric_kyc"
 
         # bbsp api code
+        get "bbps/bbps_category"
         post "bbps/bbps_operators"
         get "bbps/bbps_locations"
         post "bbps/bbps_fetch_bill"
 
+        #api code for fund request
+        post "eko_fund_requests/create"
+        get "eko_fund_requests/bank"
+        get "eko_fund_requests/balance_api"
         #
 
       end

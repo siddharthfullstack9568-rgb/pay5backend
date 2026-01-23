@@ -116,24 +116,23 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
 
   def recharge
     Rails.logger.info "================= current_user: #{current_user.id} (#{current_user.role.title})"
-    hierarchy = current_user.find_hierarchy
 
+    hierarchy = current_user.find_hierarchy
     required = %i[transaction_type recharge_type mobile_number operator operator_id amount service_product_id]
     missing = required.select { |p| params[p].blank? }
 
     return render json: { success: false, message: "Missing: #{missing.join(', ')}" }, status: :bad_request if missing.any?
 
     amount = params[:amount].to_f
-
     wallet = Wallet.find_by(user_id: current_user.id)
-    return render json: { success: false, message: "Wallet not found" }, status: :not_found unless wallet
 
+    return render json: { success: false, message: "Wallet not found" }, status: :not_found unless wallet
     return render json: { success: false, message: "Insufficient wallet balance" }, status: :unprocessable_entity if wallet.balance < amount
 
     txn_id = "TXN#{rand(100000..999999)}"
-
     service_product_item = ServiceProductItem.find_by(name: params[:operator])
-    return render json: { success: false, message: "Commission not added" }, status: :not_found unless service_product_item
+
+    return render json: { success: false, message: "Commission not Added please before added commission" }, status: :not_found unless service_product_item
 
     # === Call EKO Recharge API ===
     # response = EkoMobileRechargeService.recharge(
@@ -180,18 +179,13 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
     # === Call EKO Recharge API ===
 
 
-
     recharge_transaction = nil
-
     ActiveRecord::Base.transaction do
-
       # Deduct wallet balance
       wallet.update!(balance: wallet.balance - amount)
 
       recharge_transaction = Transaction.create!(
         tx_id: txn_id,
-        consumer_name: params[:consumer_name],
-        consumer_no: params[:consumer_no],
         operator: params[:operator],
         mobile: params[:mobile_number],
         amount: amount,
@@ -199,6 +193,10 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
         user_id: current_user.id,
         status: "SUCCESS",
         service_product_id: params[:service_product_id],
+        vehicle_no: params[:vehicle_no],
+        consumer_name: params[:consumer_name],
+        card_number: params[:card_number],
+        commission: 5
         # tid: response.dig("data", "tid"),
         # tds: response.dig("data", "tds").to_f,
         # commission: response.dig("data", "commission").to_f,
@@ -208,102 +206,129 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
 
       # === Commission Calculation ===
       scheme = Scheme.find(current_user.scheme_id)
-      p "=======current_user scheme======="
-      p scheme
-      scheme_commission = scheme.commision_rate.to_f
-      p "=========scheme_commission======="
-      p scheme_commission
+      scheme_commission = 100
+      commission_eko = 5 # Fixed EKO commission
 
+      Rails.logger.info "=========scheme_commission======= #{scheme_commission}"
+      Rails.logger.info "=========commission_eko========= #{commission_eko}"
+
+      # Get commission percentages for each role
+      commissions = {}
+
+      # 1. Get retailer commission (current user's scheme)
       retailer_commission = Commission.joins(:service_product_item)
       .where(
         scheme_id: scheme.id,
         to_role: "retailer",
         service_product_items: { name: params[:operator] }
       )
-      .pluck(:value)
-      .first
+      .pick(:value)
       .to_f
 
-      p "==========retailer_commission=========="
-      p retailer_commission
+      commissions[:retailer] = retailer_commission
 
-      admin_scheme_id = User.find_by(id: current_user.parent_id)
+      # 2. Get admin commission (parent user's scheme)
+      admin_user = User.find_by(id: current_user.parent_id)
+      admin_scheme_id = admin_user&.scheme_id
 
       admin_commission = Commission.joins(:service_product_item)
       .where(
-        scheme_id: admin_scheme_id.scheme_id,
+        scheme_id: admin_scheme_id,
         to_role: "admin",
         service_product_items: { name: params[:operator] }
       )
-      .pluck(:value)
-      .first
+      .pick(:value)
       .to_f
-      p "==========admin_commission=========="
-      p admin_commission
 
-      p "=======admin_scheme_id.idadmin_scheme_id.idadmin_scheme_id.id======="
-      p admin_scheme_id.id
+      commissions[:admin] = admin_commission
 
-      master_schemes = Scheme.where(user_id: admin_scheme_id.id)  # returns array
-      p "======master_schemes===="
-      p master_schemes
-
-      user_masters = User.find_by(scheme_id: master_schemes&.pluck(:id), role_id: 6)
-      p "========user_masters=========="
-      p user_masters
-
-      p "=========user_master===user_masters==user_masters=="
-      p user_masters
+      # 3. Get master commission
+      master_users = User.where(role_id: Role.find_by(title: 'master')&.id)
+      master_scheme_id = master_users.first&.scheme_id if master_users.any?
 
       master_commission = Commission.joins(:service_product_item)
       .where(
-        scheme_id: user_masters&.scheme_id,
+        scheme_id: master_scheme_id,
         to_role: "master",
         service_product_items: { name: params[:operator] }
       )
-      .pluck(:value)
-      .first
+      .pick(:value)
       .to_f
 
-      p "==========master_commission=========="
-      p master_commission
+      commissions[:master] = master_commission
+
+      # 4. Get dealer commission
+      dealer_users = User.where(role_id: Role.find_by(title: 'dealer')&.id)
+      dealer_scheme_id = dealer_users.first&.scheme_id if dealer_users.any?
 
       dealer_commission = Commission.joins(:service_product_item)
       .where(
-        scheme_id: user_masters&.scheme_id,
+        scheme_id: dealer_scheme_id,
         to_role: "dealer",
         service_product_items: { name: params[:operator] }
       )
-      .pluck(:value)
-      .first
+      .pick(:value)
       .to_f
 
-      p "========dealer_commission=========="
-      p dealer_commission
+      commissions[:dealer] = dealer_commission
 
+      Rails.logger.info "Commissions by role: #{commissions}"
 
-      commission_map = {
-        superadmin: ((scheme_commission - admin_commission.to_f) / 100) * amount,
-        admin:      ((admin_commission.to_f - master_commission.to_f) / 100) * amount,
-        master:     ((master_commission.to_f - dealer_commission.to_f) / 100) * amount,
-        dealer:     ((dealer_commission.to_f - retailer_commission.to_f) / 100) * amount,
-        retailer:   ((retailer_commission.to_f) / 100) * amount
-      }
+      # Calculate commission amounts for each role using hierarchy chain
+      commission_map = {}
+
+      # Start from top (Superadmin)
+      # Superadmin gets: scheme_commission - admin_commission
+      remaining_percent = scheme_commission - admin_commission
+      remaining_percent = 0 if remaining_percent.negative?
+      commission_map[:superadmin] = (remaining_percent / 100) * commission_eko
+
+      # Move down the chain - Admin
+      # Find the highest commission among roles below admin
+      next_highest_below_admin = [master_commission, dealer_commission, retailer_commission].max
+
+      # Admin gets: admin_commission - next_highest_below_admin
+      admin_diff = admin_commission - next_highest_below_admin
+      admin_diff = 0 if admin_diff.negative?
+      commission_map[:admin] = (admin_diff / 100) * commission_eko
+
+      # Move down - Master
+      # Find the highest commission among roles below master
+      next_highest_below_master = [dealer_commission, retailer_commission].max
+
+      # Master gets: master_commission - next_highest_below_master
+      master_diff = master_commission - next_highest_below_master
+      master_diff = 0 if master_diff.negative?
+      commission_map[:master] = (master_diff / 100) * commission_eko
+
+      # Move down - Dealer
+      # Dealer gets: dealer_commission - retailer_commission
+      dealer_diff = dealer_commission - retailer_commission
+      dealer_diff = 0 if dealer_diff.negative?
+      commission_map[:dealer] = (dealer_diff / 100) * commission_eko
+
+      # Retailer gets their own commission percentage
+      commission_map[:retailer] = (retailer_commission / 100) * commission_eko
 
       Rails.logger.info "Commission Breakdown: #{commission_map}"
 
-      # === Add current_user into distribution as well ===
+      # Verify total commission doesn't exceed EKO commission
+      total_commission = commission_map.values.sum
+      if total_commission > commission_eko
+        Rails.logger.error "Commission overflow! Total: #{total_commission}, EKO: #{commission_eko}"
+        # Adjust retailer commission to fit within limit
+        excess = total_commission - commission_eko
+        commission_map[:retailer] = [commission_map[:retailer] - excess, 0].max
+        Rails.logger.info "Adjusted Commission Breakdown: #{commission_map}"
+      end
+
+      # === Distribute commissions ===
       ([current_user] + hierarchy).each do |user|
         role = user.role.title.downcase.to_sym
-
-        Rails.logger.info "=========role============="
-        Rails.logger.info role.inspect
+        Rails.logger.info "Processing commission for role: #{role}"
 
         next unless commission_map[role]
-
         commission_amount = commission_map[role]
-        Rails.logger.info "===============commission_amount"
-        Rails.logger.info commission_amount.inspect
 
         next if commission_amount <= 0
 
@@ -322,8 +347,8 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
 
         Rails.logger.info "[Commission] #{role.upcase} (User #{user.id}) credited ₹#{commission_amount.round(2)}"
       end
-
     end
+
     render json: {
       success: true,
       message: "Recharge successful",

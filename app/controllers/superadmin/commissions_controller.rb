@@ -46,7 +46,7 @@ class Superadmin::CommissionsController < Superadmin::BaseController
     @result = Eko::OperatorListService.fetch(type)
 
 
-    @service_product = ServiceProduct.find_by(id: params[:service_product_id])
+    @service_product = ServiceProduct.find_by(id: 11)
     p "=================i am commissions"
     if @service_product.nil?
       redirect_to service_products_path, alert: "Service product not found"

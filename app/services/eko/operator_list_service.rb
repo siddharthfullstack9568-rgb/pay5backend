@@ -5,7 +5,7 @@ module Eko
     CATEGORY_MAP = {
       prepaid:   5,   # Mobile prepaid
       postpaid: 10,   # Mobile postpaid
-      dth:       4,   # ← **Assumption**:
+      dth:       4, 
       broaband: 1,
       electricity: 8,
       loan: 21,

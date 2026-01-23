@@ -5,12 +5,13 @@ class Superadmin::PaymentsController < Superadmin::BaseController
   def index
     user_id = current_superadmin
     # Get all fund requests requested by user 136
-    fund_requests = FundRequest.where(requested_by: user_id)
-    p fund_requests
+    @fund_transactions = FundRequest.where(requested_by: user_id).order(created_at: :desc)
+    p "=======fund_transactions============"
+    p @fund_transactions
     # Get all wallet transactions linked to these fund requests
-    @fund_transactions = WalletTransaction.where(fund_request_id: fund_requests.pluck(:id)).order(created_at: :desc)
-    p @fund_transactions.last&.status
-    Rails.logger.info "==================@fund_transactions"
+    # @fund_transactions = WalletTransaction.where(fund_request_id: fund_requests.pluck(:id)).order(created_at: :desc)
+    # pfund_transaction @s.last&.status
+    # Rails.logger.info "==================@fund_transactions"
     Rails.logger.info @fund_transactions.inspect
   end
 
@@ -54,9 +55,13 @@ class Superadmin::PaymentsController < Superadmin::BaseController
     p "=============pinpin"
     p pin
     if current_superadmin.set_pin == pin
-      @transaction = WalletTransaction.find(params[:id])
+      @transaction = FundRequest.find(params[:id])
+      p "============transaction============="
+      p @transaction
       parent_wallet = Wallet.find_by(user_id: current_superadmin.id) # parent wallet object
-      wallet = @transaction.wallet
+      p "===========parent_wallet============"
+      p parent_wallet
+      wallet = @transaction.user.wallet
 
       if parent_wallet.balance.to_f < @transaction.amount.to_f
         flash[:alert] = "Balance is low"
@@ -65,13 +70,16 @@ class Superadmin::PaymentsController < Superadmin::BaseController
 
       remaining_balance = parent_wallet.balance.to_f - @transaction.amount.to_f
 
+      p "============remaining_balance==========="
+      p remaining_balance
+
       ActiveRecord::Base.transaction do
         if @transaction.mode == "credit"
           wallet.update!(balance: wallet.balance.to_f + @transaction.amount.to_f)
           parent_wallet.update!(balance: remaining_balance)
-        elsif @transaction.mode == "fund"
+        elsif @transaction.transaction_type == "fund"
           wallet.update!(balance: wallet.balance.to_f + @transaction.amount.to_f)
-          @transaction.fund_request.update!(status: "success")
+          @transaction.update!(status: "success")
           parent_wallet.update!(balance: remaining_balance)
         elsif @transaction.mode == "debit"
           wallet.update!(balance: wallet.balance.to_f - @transaction.amount.to_f)

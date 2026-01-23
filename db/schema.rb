@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_12_053320) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_23_094237) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -182,6 +182,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_12_053320) do
     t.datetime "updated_at", null: false
     t.string "reject_note"
     t.string "account_number"
+    t.string "deposit_account_no"
+    t.string "deposit_ifsc_code"
+    t.string "ifsc_code"
     t.index ["user_id"], name: "index_fund_requests_on_user_id"
   end
 

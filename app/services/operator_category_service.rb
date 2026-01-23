@@ -6,7 +6,7 @@ require "openssl"
 require "base64"
 
 class OperatorCategoryService
-  EKO_URL = "https://staging.eko.in:25004/ekoapi/v2/billpayments/operators_category".freeze
+  EKO_URL = "https://api.eko.in:25002/ekoicici/v2/billpayments/operators_category".freeze
 
   def self.call
     developer_key = ENV["EKO_DEV_KEY"]

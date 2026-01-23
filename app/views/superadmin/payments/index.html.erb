@@ -77,8 +77,8 @@
         <tbody>
           <% @fund_transactions.each do |fund|%>
           <tr class="border-b border-gray-200 hover:bg-gray-50">
-            <td class="px-4 py-3"><%=fund.tx_id%></td>
-            <td class="px-4 py-3"><%=fund.wallet.user.first_name%></td>
+            <td class="px-4 py-3"><%=fund.wallet_transaction&.tx_id%></td>
+            <td class="px-4 py-3"><%=fund.user.first_name%></td>
             <td class="px-4 py-3">₹<%=fund.amount%></td>
             <td class="px-4 py-3"><%=fund.transaction_type%></td>
             <td class="px-4 py-3"><%= fund.created_at.strftime("%d/%m/%Y") %></td>
@@ -95,7 +95,7 @@
                     Approved
                   </button>
 
-                  <button onclick="openRejectModal(<%= fund.fund_request.id %>)" class="bg-red-600 text-white px-4 py-2 rounded-md">
+                  <button onclick="openRejectModal(<%= fund.id %>)" class="bg-red-600 text-white px-4 py-2 rounded-md">
                   Reject
                 </button>
               <% end %>

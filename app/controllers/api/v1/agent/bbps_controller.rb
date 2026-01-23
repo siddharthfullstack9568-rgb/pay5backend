@@ -1,11 +1,30 @@
 class Api::V1::Agent::BbpsController < ActionController::API
   include ApiKeyAuthenticatable
 
+  def bbps_category
+  result = OperatorCategoryService.call
+
+  if result[:code] == 200
+    render json: {
+      success: true,
+      data: result[:body]
+    }
+  else
+    render json: {
+      success: false,
+      message: "Unable to fetch BBPS categories"
+    }, status: :unprocessable_entity
+  end
+end
+
+
+
   def bbps_operators
     type = params[:category] || "prepaid"
-
+    p "=======type======="
     result = Eko::OperatorListService.fetch(type)
-
+    p "===========result==========="
+    p result
     operators = result.is_a?(Hash) ? result["data"] : result
 
     render json: {
