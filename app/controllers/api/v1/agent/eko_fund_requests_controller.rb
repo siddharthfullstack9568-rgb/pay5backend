@@ -141,7 +141,10 @@ class Api::V1::Agent::EkoFundRequestsController < ActionController::API
       :payment_mode,
       :deposit_bank,
       :your_bank,
-      :account_number
+      :account_number,
+      :deposit_account_no,
+      :deposit_ifsc_code,
+      :ifsc_code
     )
   end
 

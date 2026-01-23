@@ -7,7 +7,7 @@ class Superadmin::PaymentsController < Superadmin::BaseController
     # Get all fund requests requested by user 136
     @fund_transactions = FundRequest.where(requested_by: user_id).order(created_at: :desc)
     p "=======fund_transactions============"
-    p @fund_transactions
+    p @fund_transactions.last
     # Get all wallet transactions linked to these fund requests
     # @fund_transactions = WalletTransaction.where(fund_request_id: fund_requests.pluck(:id)).order(created_at: :desc)
     # pfund_transaction @s.last&.status
