@@ -436,6 +436,7 @@ Rails.application.routes.draw do
         post "bbps/bbps_operators"
         get "bbps/bbps_locations"
         post "bbps/bbps_fetch_bill"
+        post "bbps/recharge"
 
         #api code for fund request
         post "eko_fund_requests/create"
