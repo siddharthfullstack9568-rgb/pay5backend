@@ -2,6 +2,7 @@ class Api::V1::Agent::UserServicesController < Api::V1::Auth::BaseController
   # protect_from_forgery with: :null_session
 
   def index
+    p "=dsn,m,mn,mn,mn,mn,mn,n,"
     # current_user को assign हुई services
     service_lists = UserService.where(assignee_id: current_user.id)
     .includes(:service, :assigner)

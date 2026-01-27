@@ -448,9 +448,24 @@ Rails.application.routes.draw do
         post "biometric", to: "dmts#biometric"
         post "biometric_kyc", to: "dmts#biometric_kyc"
 
+<<<<<<< HEAD
         resources :support_tickets, only: [:create, :index, :show] do
           patch :update_status, on: :member
         end
+=======
+        # bbsp api code
+        get "bbps/bbps_category"
+        post "bbps/bbps_operators"
+        get "bbps/bbps_locations"
+        post "bbps/bbps_fetch_bill"
+        post "bbps/recharge"
+
+        #api code for fund request
+        post "eko_fund_requests/create"
+        get "eko_fund_requests/bank"
+        get "eko_fund_requests/balance_api"
+        #
+>>>>>>> 107222960f9f7da894704666153a0db6f31e4146
 
       end
 

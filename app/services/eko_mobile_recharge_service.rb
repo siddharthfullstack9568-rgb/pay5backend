@@ -115,7 +115,7 @@ class EkoMobileRechargeService
 
 
     p "========payload========"
-    p payload.to_json
+    p payload
 
     # ---------------------------------------------------
     # URL with initiator
