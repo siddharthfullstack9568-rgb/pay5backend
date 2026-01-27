@@ -2,11 +2,11 @@
   <h2 class="text-2xl font-bold mb-6">Edit User Detailsss</h2>
 
 
-<%#= form_with model: @retailer, url: superadmin_retailers_path, local: true, html: { class: "grid grid-cols-1 md:grid-cols-3 gap-6" } do |form| %>
-<%= form_with model: @retailer,
-                url: superadmin_retailers_path(@retailer),
-                method: :patch,
-                html: { class: "grid grid-cols-1 md:grid-cols-3 gap-6" } do |form| %>
+<%= form_with model: @retailer, 
+              url: @retailer.new_record? ? superadmin_retailers_path : superadmin_retailers_path(@retailer),
+              local: true,
+              html: { class: "grid grid-cols-1 md:grid-cols-3 gap-6" } do |form| %>
+
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Full Name</label>

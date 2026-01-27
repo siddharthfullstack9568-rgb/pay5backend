@@ -10,10 +10,15 @@ class User < ApplicationRecord
   # belongs_to :scheme
   has_many :transactions, dependent: :destroy
 
-  def all_descendant_ids
-    p "=========all_descendant_ids========="
-    p all_descendant_ids
-    children.flat_map { |child| [child.id] + child.all_descendant_ids }
+  # def all_descendant_ids
+  #   p "=========all_descendant_ids========="
+  #   p all_descendant_ids
+  #   children.flat_map { |child| [child.id] + child.all_descendant_ids }
+  # end
+  def all_descendants
+    children.includes(:children).flat_map do |child|
+      [child] + child.all_descendants
+    end
   end
 
   has_one :wallet, dependent: :destroy

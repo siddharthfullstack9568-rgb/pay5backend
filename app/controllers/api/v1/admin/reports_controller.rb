@@ -9,13 +9,17 @@ class Api::V1::Admin::ReportsController < Api::V1::Auth::BaseController
     service_product_id = params[:service_product_id]
 
     transactions = Transaction
-    .includes(:user, service_product: :category)
-    .where(user_id: user_ids, service_product_id: service_product_id).order(created_at: :desc)
-    p "==============transactions"
+    .includes(:user, :category)
+    .where(user_id: user_ids, category_id: service_product_id)
+    .order(created_at: :desc)
+
+    Rails.logger.info "Transactions count: #{transactions.size}"
+
     p transactions.count
     # Filter by service_product_id
+
     if params[:service_product_id].present? && params[:service_product_id] != "ALL"
-      transactions = transactions.where(service_product_id: params[:service_product_id])
+      transactions = transactions.where(category_id: params[:service_product_id])
     end
 
     # Filter by status
@@ -53,8 +57,8 @@ class Api::V1::Admin::ReportsController < Api::V1::Auth::BaseController
           consumer_name: t.consumer_name,
           consumer_no_Name: t.user&.first_name,
           role: t.user&.role&.title,
-          service_type: t.service_product&.category&.title,
-          sub_service: t.service_product&.company_name,
+          service_type: t.category&.service&.title,
+          sub_service: t.category&.title,
           tid: t.tid,
           tds: t.tds,
           commission: t.commission,

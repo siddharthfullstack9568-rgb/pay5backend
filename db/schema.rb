@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_19_112010) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_27_101001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -68,6 +68,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_112010) do
     t.datetime "updated_at", null: false
     t.bigint "service_product_item_id", null: false
     t.bigint "scheme_id"
+    t.decimal "commission_rate"
     t.index ["scheme_id"], name: "index_commissions_on_scheme_id"
     t.index ["service_product_item_id"], name: "index_commissions_on_service_product_item_id"
   end
@@ -171,6 +172,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_112010) do
     t.datetime "updated_at", null: false
     t.string "reject_note"
     t.string "account_number"
+    t.string "deposit_account_no"
+    t.string "deposit_ifsc_code"
+    t.string "ifsc_code"
     t.index ["user_id"], name: "index_fund_requests_on_user_id"
   end
 
@@ -226,13 +230,15 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_112010) do
   end
 
   create_table "service_product_items", force: :cascade do |t|
-    t.bigint "service_product_id", null: false
     t.string "name"
     t.string "oprator_type"
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["service_product_id"], name: "index_service_product_items_on_service_product_id"
+    t.bigint "category_id"
+    t.bigint "operator_id"
+    t.index ["category_id"], name: "index_service_product_items_on_category_id"
+    t.index ["operator_id"], name: "index_service_product_items_on_operator_id"
   end
 
   create_table "service_products", force: :cascade do |t|
@@ -254,6 +260,28 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_112010) do
     t.datetime "updated_at", null: false
     t.string "logo"
     t.integer "position"
+  end
+
+  create_table "support_tickets", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "ticket_number"
+    t.string "full_name"
+    t.string "email"
+    t.string "service_type"
+    t.string "reference_id"
+    t.string "subject"
+    t.text "description"
+    t.string "status"
+    t.datetime "status_updated_at"
+    t.text "resolution_note"
+    t.datetime "resolved_at"
+    t.integer "assigned_agent_id"
+    t.string "attachment_url"
+    t.integer "parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parent_id"], name: "index_support_tickets_on_parent_id"
+    t.index ["user_id"], name: "index_support_tickets_on_user_id"
   end
 
   create_table "transaction_commissions", force: :cascade do |t|
@@ -279,7 +307,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_112010) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "service_product_id"
     t.string "consumer_name"
     t.string "subscriber_or_vc_number"
     t.string "bill_no"
@@ -301,7 +328,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_112010) do
     t.decimal "commission", precision: 10, scale: 2
     t.string "status_text"
     t.string "txstatus_desc"
-    t.index ["service_product_id"], name: "index_transactions_on_service_product_id"
+    t.bigint "category_id"
+    t.index ["category_id"], name: "index_transactions_on_category_id"
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end
 
@@ -407,11 +435,32 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_112010) do
     t.boolean "eko_status_otp", default: false
     t.boolean "eko_verify_otp", default: false
     t.boolean "eko_biometric_kyc", default: false
+    t.string "permanent_address"
+    t.string "permanent_landmark"
+    t.string "permanent_postal_code"
+    t.string "permanent_city"
+    t.string "permanent_state"
+    t.string "permanent_pincode"
     t.index ["email"], name: "index_users_on_email"
     t.index ["parent_id"], name: "index_users_on_parent_id"
     t.index ["role_id"], name: "index_users_on_role_id"
     t.index ["scheme_id"], name: "index_users_on_scheme_id"
     t.index ["service_id"], name: "index_users_on_service_id"
+  end
+
+  create_table "wallet_histories", force: :cascade do |t|
+    t.bigint "wallet_id", null: false
+    t.integer "user_id"
+    t.integer "parent_id"
+    t.decimal "amount"
+    t.decimal "before_balance"
+    t.decimal "after_balance"
+    t.string "transaction_type"
+    t.string "remark"
+    t.string "reference_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["wallet_id"], name: "index_wallet_histories_on_wallet_id"
   end
 
   create_table "wallet_transactions", force: :cascade do |t|
@@ -449,12 +498,13 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_112010) do
   add_foreign_key "enquiries", "roles"
   add_foreign_key "fund_requests", "users"
   add_foreign_key "schemes", "users"
-  add_foreign_key "service_product_items", "service_products"
+  add_foreign_key "service_product_items", "categories"
   add_foreign_key "service_products", "categories"
+  add_foreign_key "support_tickets", "users"
   add_foreign_key "transaction_commissions", "service_product_items"
   add_foreign_key "transaction_commissions", "transactions"
   add_foreign_key "transaction_commissions", "users"
-  add_foreign_key "transactions", "service_products"
+  add_foreign_key "transactions", "categories"
   add_foreign_key "transactions", "users"
   add_foreign_key "user_services", "services"
   add_foreign_key "user_services", "users", column: "assignee_id"
@@ -462,6 +512,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_19_112010) do
   add_foreign_key "users", "roles"
   add_foreign_key "users", "schemes"
   add_foreign_key "users", "services"
+  add_foreign_key "wallet_histories", "wallets"
   add_foreign_key "wallet_transactions", "fund_requests"
   add_foreign_key "wallet_transactions", "wallets"
   add_foreign_key "wallets", "users"

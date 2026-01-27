@@ -10,19 +10,6 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
     end
   end
 
-  def service_product
-    category_id = params[:category_id]
-    start_date = params[:start_date] # optional
-    end_date   = params[:end_date]   # optional
-
-    if category_id.present?
-      category = ServiceProduct.where(category_id: category_id)
-      render json: {code: 200, message: "Successfully fetched data", categories: category}
-    else
-      render json: {code: 200, message: "Service not Found"}
-    end
-  end
-
   def scheme_list
     schemes = Scheme.where(user_id: current_user)
     render json: {code: 200, message: "scheme successfully show", schemes: schemes}
@@ -30,24 +17,39 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
 
 
   def commission_operator
+     p current_user
+    p current_user.id
     service_id = params[:id]
     category_id = params[:category_id]
 
-    # DEFAULT SERVICE PRODUCT ID (fallback = 11)
-    service_product_id = params[:service_product_id].presence || 11
+    service_product_id = params[:id].presence
 
-    categories = Category.where(service_id: service_id)
-    service_products = ServiceProduct.where(category_id: category_id)
+    categories = Category.where(id: service_id)
 
-    title = ServiceProduct.find_by(id: service_product_id)
-    company_name = title&.company_name&.downcase
+    p "=======categories========="
+
+    p categories
+
+    # categories = Category.where(service_id: service_id)
+    # service_products = ServiceProduct.where(category_id: category_id)
+
+    # title = ServiceProduct.find_by(id: service_product_id)
+    # company_name = title&.company_name&.downcase
+    # p "============company_name========"
+
+
+
+    title = Category.find_by(id: service_product_id)
+    company_name = title&.title&.downcase
     p "============company_name========"
     p company_name
     # --- Type Mapping ---
     type_mapping = {
-      "mobile recharge" => "prepaid",
+      "postpaid" => "postpaid",
+      "prepaid" => "prepaid",
       "broadband recharge" => "broadband",
       "dth recharge" => "dth",
+      "cabel" => "cabel",
       "fastag" => "fastag",
       "credit card bill payment" => "credit",
       "water bill" => "water",
@@ -65,8 +67,8 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
     render json: {
       code: 200,
       message: "Service product list fetched successfully",
-      categories: categories.as_json(only: [:id, :name]),
-      service_products: service_products.as_json(only: [:id, :company_name, :product_image]),
+      categories: categories.as_json(only: [:id, :title]),
+      service_products: categories.as_json(only: [:id, :title]),
       operators: result
     }
   end
@@ -74,15 +76,20 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
 
   def show_commission
     service_product_id = params[:service_product_id]
-    service_product = ServiceProduct.find_by(id: service_product_id)
+    service_product = Category.find_by(id: service_product_id)
 
     return render json: { code: 404, message: "Service product not found" }, status: :not_found if service_product.nil?
 
     items = service_product.service_product_items.map do |item|
+      p "================item"
+      p item
       commissions = Commission.where(
         service_product_item_id: item.id,
         scheme_id: params[:scheme]
       ).select(:id, :from_role, :to_role, :value, :scheme_id, :commission_type)
+
+      p "================commissions================"
+      p commissions
 
       commissions_admin = Commission.where(
         service_product_item_id: item.id,
@@ -99,7 +106,7 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
     render json: {
       code: 200,
       message: "Commission list fetched",
-      service_product: service_product.company_name,
+      service_product: service_product.title,
       data: items
     }, status: :ok
   end
@@ -117,11 +124,15 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
       return render json: { code: 400, message: "scheme is required" }, status: :bad_request
     end
 
+  p "============sssj"
     # Get service item
     service_item = ServiceProductItem.find_or_create_by!(
-      service_product_id: params[:service_product_id],
+      category_id: params[:service_product_id],
       name: params[:company_name]
     )
+
+    p "=========service_item======="
+    p service_item
 
     # Superadmin commission for this EXACT service_product_item
     superadmin_commission_record = Commission.find_by(
@@ -149,10 +160,6 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
 
     p "========admin_commission====="
     p admin_commission
-
-    # if superadmin_commission.zero?
-    #   return render json: { code: 404, message: "Superadmin commission is zero or not valid" }, status: :not_found
-    # end
 
     commissions_created = []
 

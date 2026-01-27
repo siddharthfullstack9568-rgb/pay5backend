@@ -1,6 +1,6 @@
 class Transaction < ApplicationRecord
   belongs_to :user
-  belongs_to :service_product
+  belongs_to :category
 
   has_many :transaction_commissions, dependent: :destroy
 

@@ -1,4 +1,5 @@
 class Api::V1::Admin::AdminProfilesController < Api::V1::Auth::BaseController
+  skip_before_action :authorize_request, only: [:forget_password, :reset_password, :verfiy_transaction_pin, :main_forget_password]
 
   def index
     render json: { code: 200,message: "Users fetched successfully",users: current_user }, status: :ok

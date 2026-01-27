@@ -19,7 +19,7 @@
 
         <!-- Service Product Filter -->
         <select name="service_product_id" class="border rounded-lg px-4 py-2 text-sm focus:ring focus:ring-blue-200" onchange="this.form.submit()">
-          <option value="">Select Serivce</option>
+          <option value="">Select Service</option>
           <% @service_products.each do |sp| %>
             <option value="<%= sp.id %>" <%= "selected" if params[:service_product_id].to_s == sp.id.to_s %>>
               <%= sp.company_name %>
@@ -28,10 +28,11 @@
         </select>
 
         <select name="scheme" class="border rounded-md px-3 py-1 w-full bg-white focus:ring-2 focus:ring-blue-300" onchange="this.form.submit()">
-                        <% Scheme.all.each do |sch| %>
-                          <option value="<%= sch.id %>"><%= sch.scheme_name %></option>
-                        <% end %>
-                      </select>
+          <option value="">Select Scheme</option>
+          <% Scheme.all.each do |sch| %>
+            <option value="<%= sch.id %>"><%= sch.scheme_name %></option>
+          <% end %>
+        </select>
 
       <% end %>
     </div>
@@ -63,7 +64,7 @@
             <% if operators.any? %>
               <% operators.each do |op| %>
 
-                <%= form_with url: superadmin_commissions_set_commission_path, method: :post, data: { turbo_frame: "transactions_table" }, class: "contents" do %>
+                <%= form_with url: superadmin_commissions_set_commission_path, method: :post, data: { turbo_frame: "transactions_table" }, class: "contents set-commission-form" do %>
 
                   <tr>
                     <input type="hidden" name="category_id" value="<%= @category_id %>">
@@ -81,7 +82,8 @@
                     </td>
 
                     <td class="p-3">
-                      <select name="scheme" class="border rounded-md px-3 py-1 w-full bg-white focus:ring-2 focus:ring-blue-300">
+                      <select name="scheme" class="border rounded-md px-3 py-1 w-full bg-white focus:ring-2 focus:ring-blue-300 scheme-select" required>
+                        <option value="">-- Select Scheme --</option>
                         <% Scheme.all.each do |sch| %>
                           <option value="<%= sch.id %>"><%= sch.scheme_name %></option>
                         <% end %>
@@ -94,7 +96,7 @@
                     <td class="p-3"><input type="text" name="retailer_commission" placeholder="%" class="border rounded-md px-3 py-1 w-full" /></td>
 
                     <td class="p-3">
-                      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-md text-sm">
+                      <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-md text-sm submit-btn" onclick="validateCommissionForm(this)">
                         Submit
                       </button>
                     </td>
@@ -116,4 +118,44 @@
     </div>
   </div>
 </div>
+
+<script>
+function validateCommissionForm(button) {
+  // Find the closest form
+  const form = button.closest('form.set-commission-form');
+  
+  // Find the scheme select within this form
+  const schemeSelect = form.querySelector('.scheme-select');
+  
+  // Check if scheme is selected
+  if (!schemeSelect.value) {
+    alert("Please select a scheme before submitting");
+    schemeSelect.focus();
+    return false;
+  }
+  
+  // If scheme is selected, submit the form
+  form.submit();
+  return true;
+}
+
+// Alternative: Add event listener to all submit buttons
+document.addEventListener('DOMContentLoaded', function() {
+  // Optional: You can also add this to prevent default form submission
+  const forms = document.querySelectorAll('.set-commission-form');
+  
+  forms.forEach(form => {
+    form.addEventListener('submit', function(e) {
+      const schemeSelect = this.querySelector('.scheme-select');
+      
+      if (!schemeSelect.value) {
+        e.preventDefault();
+        alert("Please select a scheme before submitting");
+        schemeSelect.focus();
+        return false;
+      }
+    });
+  });
+});
+</script>
 <% end %>

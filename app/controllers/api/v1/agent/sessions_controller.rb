@@ -20,9 +20,9 @@ class Api::V1::Agent::SessionsController < ApplicationController
     if @user.authenticate(params[:password])
       # Generate OTP
       otp = rand(100000..999999).to_s
-     
+
       token = SecureRandom.hex(20)
-     
+
       @user.update!(
         email_otp: otp,
         email_otp_status: false,
@@ -57,8 +57,8 @@ class Api::V1::Agent::SessionsController < ApplicationController
   def verify_email
     # Find user by email
     user = User.find_by(email: params[:email].to_s.strip)
-   p "_------------primepay"
-   p user.email_otp
+    p "_------------primepay"
+    p user.email_otp
     # If user not found
     unless user
       return render json: { code: 404, message: "User not found" }, status: :not_found
@@ -122,9 +122,19 @@ class Api::V1::Agent::SessionsController < ApplicationController
 
 
 
+  # def role
+  #   roles = Role.all
+  #   render json: { code: 200, message: "role list", roles: roles}
+  # end
+
   def role
-    roles = Role.all
-    render json: { code: 200, message: "role list", roles: roles}
+    roles = Role.where(title: ["master", "dealer", "retailer"])
+
+    render json: {
+      code: 200,
+      message: "role list",
+      roles: roles
+    }
   end
 
 

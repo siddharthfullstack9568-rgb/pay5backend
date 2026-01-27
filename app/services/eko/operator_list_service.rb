@@ -13,7 +13,10 @@ module Eko
       credit: 7,
       water: 11,
       fastag: 22,
-      house: 12
+      house: 12,
+      cabel: 5,
+      eChallan: 27,
+      insurance: 20
     }
 
     def self.fetch(category_name)

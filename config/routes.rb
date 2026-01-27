@@ -240,8 +240,15 @@ Rails.application.routes.draw do
             get :service_list
             get :scheme_list
             get :role_list
+            post :master_role
+            post :dealer_role
+            get :scheme_role
+            get :role_count
           end
         end
+
+        resources :enqueries, only: [:index]
+
 
         resources :schemes
         resources :banks
@@ -249,6 +256,8 @@ Rails.application.routes.draw do
           collection do
             get :bank
             get :bank_details
+            get :admin_bank
+            get :wallet_history
           end
         end
 
@@ -285,6 +294,10 @@ Rails.application.routes.draw do
             post "approved"
             post "reject_payment_request"
           end
+        end
+
+        resources :support_tickets, only: [:create, :index, :show] do
+          patch :update_status, on: :member
         end
 
         post "reports/index"
@@ -367,6 +380,7 @@ Rails.application.routes.draw do
         post "recharges/recharge"
         post "recharges/recharge_list"
         post "recharges/verify_pin"
+        get "recharges/bill_fetch_category"
         post "fetch_eko_operators", to: "recharges#fetch_eko_operators"
         get "operators_category", to: "recharges#operators_category"
         get "fetch_eko_locations", to: "recharges#fetch_eko_locations"
@@ -387,6 +401,8 @@ Rails.application.routes.draw do
         post "wallets/fund_request_list"
         get "wallets/bank_list"
         post "wallets/bank_details"
+        get "wallets/wallet_history"
+        get "wallets/agent_bank"
 
         post "filters/category_filter"
         post "filters/service_category_filter"
@@ -411,6 +427,7 @@ Rails.application.routes.draw do
         post "reatailer_profiles/set_mpin"
 
         post "commission_reports/index"
+        get "commission_reports/earn_commission"
 
         get "dmts/dmt_transactions_list"
         post "dmts/sender_details"
@@ -430,6 +447,10 @@ Rails.application.routes.draw do
         post "biometric_ekyc_otp_verify", to: "dmts#biometric_ekyc_otp_verify"
         post "biometric", to: "dmts#biometric"
         post "biometric_kyc", to: "dmts#biometric_kyc"
+
+        resources :support_tickets, only: [:create, :index, :show] do
+          patch :update_status, on: :member
+        end
 
       end
 
@@ -463,6 +484,9 @@ Rails.application.routes.draw do
     get "commissions/index"
     get "commissions/commission_filter"
     post "commissions/set_commission"
+    get "commissions/new"
+    get "commissions/service_list"
+    resources :commissions
 
     get "accounts/index"
     get "accounts/new"

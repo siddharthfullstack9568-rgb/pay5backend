@@ -5,12 +5,45 @@ class Api::V1::Admin::UserServicesController < Api::V1::Auth::BaseController
   # LIST RETAILERS/DEALERS CREATED BY ADMIN
   # -----------------------------------------
   def index
-    p "===================="
-    p current_user
-    users = User.where(parent_id: current_user.id).order(created_at: :desc)
+    users = current_user.all_descendants
+    .sort_by(&:created_at)
+    .reverse
 
-    render json: { code: 200, message: "Users fetched", users: users }
+    if users.any?
+      render json: {
+        code: 200,
+        message: "Hierarchy users fetched successfully",
+        users: users
+      }
+    else
+      render json: {
+        code: 404,
+        message: "No hierarchy users found",
+        users: []
+      }
+    end
   end
+
+
+  def role_count
+    user_ids = current_user.all_descendants.map(&:id)
+
+    users = User.joins(:role).where(id: user_ids)
+
+    counts = users.group('roles.title').count
+
+    render json: {
+      success: true,
+      data: {
+        master: counts['master'] || 0,
+        dealer: counts['dealer'] || 0,
+        retailer: counts['retailer'] || 0
+      }
+    }
+  end
+
+
+
 
   def role_list
     roles = Role.all
@@ -20,6 +53,71 @@ class Api::V1::Admin::UserServicesController < Api::V1::Auth::BaseController
       message: "Role list fetched successfully",
       roles: roles.select(:id, :title)
     }
+  end
+
+  def master_role
+    users = User.joins(:role)
+    .where(roles: { title: "master" }, parent_id: current_user.id, scheme_id: params[:scheme_id])
+
+    if users.exists?
+      render json: {
+        code: 200,
+        message: "Master users fetched successfully",
+        users: users
+      }
+    else
+      render json: {
+        code: 404,
+        message: "Master not found",
+        users: []
+      }
+    end
+  end
+
+
+  def dealer_role
+    users = User.joins(:role)
+    .where(roles: { title: "dealer" }, parent_id: params[:master_id])
+
+    if users.exists?
+      render json: {
+        code: 200,
+        message: "Dealer users fetched successfully",
+        users: users
+      }
+    else
+      render json: {
+        code: 404,
+        message: "Dealer not found",
+        users: []
+      }
+    end
+  end
+
+  def scheme_role
+     p "--------------------"
+    p current_user
+    scheme_id = current_user.scheme_id
+    scheme = Scheme.find_by(id: scheme_id)
+
+    if scheme.present?
+      render json: {
+        code: 200,
+        message: "Scheme found",
+        scheme: scheme
+      }
+    else
+      render json: {
+        code: 404,
+        message: "Scheme not found"
+      }
+    end
+  end
+
+
+  def role
+    roles = Role.all
+    render json: { code: 200, message: "Role List", roles: roles }
   end
 
   def service_list
@@ -53,9 +151,6 @@ class Api::V1::Admin::UserServicesController < Api::V1::Auth::BaseController
 
 
   def create
-    # ------------------------
-    # 1️⃣ REQUIRED FIELD CHECK
-    # ------------------------
     required_fields = [
       :first_name, :last_name, :email, :phone_number, :password,
       :role_id, :service_ids, :scheme_id
@@ -71,19 +166,22 @@ class Api::V1::Admin::UserServicesController < Api::V1::Auth::BaseController
       }
     end
 
-    # ------------------------
-    # Email already exists?
-    # ------------------------
-    if User.exists?(email: params[:email].strip.downcase)
+    email    = params[:email].to_s.strip.downcase
+    username = params[:username].to_s.strip.downcase
+
+    if User.where("LOWER(email) = ?", email).exists?
       return render json: {
         code: 409,
         message: "User already exists with this email"
       }, status: :conflict
     end
 
-    # ------------------------
-    # 2️⃣ EXTRA VALIDATIONS
-    # ------------------------
+    if User.where("LOWER(username) = ?", username).exists?
+      return render json: {
+        code: 409,
+        message: "User already exists with this username"
+      }, status: :conflict
+    end
 
     unless params[:email].match?(/\A[^@\s]+@[^@\s]+\z/)
       return render json: { code: 422, message: "Invalid email format" }
@@ -109,48 +207,152 @@ class Api::V1::Admin::UserServicesController < Api::V1::Auth::BaseController
     end
 
     # ------------------------
-    # 3️⃣ TRANSACTION START
+    # 3️⃣ IMAGE UPLOADS
+    # ------------------------
+
+    aadhaar_url = params[:aadhaar_image].present? ?
+      Cloudinary::Uploader.upload(params[:aadhaar_image], folder: "users/aadhaar")["secure_url"] : nil
+
+    pan_url = params[:pan_card_image].present? ?
+      Cloudinary::Uploader.upload(params[:pan_card_image], folder: "users/pan")["secure_url"] : nil
+
+    shop_url = params[:store_shop_photo].present? ?
+      Cloudinary::Uploader.upload(params[:store_shop_photo], folder: "users/store")["secure_url"] : nil
+
+    # ------------------------
+    # 4️⃣ TRANSACTION
     # ------------------------
     ActiveRecord::Base.transaction do
-      user = User.new(
-        user_params.merge(
-          role_id: params[:role_id],
-          parent_id: current_user.id
-        )
-      )
 
-      # 3.1 User Save
-      unless user.save
-        raise ActiveRecord::Rollback
+      if %w[master dealer retailer].include?(params[:title].to_s.downcase)
+        user = User.new(
+          user_params.merge(
+            role_id: params[:role_id],
+            parent_id: current_user.id,
+            aadhaar_image: aadhaar_url,
+            pan_card_image: pan_url,
+            store_shop_photo: shop_url
+          )
+        )
+      else
+        master_fetch = User.find_by(id: params[:master_id])
+        return render json: {
+          code: 404,
+          message: "Master not found"
+        } unless master_fetch
+
+        dealer_fetch = User.find_by(id: params[:dealer_id])
+        return render json: {
+          code: 404,
+          message: "Dealer not found"
+        } unless dealer_fetch
+
+        user = User.new(
+          user_params.merge(
+            role_id: params[:role_id],
+            parent_id: dealer_fetch.id,
+            aadhaar_image: aadhaar_url,
+            pan_card_image: pan_url,
+            store_shop_photo: shop_url
+          )
+        )
       end
 
-      # 3.2 Assign Services
+      unless user.save
+        return render json: {
+          code: 422,
+          message: user.errors.full_messages.to_sentence
+        }
+      end
+
+      # ---- User Services ----
       service_ids.each do |sid|
-        service = UserService.new(
+        UserService.create!(
           assigner: current_user,
           assignee: user,
           service_id: sid
         )
-
-        unless service.save
-          raise ActiveRecord::Rollback
-        end
       end
 
-      # Success response
+      # residence_address JSON (reuse at both places)
+      # ===============================
+      # ONLY FOR RETAILER ROLE
+      # ===============================
+      # if user.role&.title == "retailer"
+
+      #   # -------------------------------
+      #   # EKO USER ONBOARD
+      #   # -------------------------------
+      #   response = EkoDmt::UserOnboardService.new(
+      #     initiator_id: "9212094999",
+      #     pan_number:   user.pan_card,
+      #     mobile:       user.phone_number,
+      #     first_name:   user.first_name,
+      #     last_name:    user.last_name,
+      #     email:        user.email,
+      #     dob:          user.date_of_birth,
+      #     shop_name:    user.business_name,
+      #     residence_address: params[:residence_address]
+      #   ).call
+
+      #   p "==========response============="
+      #   p response
+
+      #   user_code = response.dig("data", "user_code") || response["user_code"]
+      #   p "================="
+      #   p user_code
+      #   if user_code.blank?
+      #     render json: {
+      #       code: 422,
+      #       message: response["message"] || "User code not received from EKO",
+      #       raw: response
+      #     }, status: :unprocessable_entity
+      #     raise ActiveRecord::Rollback
+      #   end
+
+      #   user.update!(
+      #     user_code: user_code,
+      #     eko_onboard_first_step: true
+      #   )
+
+      #   # -------------------------------
+      #   # EKO DMT CUSTOMER CREATE
+      #   # -------------------------------
+      #   resp = EkoDmt::DmtCustomerCreateService.new(
+      #     customer_id:       user.phone_number,
+      #     initiator_id:      "9212094999",
+      #     user_code:         user.user_code,
+      #     name:              user.first_name,
+      #     dob:               user.date_of_birth,
+      #     residence_address: params[:residence_address]
+      #   ).call
+
+      #   p "===========resp========"
+      #   p resp
+      #   user.update!(
+      #     eko_onboard_first_step: true
+      #   )
+
+      #   p "============respresp============="
+      #   p resp
+
+      # end
+
+      # residence_address JSON (reuse at both places)
+      # ===============================
+      # ONLY FOR RETAILER ROLE
+      # ===============================
+
+
       return render json: {
         code: 201,
-        message: "User created successfully and services assigned",
+        message: "User created successfully",
         user: user
       }
     end
 
-    # If rollback happens
-    render json: {
-      code: 422,
-      message: "User creation failed due to service assignment error"
-    }
   end
+
 
 
   def edit
@@ -178,44 +380,102 @@ class Api::V1::Admin::UserServicesController < Api::V1::Auth::BaseController
   def update
     service_ids = Array(params[:service_ids]).map(&:to_i)
 
-    # 1️⃣ Update User Basic Details
-    unless @user_service.update(user_params)
-      return render json: {
-        code: 422,
-        message: "Update failed",
-        errors: @user_service.errors.full_messages
-      }
+    ActiveRecord::Base.transaction do
+      # ==============================
+      # 1️⃣ IMAGE UPLOAD (OPTIONAL)
+      # ==============================
+      image_params = {}
+
+      if params[:aadhaar_image].present?
+        image_params[:aadhaar_image] =
+        Cloudinary::Uploader.upload(
+          params[:aadhaar_image],
+          folder: "users/aadhaar"
+        )["secure_url"]
+      end
+
+      if params[:pan_card_image].present?
+        image_params[:pan_card_image] =
+        Cloudinary::Uploader.upload(
+          params[:pan_card_image],
+          folder: "users/pan"
+        )["secure_url"]
+      end
+
+      if params[:store_shop_photo].present?
+        image_params[:store_shop_photo] =
+        Cloudinary::Uploader.upload(
+          params[:store_shop_photo],
+          folder: "users/store"
+        )["secure_url"]
+      end
+
+      # ==============================
+      # 2️⃣ UPDATE USER BASIC DETAILS
+      # ==============================
+      unless @user_service.update(user_params.merge(image_params))
+        raise ActiveRecord::Rollback,
+          @user_service.errors.full_messages.join(", ")
+      end
+
+      # ==============================
+      # 3️⃣ UPDATE SERVICES MAPPING
+      # ==============================
+      existing_ids = @user_service.user_services.pluck(:service_id)
+
+      # Remove unselected services
+      (existing_ids - service_ids).each do |sid|
+        UserService.where(
+          assigner: current_user,
+          assignee: @user_service,
+          service_id: sid
+        ).destroy_all
+      end
+
+      # Add new services
+      (service_ids - existing_ids).each do |sid|
+        UserService.create!(
+          assigner: current_user,
+          assignee: @user_service,
+          service_id: sid
+        )
+      end
+
+      # ==============================
+      # 4️⃣ BANK CREATE / UPDATE
+      # ==============================
+      if params[:bank_name].present? ||
+          params[:account_number].present? ||
+          params[:ifsc_code].present?
+
+        bank = Bank.find_or_initialize_by(user: @user_service)
+
+        bank.update!(
+          bank_name: params[:bank_name],
+          account_number: params[:account_number],
+          ifsc_code: params[:ifsc_code]
+        )
+      end
     end
 
-    # 2️⃣ Update Services Mapping
-    existing_ids = @user_service.user_services.pluck(:service_id)
-
-    # Remove unselected
-    (existing_ids - service_ids).each do |sid|
-      UserService.where(
-        assigner: current_user,
-        assignee: @user_service,
-        service_id: sid
-      ).destroy_all
-    end
-
-    # Add new services
-    (service_ids - existing_ids).each do |sid|
-      UserService.create!(
-        assigner: current_user,
-        assignee: @user_service,
-        service_id: sid
-      )
-    end
-
-    # 3️⃣ Response
+    # ==============================
+    # 5️⃣ SUCCESS RESPONSE
+    # ==============================
     render json: {
       code: 200,
       message: "User updated successfully",
       user: @user_service,
       updated_service_ids: service_ids
     }
+
+  rescue StandardError => e
+    render json: {
+      code: 422,
+      message: "Update failed",
+      error: e.message
+    }
   end
+
 
 
   # -----------------------------------------
@@ -282,6 +542,18 @@ class Api::V1::Admin::UserServicesController < Api::V1::Auth::BaseController
 
   private
 
+  def upload_image(file, folder)
+    return nil unless file.present?
+
+    result = Cloudinary::Uploader.upload(
+      file,
+      folder: folder,
+      resource_type: :image
+    )
+
+    result["secure_url"]
+  end
+
   def set_user_service
     @user_service = User.find(params[:id])
   end
@@ -296,7 +568,8 @@ class Api::V1::Admin::UserServicesController < Api::V1::Auth::BaseController
       :ifsc_code, :account_holder_name, :notes, :session_token, :domin_name, :company_type,
       :registration_certificate, :role_id, :company_name, :user_admin_id, :confirm_password,
       :scheme_id, :domain_name, :cin_number, :service_id, :address_proof_photo,
-      :store_shop_photo, :passport_photo, :aadhaar_image, :pan_card_image
+      :store_shop_photo, :passport_photo, :aadhaar_image, :pan_card_image, :permanent_address, :permanent_landmark,
+      :permanent_landmark, :permanent_postal_code, :permanent_address, :permanent_city, :permanent_state, :permanent_pincode
     )
   end
 end

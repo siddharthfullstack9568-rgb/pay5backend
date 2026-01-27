@@ -10,11 +10,17 @@ class Api::V1::Agent::UserServicesController < Api::V1::Auth::BaseController
     # assign हुई services के ids   reda karna hai
     service_ids = service_lists.map(&:service_id).compact
 
+    commission_count = Commission.where(scheme_id: current_user.scheme_id)
+
+    p "====commission_count========="
+    p commission_count
+
     # transaction count निकालना service_id के हिसाब से
-    transaction_counts = Transaction.joins(service_product: :category)
-    .where(categories: { service_id: service_ids })
-    .group("categories.service_id")
-    .count
+    transaction_counts = Transaction
+  .left_joins(:category)
+  .where(categories: { service_id: service_ids })
+  .group("categories.service_id")
+  .count
 
     render json: {
       code: 200,
@@ -71,14 +77,10 @@ class Api::V1::Agent::UserServicesController < Api::V1::Auth::BaseController
     end_date   = params[:end_date]   # optional
 
     if service_name.present? && service_name.downcase != "all"
-      # 1️⃣ Find the service record
-      service_record = Service.where(title: service_name)
-      unless service_record.exists?
-        render json: { message: "Service not found" }, status: 404 and return
-      end
-
+      
+      
       # 2️⃣ Get category ids for this service
-      category_ids = Category.where(service_id: service_record.last.id).pluck(:id)
+      category_ids = Category.where(name: service_name).pluck(:id)
       if category_ids.empty?
         render json: { message: "No categories found for this service" }, status: 404 and return
       end

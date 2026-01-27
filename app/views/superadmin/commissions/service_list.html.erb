@@ -1,0 +1,114 @@
+<div class="flex-1 px-4">
+  <div class="max-w-8xl mx-auto mt-4">
+    <div class="bg-white rounded-3xl shadow-xl p-8 border border-indigo-200">
+      
+      <!-- Title -->
+      <h2 class="text-2xl font-semibold text-indigo-800 mb-6 pl-2 border-l-4 border-indigo-500">
+        Commissions
+      </h2>
+       <div class="flex justify-between items-start">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+        DMT Commission Schemes
+      </h1>
+      <p class="text-gray-600 mb-8">
+        Manage and configure commission distribution for DMT transactions
+      </p>
+    </div>
+
+    <div class="mt-3">
+      <%= link_to superadmin_commissions_new_path,
+        class: "px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition inline-flex items-center gap-2" do %>
+        ➕ Create Dmt Commission
+      <% end %>
+    </div>
+  </div>
+      
+      <!-- Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
+        
+        <!-- Dynamic Services -->
+        <% @services.each do |service| %>
+          <% 
+            # यहाँ आप प्रत्येक service के लिए route तय कर सकते हैं
+            link_path = case service.title
+              when "BBPS"
+                superadmin_commissions_index_path(id: service.id, category_id: @category_id)
+              when "Mobile Recharge"
+                superadmin_commissions_index_path(id: service.id, category_id: @category_id)
+              when "Loan & Credit"
+                superadmin_commissions_path # या appropriate path
+              when "DMT"
+                superadmin_dmt_commissions_index_path
+              else
+                "#" # default path
+            end
+            
+            # Icon mapping
+            icon_mapping = {
+              "BBPS" => 'report1.png',
+              "Travel & Stay" => 'report2.png',
+              "Loan & Credit" => 'report3.png',
+              "Investment" => 'report4.png',
+              "Utility Service" => 'report5.png',
+              "DMT" => 'report5.png',
+              "Electric Vehicle" => 'report6.png',
+              "Entertainment" => 'report7.png',
+              "Insurance" => 'report8.png',
+              "AEPS" => 'aeps_icon.png' # Add appropriate icon
+            }
+            
+            icon = icon_mapping[service.title] || 'default_icon.png'
+            
+            # Count logic - आपके logic के अनुसार बदलें
+            count = case service.title
+              when "BBPS"
+                99
+              when "Loan & Credit"
+                InstantLoan.count
+              when "Earn Commission"
+                TransactionCommission.where(user_id: 136).pluck(:commission_amount).compact.sum.to_f
+              else
+                0 # Default count
+            end
+          %>
+          
+          <a href="<%= link_path %>">
+            <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-200 transition-all cursor-pointer hover:scale-105">
+              <div class="mb-3 p-3 bg-blue-100 rounded-full">
+                <img src="<%#= asset_path icon %>" alt="<%= service.title %>" class="w-10 h-10">
+              </div>
+              <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">
+                <%= service.title %>
+              </span>
+              <span class="mt-1 text-lg font-semibold text-indigo-900">
+                <%= count %>
+              </span>
+            </div>
+          </a>
+        <% end %>
+        
+        <!-- Static items (जो Service model में नहीं हैं) -->
+        <!-- Commission Report -->
+        <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-200 transition-all cursor-pointer hover:scale-105">
+          <div class="mb-3 p-3 bg-blue-100 rounded-full">
+            <img src="<%= asset_path 'commision.png' %>" alt="Commission Report Icon" class="w-10 h-10"/>
+          </div>
+          <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">Commission Report</span>
+          <span class="mt-1 text-lg font-semibold text-indigo-900">0</span>
+        </div>
+
+        <!-- Earn Commission -->
+        <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-200 transition-all cursor-pointer hover:scale-105">
+          <div class="mb-3 p-3 bg-blue-100 rounded-full">
+            <img src="<%= asset_path 'commision.png' %>" alt="Earn Commission Icon" class="w-10 h-10"/>
+          </div>
+          <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">Earn Commission</span>
+          <span class="mt-1 text-lg font-semibold text-indigo-900">
+            <%= TransactionCommission.where(user_id: 136).pluck(:commission_amount).compact.sum.to_f %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

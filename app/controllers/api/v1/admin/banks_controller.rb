@@ -23,7 +23,7 @@ class Api::V1::Admin::BanksController < Api::V1::Auth::BaseController
 
   # POST /api/v1/admin/banks
   def create
-    required = %i[bank_name account_name ifsc_code account_number account_type initial_balance]
+    required = %i[bank_name account_name ifsc_code account_number]
 
     missing = required.select { |p| params[:bank].blank? || params[:bank][p].blank? }
 

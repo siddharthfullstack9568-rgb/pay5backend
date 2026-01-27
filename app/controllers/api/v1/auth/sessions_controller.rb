@@ -8,7 +8,9 @@ class Api::V1::Auth::SessionsController < Api::V1::Auth::BaseController
   # ------------------------------------
   def login
     p "============check"
-    user = User.find_by(email: params[:email].to_s.strip)
+    login_param = params[:email].to_s.strip.downcase
+
+    user = User.find_by("LOWER(email) = ? OR LOWER(username) = ?", login_param.downcase, login_param.downcase)
     p "==========user"
     p user
     enquiry = Enquiry.find_by(email: params[:email].to_s.strip)
@@ -49,7 +51,19 @@ class Api::V1::Auth::SessionsController < Api::V1::Auth::BaseController
     )
 
     # Send OTP
-    UserMailer.send_email_otp(user, otp).deliver_now
+    if user
+      Thread.new do
+        begin
+          # ✅ Ensure DB connection inside thread
+          ActiveRecord::Base.connection_pool.with_connection do
+            UserMailer.send_email_otp(user, otp).deliver_now
+          end
+        rescue => e
+          Rails.logger.error("Failed to send status update email: #{e.message}")
+        end
+      end
+    end
+
 
     render json: {
       code: 200,

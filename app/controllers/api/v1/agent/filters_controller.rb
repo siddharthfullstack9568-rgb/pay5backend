@@ -19,10 +19,11 @@ class Api::V1::Agent::FiltersController < Api::V1::Auth::BaseController
 
   def service_category_filter
     transactions = Transaction.where(user_id: current_user.id).order(created_at: :desc)
-
     # Filter by service_product_id
     if params[:service_product_id].present? && params[:service_product_id] != "ALL"
-      transactions = transactions.where(service_product_id: params[:service_product_id])
+      transactions = transactions.where(category_id: params[:service_product_id])
+      p "==========transactions========="
+    p transactions
     end
 
     # Filter by status
@@ -51,14 +52,14 @@ class Api::V1::Agent::FiltersController < Api::V1::Auth::BaseController
           only: [
             :id, :tx_id, :operator, :transaction_type,
             :account_or_mobile, :amount, :status,
-            :user_id, :consumer_name, :landline_no, :bank, :card_number, :mobile, :consumer_no
+            :user_id, :consumer_name, :landline_no, :bank, :card_number, :mobile, :consumer_no, :tid, :commission
           ]
         ).merge(
           created_at: t.created_at.strftime("%d/%m/%y %H:%M"),
           consumer_no_Name: t.user.first_name,
           role: current_user.role&.title,
-          service_type: t.service_product&.category&.title,
-          sub_service: t.service_product&.company_name
+          service_type: t.category&.service&.title,
+          sub_service: t.category&.title
         )
       end
     }

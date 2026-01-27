@@ -27,7 +27,7 @@ class Superadmin::AdminsController < Superadmin::BaseController
   end
 
   def create
-    assigner = User.find(136)
+    assigner = current_superadmin
     @admin = User.new(user_params.merge(parent_id: assigner.id)) # assignee (new user)
 
     if @admin.save
@@ -57,7 +57,7 @@ class Superadmin::AdminsController < Superadmin::BaseController
     if @admin.update(user_params)
 
       service_ids = Array(params[:user][:service_ids]).map(&:to_i)
-      assigner = User.find(136) # ya phir current_admin_user agar login se aa raha ho
+      assigner = current_superadmin # ya phir current_admin_user agar login se aa raha ho
 
       existing_ids = @admin.user_services.pluck(:service_id)
 

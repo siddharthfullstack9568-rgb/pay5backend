@@ -1,4 +1,4 @@
 class Category < ApplicationRecord
   belongs_to :service
-  has_many :service_products, dependent: :destroy
+  has_many :service_product_items, dependent: :destroy
 end

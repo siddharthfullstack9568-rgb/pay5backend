@@ -1,42 +1,65 @@
-<header class="flex items-center justify-between bg-white p-3 border-b" data-controller="dropdown">
-      <!-- Search -->
-      <div class="relative w-1/3">
-       <%#  <input type="text" placeholder="Search..."
-          class="w-full border rounded-lg pl-10 pr-3 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" />
-        <i class="fa fa-search absolute left-3 top-3 text-gray-400"></i> %>
-      </div>
-      <!-- Right -->
-      <div class="flex items-center gap-6">
-        <h4 class="text-xl font-bold text-fuchsia-700"><%#= Wallet.find(58).balance.to_f%></h4>
-        <button><i class="fa fa-bell text-gray-600"></i></button>
-        <div>
-          <%# <a href="" class="py-1 text-white font-bold px-2 rounded-lg bg-red-600">
-            Logout
-          </a> %>
+<header class="flex items-center justify-between bg-black px-6 py-3 border-b border-gray-800"
+        data-controller="dropdown">
+
+  <!-- Left (empty / future search) -->
+  <div class="w-1/3"></div>
+
+  <!-- Right -->
+  <div class="flex items-center gap-6 text-white">
+
+    <!-- Balance -->
+    <h4 class="text-lg font-semibold text-green-400">
+      ₹ <%= @balance.round(2) %>
+    </h4>
+
+    <!-- Notification -->
+    <button class="hover:text-gray-300 transition">
+      <i class="fa fa-bell"></i>
+    </button>
+
+    <!-- Profile Dropdown -->
+    <div data-action="click@window->dropdown#close" class="relative">
+      <button
+        data-action="click->dropdown#toggle"
+        class="flex items-center gap-3 focus:outline-none">
+
+        <!-- Avatar -->
+        <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-sm font-bold">
+          S
         </div>
-        <div data-action="click@window->dropdown#close" class="relative">
-      <button data-action="click->dropdown#toggle" class="flex items-center gap-2 focus:outline-none">
-        <h4 class="text-xl text-blue-600 font-bold"><%=@balance.round(2)%></h4>
-        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center">M</div>
+
         <span class="font-medium">Super Admin</span>
-        <i class="fa fa-chevron-down text-gray-500"></i>
+        <i class="fa fa-chevron-down text-sm text-gray-400"></i>
       </button>
 
       <!-- Dropdown Menu -->
       <div data-dropdown-target="menu"
-        class="hidden absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg py-2 z-50">
-        <a href="/superadmin/payments/set_pin" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Reset Pin</a>
-        <a href="/superadmin/reset_passwords/reset_password" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Reset Password</a>
-        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
-         <%= button_to "Logout", logout_sessions_path,
+           class="hidden absolute right-0 mt-3 w-48 bg-black border border-gray-700 rounded-xl shadow-xl py-2 z-50">
+
+        <a href="/superadmin/payments/set_pin"
+           class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-800">
+          Reset Pin
+        </a>
+
+        <a href="/superadmin/reset_passwords/reset_password"
+           class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-800">
+          Reset Password
+        </a>
+
+        <a href="#"
+           class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-800">
+          Settings
+        </a>
+
+        <div class="border-t border-gray-700 my-1"></div>
+
+        <%= button_to "Logout",
+            logout_sessions_path,
             method: :delete,
             data: { turbo: false },
-            class: "w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100" %>
-        <%#= button_to "Logout", admin_sessions_destroy_path,
-            method: :delete,
-            data: { turbo: false },
-            class: "w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100" %>
+            class: "w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-800" %>
       </div>
     </div>
-      </div>
-    </header>
+
+  </div>
+</header>

@@ -50,41 +50,74 @@ class Superadmin::PaymentsController < Superadmin::BaseController
   # end
 
    def approved
-    pin = params[:pin]&.join # Combine array to string
-    p "=============pinpin"
-    p pin
-    if current_superadmin.set_pin == pin
-      @transaction = WalletTransaction.find(params[:id])
-      parent_wallet = Wallet.find_by(user_id: current_superadmin.id) # parent wallet object
-      wallet = @transaction.wallet
+    pin = params[:pin]&.join
 
-      if parent_wallet.balance.to_f < @transaction.amount.to_f
-        flash[:alert] = "Balance is low"
-        return redirect_to superadmin_payments_index_path
-      end
-
-      remaining_balance = parent_wallet.balance.to_f - @transaction.amount.to_f
-
-      ActiveRecord::Base.transaction do
-        if @transaction.mode == "credit"
-          wallet.update!(balance: wallet.balance.to_f + @transaction.amount.to_f)
-          parent_wallet.update!(balance: remaining_balance)
-        elsif @transaction.mode == "fund"
-          wallet.update!(balance: wallet.balance.to_f + @transaction.amount.to_f)
-          @transaction.fund_request.update!(status: "success")
-          parent_wallet.update!(balance: remaining_balance)
-        elsif @transaction.mode == "debit"
-          wallet.update!(balance: wallet.balance.to_f - @transaction.amount.to_f)
-        end
-
-        @transaction.update!(status: "success")
-      end
-
-      flash[:notice] = "Transaction approved successfully"
-    else
+    unless current_superadmin.set_pin == pin
       flash[:alert] = "Invalid PIN"
+      return redirect_to admin_payments_index_path
     end
 
+    transaction   = WalletTransaction.find(params[:id])
+    parent_wallet = Wallet.find_by!(user_id: current_superadmin.id)
+    user_wallet   = transaction.wallet
+    amount        = transaction.amount.to_f
+
+    # 🔴 Balance check (parent pays in credit/fund)
+    if %w[credit fund].include?(transaction.mode) &&
+        parent_wallet.balance.to_f < amount
+      flash[:alert] = "Balance is low"
+      return redirect_to admin_payments_index_path
+    end
+
+    ActiveRecord::Base.transaction do
+      case transaction.mode
+      when "credit", "fund"
+        # 🔻 Parent wallet debit
+        parent_result = Wallets::WalletService.update_balance(
+          wallet: parent_wallet,
+          amount: amount,
+          transaction_type: "debit",
+          remark: "Wallet Transfer",
+          reference_id: transaction.id
+        )
+        raise ActiveRecord::Rollback unless parent_result[:success]
+
+        # 🔺 User wallet credit
+        user_result = Wallets::WalletService.update_balance(
+          wallet: user_wallet,
+          amount: amount,
+          transaction_type: "credit",
+          remark: transaction.mode == "fund" ? "Fund Request Approved" : "Wallet Credit",
+          reference_id: transaction.id
+        )
+        raise ActiveRecord::Rollback unless user_result[:success]
+
+        transaction.fund_request.update!(status: "success") if transaction.mode == "fund"
+
+      when "debit"
+        # 🔻 User wallet debit
+        debit_result = Wallets::WalletService.update_balance(
+          wallet: user_wallet,
+          amount: amount,
+          transaction_type: "debit",
+          remark: "Wallet Debit",
+          reference_id: transaction.id
+        )
+        raise ActiveRecord::Rollback unless debit_result[:success]
+      end
+
+      transaction.update!(status: "success")
+    end
+
+    flash[:notice] = "Transaction approved successfully"
+    redirect_to superadmin_payments_index_path
+
+  rescue ActiveRecord::RecordNotFound
+    flash[:alert] = "Transaction not found"
+    redirect_to superadmin_payments_index_path
+
+  rescue StandardError => e
+    flash[:alert] = e.message
     redirect_to superadmin_payments_index_path
   end
 

@@ -4,18 +4,37 @@ class Admin::DashboardsController < Admin::BaseController
   #before_action :authenticate_user!
 
   def index
-    @total_users = User.where(role_id: 5).count
-    @total_transcations = Transaction.all.count
-    @users = User.where(role_id: 5)
-    @total_revenue = TransactionCommission.where(user_id: @users.pluck(:id)).sum(:commission_amount).round(2)
-    p "========================"
-    p @total_revenue
-    @transactions_graph = Transaction.all
-    @total_pending = Transaction.where(user_id: @users.pluck(:id)).where(status: "PENDING").count
-    @transactions = Transaction.order(created_at: :desc).limit(20)
-    @revenue_data = TransactionCommission
-    .where(user_id: @users.pluck(:id))
-    .group(:user_id)
-    .sum(:commission_amount)
+    transactions = Transaction.where(user_id: current_user.id)
+
+    # Calculate wallet balance dynamically
+    wallet_balance = Wallet.where(user_id: current_user.id).pluck(:balance).sum
+  
+    # Only include transactions that have a valid created_at
+    valid_transactions = transactions.where.not(created_at: nil)
+    commission_amount = TransactionCommission.where(user_id: current_user.id).pluck(:commission_amount).sum.round(2)
+
+    # Group transactions by month (based on created_at)
+    transaction_trend = valid_transactions
+      .group_by { |t| t.created_at.strftime("%b") }
+      .map do |month, trans|
+        {
+          month: month,
+          transactions: trans.count,
+          amount: trans.sum { |t| t.amount.to_f } # handle nil safely
+        }
+      end
+  
+    render json: {
+      total_balance: transactions.sum { |t| t.amount.to_f },
+      total_expends: commission_amount,
+      wallet: wallet_balance,
+      transaction_trend: transaction_trend.sort_by { |t| Date::ABBR_MONTHNAMES.index(t[:month]) }, # correct order
+      revenue_overview: [
+        { category: "BBPS", percent: 34 },
+        { category: "Insurance", percent: 31 },
+        { category: "Loans", percent: 23 }
+      ],
+      transactions: transactions.limit(10)
+    }
   end
 end

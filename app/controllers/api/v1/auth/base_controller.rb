@@ -7,13 +7,13 @@ class Api::V1::Auth::BaseController < ActionController::API
 
     begin
       decoded = JsonWebToken.decode(token)
-      @current_user = User.find(decoded[:user_id])
-    rescue
+      @current_user = User.find(decoded["user_id"]) # 🔥 FIX HERE
+    rescue => e
+      Rails.logger.error "AUTH ERROR => #{e.message}"
       render json: { code: 401, message: "Invalid or expired token" }
     end
   end
 
-  # make helper method
   def current_user
     @current_user
   end

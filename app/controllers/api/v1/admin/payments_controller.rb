@@ -43,30 +43,64 @@ class Api::V1::Admin::PaymentsController < Api::V1::Auth::BaseController
 
   def approved
     transaction = WalletTransaction.find(params[:id])
-    parent_wallet = Wallet.find_by(user_id: current_user.id)
-    wallet = transaction.wallet
 
-    # Check balance
-    if parent_wallet.balance.to_f < transaction.amount.to_f
+    parent_wallet = Wallet.find_by!(user_id: current_user.id)
+    user_wallet   = transaction.wallet
+    amount        = transaction.amount.to_f
+
+    # 🔴 Balance check (parent ke liye)
+    if %w[credit fund].include?(transaction.mode) &&
+        parent_wallet.balance.to_f < amount
       return render json: { code: 400, message: "Insufficient balance" }
     end
-
-    remaining_balance = parent_wallet.balance.to_f - transaction.amount.to_f
 
     ActiveRecord::Base.transaction do
       case transaction.mode
       when "credit", "fund"
-        wallet.update!(balance: wallet.balance.to_f + transaction.amount.to_f)
-        parent_wallet.update!(balance: remaining_balance)
+        # 🔻 Parent wallet debit
+        parent_result = Wallets::WalletService.update_balance(
+          wallet: parent_wallet,
+          amount: amount,
+          transaction_type: "debit",
+          remark: "Wallet Transfer",
+          reference_id: transaction.id
+        )
+        raise ActiveRecord::Rollback unless parent_result[:success]
+
+        # 🔺 User wallet credit
+        user_result = Wallets::WalletService.update_balance(
+          wallet: user_wallet,
+          amount: amount,
+          transaction_type: "credit",
+          remark: transaction.mode == "fund" ? "Fund Request Approved" : "Wallet Credit",
+          reference_id: transaction.id
+        )
+        raise ActiveRecord::Rollback unless user_result[:success]
+
         transaction.fund_request.update!(status: "success") if transaction.mode == "fund"
+
       when "debit"
-        wallet.update!(balance: wallet.balance.to_f - transaction.amount.to_f)
+        # 🔻 User wallet debit
+        debit_result = Wallets::WalletService.update_balance(
+          wallet: user_wallet,
+          amount: amount,
+          transaction_type: "debit",
+          remark: "Wallet Debit",
+          reference_id: transaction.id
+        )
+        raise ActiveRecord::Rollback unless debit_result[:success]
       end
 
       transaction.update!(status: "success")
     end
 
     render json: { code: 200, message: "Transaction approved successfully" }
+
+  rescue ActiveRecord::RecordNotFound
+    render json: { code: 404, message: "Transaction not found" }
+
+  rescue StandardError => e
+    render json: { code: 422, message: e.message }
   end
 
   # =========================

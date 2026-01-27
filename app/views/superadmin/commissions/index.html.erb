@@ -1,111 +1,133 @@
-<div class="flex-1 px-4">
-  <div class="max-w-8xl mx-auto mt-4 ">
-    <div class="bg-white rounded-3xl shadow-xl p-8 border border-indigo-200">
-      
-      <!-- Title -->
-      <h2 class="text-2xl font-semibold text-indigo-800 mb-6 pl-2 border-l-4 border-indigo-500">
-      Commissions
-      </h2>
-      <!-- Grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
+<body class="bg-gray-50">
 
-        <!-- BBPS -->
-        <a href="<%=superadmin_commissions_commission_filter_path(id: 7, category_id: @category_id)%>">
-        <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-200 transition-all cursor-pointer hover:scale-105">
-          <div class="mb-3 p-3 bg-blue-100 rounded-full">
-            <img src="<%= asset_path 'report1.png' %>" alt="BBPS" class="w-10 h-10">
-          </div>
-          <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">BBPS</span>
-          <span class="mt-1 text-lg font-semibold text-indigo-900">99</span>
-        </div>
+  <div class="min-h-screen p-6">
+
+    <!-- Header -->
+    <div class="flex justify-between items-start">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+          BBPS and Recharge & DTH Commission
+        </h1>
+        <p class="text-gray-600 mb-8">
+          Manage and configure commission distribution for BBPS and Recharge & DTH Commission transactions
+        </p>
+      </div>
+
+      <div class="mt-3">
+        <a
+          href="<%= superadmin_commissions_new_path(id: @services_id) %>"
+          class="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition inline-flex items-center gap-2"
+        >
+          ➕ Create BBPS Commission
         </a>
-
-        <!-- Travel & Stay -->
-        <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-200 transition-all cursor-pointer hover:scale-105">
-          <div class="mb-3 p-3 bg-blue-100 rounded-full">
-            <img src="<%= asset_path 'report2.png' %>" alt="Travel & Stay Icon" class="w-10 h-10"/>
-          </div>
-          <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">Travel & Stay</span>
-          <span class="mt-1 text-lg font-semibold text-indigo-900">0</span>
-        </div>
-
-        <!-- Loan & Credit -->
-        <a href="<%=superadmin_travel_and_stay_report_travel_report_path%>">
-
-        <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-200 transition-all cursor-pointer hover:scale-105">
-          <div class="mb-3 p-3 bg-blue-100 rounded-full">
-            <img src="<%= asset_path 'report3.png' %>" alt="Loan & Credit Icon" class="w-10 h-10"/>
-          </div>
-          <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">Loan & Credit</span>
-          <span class="mt-1 text-lg font-semibold text-indigo-900"><%=InstantLoan.count%></span>
-        </div>
-      </a>
-
-        <!-- Investment -->
-        <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-200 transition-all cursor-pointer hover:scale-105">
-          <div class="mb-3 p-3 bg-blue-100 rounded-full">
-            <img src="<%= asset_path 'report4.png' %>" alt="Investment Icon" class="w-10 h-10"/>
-          </div>
-          <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">Investment</span>
-          <span class="mt-1 text-lg font-semibold text-indigo-900">0</span>
-        </div>
-
-        <!-- Utility Service -->
-        <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-200 transition-all cursor-pointer hover:scale-105">
-          <div class="mb-3 p-3 bg-blue-100 rounded-full">
-            <img src="<%= asset_path 'report5.png' %>" alt="Utility Service Icon" class="w-10 h-10"/>
-          </div>
-          <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">Utility Service</span>
-          <span class="mt-1 text-lg font-semibold text-indigo-900">0</span>
-        </div>
-
-        <!-- Electric Vehicle -->
-        <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-200 transition-all cursor-pointer hover:scale-105">
-          <div class="mb-3 p-3 bg-blue-100 rounded-full">
-            <img src="<%= asset_path 'report6.png' %>" alt="Electric Vehicle Icon" class="w-10 h-10"/>
-          </div>
-          <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">Electric Vehicle</span>
-          <span class="mt-1 text-lg font-semibold text-indigo-900">0</span>
-        </div>
-
-        <!-- Entertainment -->
-        <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-200 transition-all cursor-pointer hover:scale-105">
-          <div class="mb-3 p-3 bg-blue-100 rounded-full">
-            <img src="<%= asset_path 'report7.png' %>" alt="Entertainment Icon" class="w-10 h-10"/>
-          </div>
-          <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">Entertainment</span>
-          <span class="mt-1 text-lg font-semibold text-indigo-900">0</span>
-        </div>
-
-        <!-- Insurance -->
-        <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-200 transition-all cursor-pointer hover:scale-105">
-          <div class="mb-3 p-3 bg-blue-100 rounded-full">
-            <img src="<%= asset_path 'report8.png' %>" alt="Insurance Icon" class="w-10 h-10"/>
-          </div>
-          <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">Insurance</span>
-          <span class="mt-1 text-lg font-semibold text-indigo-900">0</span>
-        </div>
-
-        <!-- Commission Report -->
-        <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-200 transition-all cursor-pointer hover:scale-105">
-          <div class="mb-3 p-3 bg-blue-100 rounded-full">
-            <img src="<%= asset_path 'commision.png' %>" alt="Commission Report Icon" class="w-10 h-10"/>
-          </div>
-          <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">Commission Report</span>
-          <span class="mt-1 text-lg font-semibold text-indigo-900">0</span>
-        </div>
-
-        <!-- Earn Commission -->
-        <div class="group flex flex-col items-center justify-center p-4 bg-gradient-to-b from-white to-blue-50 rounded-2xl shadow-sm hover:shadow-lg border border-yellow-200 transition-all cursor-pointer hover:scale-105">
-          <div class="mb-3 p-3 bg-blue-100 rounded-full">
-            <img src="<%= asset_path 'commision.png' %>" alt="Earn Commission Icon" class="w-10 h-10"/>
-          </div>
-          <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-800 text-center">Earn Commission</span>
-          <span class="mt-1 text-lg font-semibold text-indigo-900">
-            <%=  TransactionCommission.where(user_id: 136).pluck(:commission_amount).compact.sum.to_f %>
-          </span>
-        </div>
       </div>
     </div>
+
+    <!-- TABLE -->
+    <div class="max-w-[1460px] mx-auto bg-white rounded-xl shadow-md overflow-hidden mt-6">
+
+      <% if @commissions.any? %>
+        <table class="min-w-full border-collapse">
+          <thead>
+            <tr class="bg-yellow-100 text-gray-800 text-sm font-semibold">
+              <th class="px-6 py-4 text-left">ID</th>
+              <th class="px-6 py-4 text-left">SCHEME</th>
+              <th class="px-6 py-4 text-left">COMMISSION TYPE</th>
+              <th class="px-6 py-4 text-left">FROM ROLE</th>
+              <th class="px-6 py-4 text-left">TO ROLE</th>
+              <th class="px-6 py-4 text-left">VALUE</th>
+              <th class="px-6 py-4 text-left">SERVICE ITEM</th>
+              <th class="px-6 py-4 text-left">CREATED AT</th>
+              <th class="px-6 py-4 text-left">ACTIONS</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @commissions.each do |commission| %>
+              <tr class="border-b hover:bg-gray-50 transition">
+                <td class="px-6 py-4 font-semibold text-gray-900">
+                  #<%= commission.id %>
+                </td>
+                <td class="px-6 py-4 text-gray-700">
+                  <%= commission.scheme&.scheme_name || 'N/A' %>
+                </td>
+                <td class="px-6 py-4 text-gray-700">
+                  <%= commission.commission_type || 'Commission' %>
+                </td>
+                <td class="px-6 py-4 text-gray-700">
+                  <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                    <%= commission.from_role || 'N/A' %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-gray-700">
+                  <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
+                    <%= commission.to_role || 'N/A' %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-gray-700">
+                  <span class="font-bold text-yellow-700">
+                    <%= commission.value %>%
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-gray-700">
+                  <%= commission.service_product_item&.name || 'N/A' %>
+                </td>
+                <td class="px-6 py-4 text-gray-700 text-sm">
+                  <%= commission.created_at.strftime("%d %b %Y") %>
+                </td>
+                <td class="px-6 py-4">
+                  <a
+                    href="<%= edit_superadmin_commission_path(category_id: @services_id, id: commission.id) %>"
+                    class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg shadow inline-flex items-center gap-2 text-sm"
+                  >
+                    ✏️ Edit
+                  </a>
+                  <%= link_to '🗑️ Delete',
+                        superadmin_commission_path(commission),
+                        method: :delete,
+                        data: { confirm: 'Are you sure you want to delete this commission?' },
+                        class: "bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow inline-flex items-center gap-2 text-sm mt-2" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="p-12 text-center">
+          <div class="text-gray-400 text-6xl mb-4">📊</div>
+          <h3 class="text-xl font-semibold text-gray-700 mb-2">No Commissions Found</h3>
+          <p class="text-gray-500 mb-6">Create your first commission scheme to get started</p>
+          <a
+            href="<%= superadmin_commissions_new_path(id: @services_id) %>"
+            class="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition inline-flex items-center gap-2"
+          >
+            ➕ Create First Commission
+          </a>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Pagination (optional) -->
+    <% if @commissions.respond_to?(:total_pages) && @commissions.total_pages > 1 %>
+      <div class="mt-8 flex justify-center">
+        <div class="flex items-center gap-2">
+          <% if @commissions.previous_page %>
+            <a href="?page=<%= @commissions.previous_page %>" class="px-4 py-2 border rounded-lg hover:bg-gray-50">
+              ← Previous
+            </a>
+          <% end %>
+          
+          <span class="px-4 py-2 text-gray-700">
+            Page <%= @commissions.current_page %> of <%= @commissions.total_pages %>
+          </span>
+          
+          <% if @commissions.next_page %>
+            <a href="?page=<%= @commissions.next_page %>" class="px-4 py-2 border rounded-lg hover:bg-gray-50">
+              Next →
+            </a>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
   </div>
-</div>

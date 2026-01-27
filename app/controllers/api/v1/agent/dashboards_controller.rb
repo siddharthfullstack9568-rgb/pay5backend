@@ -6,6 +6,7 @@ class Api::V1::Agent::DashboardsController < Api::V1::Auth::BaseController
 
   # Calculate wallet balance dynamically
   wallet_balance = Wallet.where(user_id: current_user.id).pluck(:balance).sum
+  commission_amount = TransactionCommission.where(user_id: current_user.id).pluck(:commission_amount).sum.round(2)
 
   # Only include transactions that have a valid created_at
   valid_transactions = transactions.where.not(created_at: nil)
@@ -23,7 +24,7 @@ class Api::V1::Agent::DashboardsController < Api::V1::Auth::BaseController
 
   render json: {
     total_balance: transactions.sum { |t| t.amount.to_f },
-    total_expends: 0.0,
+    total_expends: commission_amount,
     wallet: wallet_balance,
     transaction_trend: transaction_trend.sort_by { |t| Date::ABBR_MONTHNAMES.index(t[:month]) }, # correct order
     revenue_overview: [
