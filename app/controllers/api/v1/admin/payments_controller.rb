@@ -30,7 +30,7 @@ class Api::V1::Admin::PaymentsController < Api::V1::Auth::BaseController
         only: [:id, :tx_id, :transaction_type, :status, :amount, :fund_request_id, :created_at, :updated_at],
         include: {
           fund_request: {
-            only: [:id, :requested_by, :amount, :payment_method, :status, :deposit_bank, :your_bank, :account_number, :reject_note],
+            only: [:id, :requested_by, :amount, :payment_method, :status, :deposit_bank, :your_bank, :account_number, :reject_note, :image],
             include: {
               user: { only: [:id, :first_name, :last_name, :username, :phone_number] }
             }

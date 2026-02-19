@@ -35,11 +35,10 @@ class Api::V1::Admin::SupportTicketsController < Api::V1::Auth::BaseController
   # List Tickets
   # =========================
   def index
-    tickets = SupportTicket.order(created_at: :desc)
+    user_ids = current_user.all_descendants.map(&:id)
+    user_ids << current_user.id
 
-    tickets = tickets.where(status: params[:status]) if params[:status].present?
-    tickets = tickets.where(service_type: params[:service_type]) if params[:service_type].present?
-    tickets = tickets.where(user_id: params[:user_id]) if params[:user_id].present?
+    tickets = SupportTicket.where(parent_id: user_ids)
 
     render json: {
       success: true,

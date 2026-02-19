@@ -12,7 +12,20 @@ class Api::V1::Agent::SupportTicketsController < Api::V1::Auth::BaseController
       return render json: { status: false, message: "subject, description & email & reference_id && full_name required" }, status: 400
     end
 
-    ticket = SupportTicket.new(ticket_params.merge(user_id: current_user.id))
+    image_url = nil
+
+    if params[:attachment].present?
+      uploaded_image = Cloudinary::Uploader.upload(params[:attachment])
+      image_url = uploaded_image["secure_url"]
+    end
+
+    ticket = SupportTicket.new(
+      ticket_params.merge(
+        user_id: current_user.id,
+        attachment_url: image_url,
+        parent_id: current_user.parent_id
+      )
+    )
     ticket.status = "open"
     ticket.status_updated_at = Time.current
 
@@ -35,7 +48,7 @@ class Api::V1::Agent::SupportTicketsController < Api::V1::Auth::BaseController
   # List Tickets
   # =========================
   def index
-    tickets = SupportTicket.where(parent_id: current_user.id).order(created_at: :desc)
+    tickets = SupportTicket.order(created_at: :desc)
 
     tickets = tickets.where(status: params[:status]) if params[:status].present?
     tickets = tickets.where(service_type: params[:service_type]) if params[:service_type].present?
@@ -107,7 +120,7 @@ class Api::V1::Agent::SupportTicketsController < Api::V1::Auth::BaseController
   end
 
   def ticket_params
-    params.require(:support_ticket).permit(
+    params.permit(
       :user_id,
       :full_name,
       :email,

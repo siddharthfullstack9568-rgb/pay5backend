@@ -14,7 +14,7 @@ class Api::V1::Agent::InstantLoansController < Api::V1::Auth::BaseController
       return render json: { success: false, message: "Missing: #{missing.join(', ')}" }, status: :bad_request
     end
 
-    loan = InstantLoan.new(instant_params)
+    loan = InstantLoan.new(instant_params.merge(user_id: current_user.id, status: "in_progress"))
 
     # Convert dob to age
     begin

@@ -2,7 +2,7 @@ class Api::V1::Agent::PersonalLoansController < Api::V1::Auth::BaseController
   # protect_from_forgery with: :null_session
 
   def persoanl_loan_list
-    persoanl_loans = PersonalLoan.all
+    persoanl_loans = PersonalLoan.where(user_id: current_user.id)
     render json: {code: 200, message: "Personal Loans List", persoanl_loans: persoanl_loans}
   end
 
@@ -14,7 +14,7 @@ class Api::V1::Agent::PersonalLoansController < Api::V1::Auth::BaseController
       return render json: { success: false, message: "Missing: #{missing.join(', ')}" }, status: :bad_request
     end
 
-    loan = PersonalLoan.new(instant_params)
+    loan = PersonalLoan.new(instant_params.merge(user_id: current_user.id, status: "in_progress"))
 
     # Convert dob to age
     begin

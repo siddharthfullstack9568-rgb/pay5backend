@@ -1,7 +1,7 @@
 class Admin::BanksController < Admin::BaseController
     layout "admin"
 
-  before_action :set_bank, only: [:show, :edit, :update, :destroy]
+  before_action :set_bank, only: [ :show, :edit, :update, :destroy ]
 
   # GET /admin/banks
   def index
@@ -57,6 +57,6 @@ end
   end
 
   def bank_params
-    params.require(:bank).permit(:first_name, :last_name,:bank_name, :account_name, :ifsc_code, :account_number, :account_type, :initial_balance)
+    params.require(:bank).permit(:first_name, :last_name, :bank_name, :account_name, :ifsc_code, :account_number, :account_type, :initial_balance)
   end
 end

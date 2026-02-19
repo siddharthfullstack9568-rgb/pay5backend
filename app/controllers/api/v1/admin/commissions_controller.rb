@@ -88,14 +88,18 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
         scheme_id: params[:scheme]
       ).select(:id, :from_role, :to_role, :value, :scheme_id, :commission_type)
 
-      p "================commissions================"
+      p "================admin commissions================"
       p commissions
+
+      p "=================current_user.scheme_id"
+      p current_user
 
       commissions_admin = Commission.where(
         service_product_item_id: item.id,
         scheme_id: current_user.scheme_id
       ).select(:id, :from_role, :to_role, :value, :scheme_id, :commission_type)
-
+      p "==============commissions_admin"
+      p commissions_admin
       {
         item_id: item.id,
         item_name: item.name,
@@ -167,7 +171,7 @@ class Api::V1::Admin::CommissionsController < Api::V1::Auth::BaseController
 
     role_commissions = [
       { role: "master",   value: params[:master_commission] },
-      { role: "dealer",   value: params[:dealer_commision] },
+      { role: "dealer",   value: params[:dealer_commission] },
       { role: "retailer", value: params[:retailer_commission] }
     ]
 

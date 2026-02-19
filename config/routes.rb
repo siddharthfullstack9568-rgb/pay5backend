@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-
   scope :sessions, controller: :sessions do
     # Login
     get  :login,                action: :login,              as: :login_sessions
@@ -19,7 +18,7 @@ Rails.application.routes.draw do
 
     # Set Password (after forgot OTP verified)
     get  :set_password,         action: :set_password,       as: :set_password_sessions
-    post :set_password,  action: :set_password,as: :set_password_update_sessions
+    post :set_password,  action: :set_password, as: :set_password_update_sessions
 
     # Logout
     delete :logout,             action: :logout,             as: :logout_sessions
@@ -68,7 +67,6 @@ Rails.application.routes.draw do
 
     get "reset_passwords/reset_password"
     post "reset_passwords/reset_password"
-
   end
 
   namespace :master do
@@ -125,7 +123,7 @@ Rails.application.routes.draw do
     get "schemes/index"
     post "schemes/create", to: "schemes#create", as: :admin_scheme_create
     post "schemes/update", to: "schemes#update", as: :admin_scheme_update
-    resources :schemes, only: [:destroy]
+    resources :schemes, only: [ :destroy ]
 
     resources :banks
 
@@ -195,7 +193,7 @@ Rails.application.routes.draw do
     get "schemes/index"
     post "schemes/create", to: "schemes#create", as: :admin_scheme_create
     post "schemes/update", to: "schemes#update", as: :admin_scheme_update
-    resources :schemes, only: [:destroy]
+    resources :schemes, only: [ :destroy ]
 
     resources :banks
 
@@ -232,7 +230,6 @@ Rails.application.routes.draw do
         post "accounts/add_debit",   to: "accounts#add_debit"
 
         resources :user_services do
-
           member do
             put :update_status
           end
@@ -247,12 +244,12 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :enqueries, only: [:index]
+        resources :enqueries, only: [ :index ]
 
 
         resources :schemes
         resources :banks
-        resources :wallets, only: [:index, :create] do
+        resources :wallets, only: [ :index, :create ] do
           collection do
             get :bank
             get :bank_details
@@ -296,14 +293,21 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :support_tickets, only: [:create, :index, :show] do
+        resources :support_tickets, only: [ :create, :index, :show ] do
           patch :update_status, on: :member
         end
 
         post "reports/index"
         # resources :reports , only: [:index]
 
+        resources :refunds, only: [ :index, :create ] do
+          post :refund_transaction, on: :member
+        end
 
+        get "personal_loans/list"
+
+        post "personal_loans/update_loan_status"
+        post "personal_loans/approved_loan_status"
       end
     end
   end
@@ -311,7 +315,6 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       namespace :auth do
-
         # LOGIN (Admin / Master / Dealer / Agent)
         post "login", to: "sessions#login"
 
@@ -323,7 +326,6 @@ Rails.application.routes.draw do
 
         # ROLE LIST
         get "roles", to: "sessions#role"
-
       end
     end
   end
@@ -413,7 +415,7 @@ Rails.application.routes.draw do
         get "instant_loans/instant_loan_list"
         get "personal_loans/persoanl_loan_list"
 
-        resources :reatailer_profiles, only: [:index]
+        resources :reatailer_profiles, only: [ :index ]
         get "reatailer_profiles/user_profile"
         post "reatailer_profiles/set_pin"
         post "reatailer_profiles/reset_transaction_pin"
@@ -447,12 +449,9 @@ Rails.application.routes.draw do
         post "biometric_ekyc_otp_verify", to: "dmts#biometric_ekyc_otp_verify"
         post "biometric", to: "dmts#biometric"
         post "biometric_kyc", to: "dmts#biometric_kyc"
-
-<<<<<<< HEAD
-        resources :support_tickets, only: [:create, :index, :show] do
+        resources :support_tickets, only: [ :create, :index, :show ] do
           patch :update_status, on: :member
         end
-=======
         # bbsp api code
         get "bbps/bbps_category"
         post "bbps/bbps_operators"
@@ -460,15 +459,17 @@ Rails.application.routes.draw do
         post "bbps/bbps_fetch_bill"
         post "bbps/recharge"
 
-        #api code for fund request
+        # api code for fund request
         post "eko_fund_requests/create"
         get "eko_fund_requests/bank"
         get "eko_fund_requests/balance_api"
+
+        resources :refunds, only: [ :index, :create ] do
+          post :refund_transaction, on: :collection
+          post :refund_verify_otp, on: :collection
+        end
         #
->>>>>>> 107222960f9f7da894704666153a0db6f31e4146
-
       end
-
     end
   end
 
@@ -538,7 +539,7 @@ Rails.application.routes.draw do
     post "scheme/create", to: "scheme#create", as: :scheme_create
     post "scheme/update", to: "scheme#update", as: :scheme_update
 
-    resources :scheme, only: [:destroy]
+    resources :scheme, only: [ :destroy ]
 
     post "admins/create", to: "admins#create", as: :admins_create
     post "admins/:id/admin_update_stauts", to: "admins#admin_update_stauts", as: :admin_update_status

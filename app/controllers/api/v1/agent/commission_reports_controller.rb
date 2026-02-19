@@ -48,6 +48,9 @@ class Api::V1::Agent::CommissionReportsController < Api::V1::Auth::BaseControlle
     .includes(:txn, :service_product_item)
     .where(user_id: current_user.id)
 
+    p "====commissions========"
+    p commissions
+
     render json: {
       code: 200,
       message: "Successfully commission show",

@@ -3,21 +3,18 @@ class Api::V1::Admin::ReportsController < Api::V1::Auth::BaseController
   def index
     admin = current_user
 
-    # Include admin + its children
-    user_ids = admin.children.ids << admin.id
+    # 🔥 admin + all descendants (children, sub-children, ...)
+    user_ids = admin.all_descendants.map(&:id)
+    user_ids << admin.id
 
     service_product_id = params[:service_product_id]
 
     transactions = Transaction
     .includes(:user, :category)
-    .where(user_id: user_ids, category_id: service_product_id)
+    .where(user_id: user_ids)
     .order(created_at: :desc)
 
-    Rails.logger.info "Transactions count: #{transactions.size}"
-
-    p transactions.count
     # Filter by service_product_id
-
     if params[:service_product_id].present? && params[:service_product_id] != "ALL"
       transactions = transactions.where(category_id: params[:service_product_id])
     end
@@ -34,7 +31,7 @@ class Api::V1::Admin::ReportsController < Api::V1::Auth::BaseController
         end_date   = Date.parse(params[:to_date]).end_of_day
         transactions = transactions.where(created_at: start_date..end_date)
       rescue ArgumentError
-        Rails.logger.warn "Invalid date format: #{params[:from_date]} - #{params[:to_date]}"
+        Rails.logger.warn "Invalid date format"
       end
     end
 

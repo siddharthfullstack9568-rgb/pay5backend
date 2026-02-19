@@ -10,11 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema[7.2].define(version: 2026_01_27_101001) do
-=======
-ActiveRecord::Schema[7.2].define(version: 2026_01_23_094237) do
->>>>>>> 107222960f9f7da894704666153a0db6f31e4146
+ActiveRecord::Schema[7.2].define(version: 2026_01_31_102426) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -207,6 +203,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_23_094237) do
     t.boolean "fetch_credit_score"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status"
+    t.text "pending_note"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_instant_loans_on_user_id"
   end
 
   create_table "personal_loans", force: :cascade do |t|
@@ -226,6 +226,30 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_23_094237) do
     t.string "pincode"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status"
+    t.text "pending_note"
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_personal_loans_on_user_id"
+  end
+
+  create_table "refund_requests", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "transaction_id"
+    t.bigint "parent_id"
+    t.string "refund_id"
+    t.string "refund_type"
+    t.decimal "amount", precision: 15, scale: 2
+    t.text "reason"
+    t.string "status"
+    t.text "admin_note"
+    t.datetime "processed_at"
+    t.integer "processed_by"
+    t.string "attachment_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parent_id"], name: "index_refund_requests_on_parent_id"
+    t.index ["transaction_id"], name: "index_refund_requests_on_transaction_id"
+    t.index ["user_id"], name: "index_refund_requests_on_user_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -512,6 +536,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_23_094237) do
   add_foreign_key "dmts", "users"
   add_foreign_key "enquiries", "roles"
   add_foreign_key "fund_requests", "users"
+  add_foreign_key "instant_loans", "users"
+  add_foreign_key "personal_loans", "users"
+  add_foreign_key "refund_requests", "users"
   add_foreign_key "schemes", "users"
   add_foreign_key "service_product_items", "categories"
   add_foreign_key "service_products", "categories"

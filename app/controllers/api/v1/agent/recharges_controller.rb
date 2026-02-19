@@ -86,21 +86,21 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
       utility_acc_no:    params[:utility_acc_no],
       mobile_number:     params[:mobile_number],
       sender_name:       params[:sender_name],
-      client_ref_id:     params[:client_ref_id]
+      client_ref_id:     params[:client_ref_id],
+      dob:               params[:dob]
     )
 
     render json: response
   end
 
   def bill_fetch_category
-
-     begin
+    begin
       result = Eko::BillPaymentService.fetch
       render json: { success: true, data: result }, status: 200
     rescue => e
       render json: { success: false, message: e.message }, status: :bad_request
     end
-    
+
     # result = Eko::BillPaymentService.fetch(params[:category_id] || 51)
 
     # if result[:status] == 200
@@ -230,7 +230,6 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
         vehicle_no: params[:vehicle_no],
         consumer_name: params[:consumer_name],
         card_number: params[:card_number],
-        commission: 5
         # tid: response.dig("data", "tid"),
         # tds: response.dig("data", "tds").to_f,
         # commission: response.dig("data", "commission").to_f,
@@ -241,6 +240,7 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
       # === Commission Calculation ===
       scheme = Scheme.find(current_user.scheme_id)
       scheme_commission = 100
+      # commission_eko = response.dig("data", "commission").to_f # Fixed EKO commission
       commission_eko = 5 # Fixed EKO commission
 
       Rails.logger.info "=========scheme_commission======= #{scheme_commission}"
@@ -279,6 +279,9 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
       )
       .pick(:value)
       .to_f
+
+      p "========admin_commission========="
+      p admin_commission
 
       commissions[:admin] = admin_commission
 
@@ -329,55 +332,47 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
       Rails.logger.info "Commissions by role: #{commissions}"
 
       # Calculate commission amounts for each role using hierarchy chain
+      # === NEW Commission Distribution Logic ===
+
+
+      # ===== FINAL & CORRECT COMMISSION LOGIC =====
+
       commission_map = {}
 
-      # Start from top (Superadmin)
-      # Superadmin gets: scheme_commission - admin_commission
-      remaining_percent = scheme_commission - admin_commission
-      remaining_percent = 0 if remaining_percent.negative?
-      commission_map[:superadmin] = (remaining_percent / 100) * commission_eko
+      # Superadmin → 0
+      commission_map[:superadmin] = 0.0
 
-      # Move down the chain - Admin
-      # Find the highest commission among roles below admin
-      next_highest_below_admin = [master_commission, dealer_commission, retailer_commission].max
+      # Safety
+      admin_commission    = admin_commission.to_f
+      master_commission   = master_commission.to_f
+      dealer_commission   = dealer_commission.to_f
+      retailer_commission = retailer_commission.to_f
 
-      # Admin gets: admin_commission - next_highest_below_admin
-      admin_diff = admin_commission - next_highest_below_admin
-      admin_diff = 0 if admin_diff.negative?
-      commission_map[:admin] = (admin_diff / 100) * commission_eko
+      # Lower roles total %
+      lower_total_percent =
+        master_commission + dealer_commission + retailer_commission
 
-      # Move down - Master
-      # Find the highest commission among roles below master
-      next_highest_below_master = [dealer_commission, retailer_commission].max
+      # Admin effective % = admin - lower total
+      admin_effective_percent = admin_commission - lower_total_percent
+      admin_effective_percent = 0 if admin_effective_percent.negative?
 
-      # Master gets: master_commission - next_highest_below_master
-      master_diff = master_commission - next_highest_below_master
-      master_diff = 0 if master_diff.negative?
-      commission_map[:master] = (master_diff / 100) * commission_eko
+      # Convert % → amount
+      commission_map[:admin] =
+        (admin_effective_percent / 100) * commission_eko
 
-      # Move down - Dealer
-      # Dealer gets: dealer_commission - retailer_commission
-      dealer_diff = dealer_commission - retailer_commission
-      dealer_diff = 0 if dealer_diff.negative?
-      commission_map[:dealer] = (dealer_diff / 100) * commission_eko
+      commission_map[:master] =
+        (master_commission / 100) * commission_eko
 
-      # Retailer gets their own commission percentage
-      commission_map[:retailer] = (retailer_commission / 100) * commission_eko
+      commission_map[:dealer] =
+        (dealer_commission / 100) * commission_eko
 
-      Rails.logger.info "Commission Breakdown: #{commission_map}"
+      commission_map[:retailer] =
+        (retailer_commission / 100) * commission_eko
 
-      # Verify total commission doesn't exceed EKO commission
-      total_commission = commission_map.values.sum
-      if total_commission > commission_eko
-        Rails.logger.error "Commission overflow! Total: #{total_commission}, EKO: #{commission_eko}"
-        # Adjust retailer commission to fit within limit
-        excess = total_commission - commission_eko
-        commission_map[:retailer] = [commission_map[:retailer] - excess, 0].max
-        Rails.logger.info "Adjusted Commission Breakdown: #{commission_map}"
-      end
+      Rails.logger.info "✅ FINAL Commission Map: #{commission_map}"
 
       # === Distribute commissions ===
-      ([current_user] + hierarchy).each do |user|
+      ([ current_user ] + hierarchy).each do |user|
         role = user.role.title.downcase.to_sym
         Rails.logger.info "Processing commission for role: #{role}"
 
@@ -438,5 +433,4 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
   #     0
   #   end
   # end
-
 end

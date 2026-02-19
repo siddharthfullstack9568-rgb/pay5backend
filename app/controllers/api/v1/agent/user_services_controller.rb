@@ -2,32 +2,36 @@ class Api::V1::Agent::UserServicesController < Api::V1::Auth::BaseController
   # protect_from_forgery with: :null_session
 
   def index
-    p "=dsn,m,mn,mn,mn,mn,mn,n,"
-    # current_user को assign हुई services
-    service_lists = UserService.where(assignee_id: current_user.id)
+    service_lists = UserService
+    .where(assignee_id: current_user.id)
     .includes(:service, :assigner)
     .order("services.position ASC")
 
-    # assign हुई services के ids   reda karna hai
     service_ids = service_lists.map(&:service_id).compact
 
-    commission_count = Commission.where(scheme_id: current_user.scheme_id)
+    # 🔥 current_user ke niche ke saare users (children + sub-children)
+    descendant_user_ids = current_user
+    .all_descendants
+    .map(&:id)
 
-    p "====commission_count========="
-    p commission_count
+    # agar current_user ki bhi transactions chahiye
+    descendant_user_ids << current_user.id
 
-    # transaction count निकालना service_id के हिसाब से
     transaction_counts = Transaction
-  .left_joins(:category)
-  .where(categories: { service_id: service_ids })
-  .group("categories.service_id")
-  .count
+    .joins(:category)
+    .where(
+      user_id: descendant_user_ids,
+      categories: { service_id: service_ids }
+    )
+    .group("categories.service_id")
+    .count
 
     render json: {
       code: 200,
       message: "Successfully fetched data",
       services: service_lists.map do |us|
         service_id = us.service_id
+
         {
           id: us.service&.id,
           name: us.service&.title,
@@ -78,8 +82,8 @@ class Api::V1::Agent::UserServicesController < Api::V1::Auth::BaseController
     end_date   = params[:end_date]   # optional
 
     if service_name.present? && service_name.downcase != "all"
-      
-      
+
+
       # 2️⃣ Get category ids for this service
       category_ids = Category.where(name: service_name).pluck(:id)
       if category_ids.empty?

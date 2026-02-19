@@ -14,47 +14,47 @@ class Superadmin::PaymentsController < Superadmin::BaseController
     Rails.logger.info @fund_transactions.inspect
   end
 
-  # def approved
-  #   super_admin_id = current_superadmin
-  #   fund_requests = FundRequest.where(requested_by: super_admin_id)
-  #   pin = params[:pin]&.join
-  #   Rails.logger.info "Entered PIN: #{pin}"
+   # def approved
+   #   super_admin_id = current_superadmin
+   #   fund_requests = FundRequest.where(requested_by: super_admin_id)
+   #   pin = params[:pin]&.join
+   #   Rails.logger.info "Entered PIN: #{pin}"
 
-  #   # Verify admin PIN
-  #   if super_admin_id.set_pin == pin
-  #     transaction = WalletTransaction.find(params[:id])
-  #     Rails.logger.info "Transaction: #{transaction.inspect}"
+   #   # Verify admin PIN
+   #   if super_admin_id.set_pin == pin
+   #     transaction = WalletTransaction.find(params[:id])
+   #     Rails.logger.info "Transaction: #{transaction.inspect}"
 
-  #     wallet = transaction.wallet
-  #     parent_wallet = Wallet.find_by(user_id: current_superadmin.id) # parent wallet object
-  #     p "==============-------------parent_walletparent_wallet"
-  #     parent_wallet.update!(balance: parent_wallet.balance.to_f - transaction.amount)
-  #     # Ensure parent has enough balance for debit
-  #     if transaction.mode == "debit" && parent_wallet.balance < transaction.amount
-  #       flash[:alert] = "Insufficient parent wallet balance"
-  #       redirect_to superadmin_payments_index_path and return
-  #     end
+   #     wallet = transaction.wallet
+   #     parent_wallet = Wallet.find_by(user_id: current_superadmin.id) # parent wallet object
+   #     p "==============-------------parent_walletparent_wallet"
+   #     parent_wallet.update!(balance: parent_wallet.balance.to_f - transaction.amount)
+   #     # Ensure parent has enough balance for debit
+   #     if transaction.mode == "debit" && parent_wallet.balance < transaction.amount
+   #       flash[:alert] = "Insufficient parent wallet balance"
+   #       redirect_to superadmin_payments_index_path and return
+   #     end
 
-  #     ActiveRecord::Base.transaction do
-  #       wallet.update!(balance: wallet.balance + transaction.amount)
-  #       transaction.update!(status: "success")
-  #       fund_requests.update(status: "success")
-  #     end
+   #     ActiveRecord::Base.transaction do
+   #       wallet.update!(balance: wallet.balance + transaction.amount)
+   #       transaction.update!(status: "success")
+   #       fund_requests.update(status: "success")
+   #     end
 
-  #     flash[:notice] = "Transaction approved successfully"
-  #   else
-  #     flash[:alert] = "Invalid PIN"
-  #   end
+   #     flash[:notice] = "Transaction approved successfully"
+   #   else
+   #     flash[:alert] = "Invalid PIN"
+   #   end
 
-  #   redirect_to superadmin_payments_index_path
-  # end
+   #   redirect_to superadmin_payments_index_path
+   # end
 
    def approved
     pin = params[:pin]&.join
 
     unless current_superadmin.set_pin == pin
       flash[:alert] = "Invalid PIN"
-      return redirect_to admin_payments_index_path
+      return redirect_to superadmin_payments_index_path
     end
 
     transaction   = WalletTransaction.find(params[:id])
@@ -66,7 +66,7 @@ class Superadmin::PaymentsController < Superadmin::BaseController
     if %w[credit fund].include?(transaction.mode) &&
         parent_wallet.balance.to_f < amount
       flash[:alert] = "Balance is low"
-      return redirect_to admin_payments_index_path
+      return redirect_to superadmin_payments_index_path
     end
 
     ActiveRecord::Base.transaction do
@@ -183,7 +183,6 @@ class Superadmin::PaymentsController < Superadmin::BaseController
 
 
   def set_pin
-
   end
 
   def set_pin_update
@@ -211,7 +210,6 @@ class Superadmin::PaymentsController < Superadmin::BaseController
   end
 
   def forgot_mpin
-
   end
 
   def send_mpin_otp
@@ -266,7 +264,6 @@ class Superadmin::PaymentsController < Superadmin::BaseController
   end
 
   def set_pin_agin
-
   end
 
   def set_pin_agin_update
@@ -288,6 +285,4 @@ class Superadmin::PaymentsController < Superadmin::BaseController
 
     redirect_to superadmin_payments_set_pin_path
   end
-
-
 end

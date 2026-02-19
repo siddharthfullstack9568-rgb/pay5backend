@@ -7,7 +7,7 @@ require "securerandom"
 class EkoMobilePlanService
   BASE_URL = "https://api.eko.in:25002/ekoicici/v2/billpayments/fetchbill"
 
-  def self.fetch_bill(operator_id:, utility_acc_no:, mobile_number:, sender_name:, client_ref_id: SecureRandom.hex(6), district_discom: nil)
+  def self.fetch_bill(dob:, operator_id:, utility_acc_no:, mobile_number:, sender_name:, client_ref_id: SecureRandom.hex(6), district_discom: nil)
     puts "========== mobile_number =========="
     puts mobile_number
 
@@ -36,19 +36,36 @@ class EkoMobilePlanService
     }
 
     # 4️⃣ Required payload structure
-    payload = {
-      source_ip: "121.121.1.1",
-      user_code: user_code,
-      client_ref_id: client_ref_id,
-      consumer_number: utility_acc_no,
-      utility_acc_no: utility_acc_no,
-      mobile_number: mobile_number,
-      confirmation_mobile_no: mobile_number,        # <---- required duplicate field
-      sender_name: sender_name,
-      operator_id: operator_id,
-      latlong: "28.6139,77.2090",
-      hc_channel: "0"
-    }
+    payload = if dob.present?
+      {
+        source_ip: "121.121.1.1",
+        user_code: user_code,
+        client_ref_id: client_ref_id,
+        utility_acc_no: utility_acc_no,
+        mobile_number: mobile_number,
+        confirmation_mobile_no: mobile_number,
+        sender_name: sender_name,
+        operator_id: operator_id,
+        dob7: dob,
+        latlong: "28.6139,77.2090",
+        hc_channel: "0"
+      }
+    else
+      {
+        source_ip: "121.121.1.1",
+        user_code: user_code,
+        client_ref_id: client_ref_id,
+        consumer_number: utility_acc_no,
+        utility_acc_no: utility_acc_no,
+        mobile_number: mobile_number,
+        confirmation_mobile_no: mobile_number,        # <---- required duplicate field
+        sender_name: sender_name,
+        operator_id: operator_id,
+        latlong: "28.6139,77.2090",
+        hc_channel: "0"
+      }
+    end
+
 
     # 5️⃣ Final URL with initiator id
     url = "#{BASE_URL}?initiator_id=#{initiator_id}"

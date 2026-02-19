@@ -35,6 +35,8 @@ class Superadmin::CommissionsController < Superadmin::BaseController
       case category&.title&.downcase
       when "prepaid" then "prepaid"
       when "loan repayment" then "loan"
+      when "loan" then "loan"
+      when "insurance" then "insurance"
       when "broadband recharge" then "broaband"
       when "dth recharge" then "dth"
       when "fastag recharge" then "fastag"

@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_secure_password validations: false
   # belongs_to :scheme
   has_many :transactions, dependent: :destroy
+  has_many :refund_requests, dependent: :destroy
 
   # def all_descendant_ids
   #   p "=========all_descendant_ids========="
@@ -17,7 +18,7 @@ class User < ApplicationRecord
   # end
   def all_descendants
     children.includes(:children).flat_map do |child|
-      [child] + child.all_descendants
+      [ child ] + child.all_descendants
     end
   end
 
@@ -49,5 +50,4 @@ class User < ApplicationRecord
     verified: "verified",
     rejected: "rejected"
   }
-
 end
