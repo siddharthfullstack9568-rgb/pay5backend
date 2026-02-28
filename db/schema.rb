@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_31_102426) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_23_091558) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -229,6 +229,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_31_102426) do
     t.string "status"
     t.text "pending_note"
     t.bigint "user_id"
+    t.string "lead_id"
+    t.index ["lead_id"], name: "index_personal_loans_on_lead_id"
     t.index ["user_id"], name: "index_personal_loans_on_user_id"
   end
 

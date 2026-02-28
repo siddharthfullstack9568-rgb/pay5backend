@@ -414,6 +414,7 @@ Rails.application.routes.draw do
         post "personal_loans/check_eligibility"
         get "instant_loans/instant_loan_list"
         get "personal_loans/persoanl_loan_list"
+        post "personal_loans/get_offer"
 
         resources :reatailer_profiles, only: [ :index ]
         get "reatailer_profiles/user_profile"
