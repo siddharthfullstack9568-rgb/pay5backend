@@ -67,6 +67,31 @@ class Api::V1::Agent::FiltersController < Api::V1::Auth::BaseController
 
   end
 
+  def loan_report
+    loans =
+      case params[:loan]
+      when "personal_loan"
+        PersonalLoan.where(user_id: current_user.id)
+
+      when "instant_loan"
+        InstantLoan.where(user_id: current_user.id)
+
+      when "gold_loan"
+        GoldLoan.where(user_id: current_user.id)
+
+      when "house_loan"
+        Houseloan.where(user_id: current_user.id)
+
+      else
+        []
+      end
+
+    render json: {
+      success: true,
+      data: loans
+    }
+  end
+
 
 
 end

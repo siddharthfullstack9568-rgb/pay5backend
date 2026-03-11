@@ -298,6 +298,7 @@ Rails.application.routes.draw do
         end
 
         post "reports/index"
+        post "reports/loan_report"
         # resources :reports , only: [:index]
 
         resources :refunds, only: [ :index, :create ] do
@@ -409,12 +410,25 @@ Rails.application.routes.draw do
         post "filters/category_filter"
         post "filters/service_category_filter"
         post "filters/service_product"
+        post "filters/loan_report"
 
         post "instant_loans/check_eligibility"
         post "personal_loans/check_eligibility"
         get "instant_loans/instant_loan_list"
         get "personal_loans/persoanl_loan_list"
         post "personal_loans/get_offer"
+
+        resources :home_loans, only: [:create, :index] do
+          collection do
+            post :get_offer
+          end
+        end
+
+        resources :gold_loans, only: [:create, :index] do
+          collection do
+            post :get_offer
+          end
+        end
 
         resources :reatailer_profiles, only: [ :index ]
         get "reatailer_profiles/user_profile"

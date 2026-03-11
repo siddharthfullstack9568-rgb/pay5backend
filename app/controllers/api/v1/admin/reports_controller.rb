@@ -65,4 +65,32 @@ class Api::V1::Admin::ReportsController < Api::V1::Auth::BaseController
     }
   end
 
+  def loan_report
+  users = [current_user] + current_user.all_descendants
+  user_ids = users.map(&:id)
+
+  loans =
+    case params[:loan]
+    when "personal_loan"
+      PersonalLoan.where(user_id: user_ids)
+
+    when "instant_loan"
+      InstantLoan.where(user_id: user_ids)
+
+    when "gold_loan"
+      GoldLoan.where(user_id: user_ids)
+
+    when "house_loan"
+      Houseloan.where(user_id: user_ids)
+
+    else
+      []
+    end
+
+  render json: {
+    success: true,
+    data: loans
+  }
+end
+
 end

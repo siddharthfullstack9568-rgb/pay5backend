@@ -50,7 +50,7 @@ module CreditLinks
         pan: @loan.pan,
         email: @loan.email,
         pincode: @loan.pincode,
-        loanAmount: @loan.loan_amount,
+        loanAmount: @loan.loan_amount.to_i,
         consumerConsentDate: formatted_date,
         consumerConsentIp: @loan.consumer_consent_ip || "0.0.0.0"
       }

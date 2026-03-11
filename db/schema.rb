@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_23_091558) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_09_090614) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -187,6 +187,63 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_23_091558) do
     t.string "deposit_ifsc_code"
     t.string "ifsc_code"
     t.index ["user_id"], name: "index_fund_requests_on_user_id"
+  end
+
+  create_table "gold_loans", force: :cascade do |t|
+    t.string "mobile_number"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "pan"
+    t.string "email"
+    t.string "pincode"
+    t.decimal "loan_amount"
+    t.datetime "consumer_consent_date"
+    t.string "consumer_consent_ip"
+    t.string "utm_id"
+    t.string "utm_campaign"
+    t.string "utm_source"
+    t.string "utm_medium"
+    t.string "utm_content"
+    t.string "utm_term"
+    t.string "pid"
+    t.string "sub_id1"
+    t.string "sub_id2"
+    t.string "sub_id3"
+    t.string "lead_id"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_gold_loans_on_user_id"
+  end
+
+  create_table "houseloans", force: :cascade do |t|
+    t.string "mobile_number"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "pan"
+    t.date "dob"
+    t.string "email"
+    t.string "pincode"
+    t.decimal "monthly_income"
+    t.decimal "housing_loan_amount"
+    t.string "property_type"
+    t.datetime "consumer_consent_date"
+    t.string "consumer_consent_ip"
+    t.string "utm_id"
+    t.string "utm_campaign"
+    t.string "utm_source"
+    t.string "utm_medium"
+    t.string "utm_content"
+    t.string "utm_term"
+    t.string "pid"
+    t.string "sub_id1"
+    t.string "sub_id2"
+    t.string "sub_id3"
+    t.string "lead_id"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_houseloans_on_user_id"
   end
 
   create_table "instant_loans", force: :cascade do |t|
@@ -538,6 +595,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_23_091558) do
   add_foreign_key "dmts", "users"
   add_foreign_key "enquiries", "roles"
   add_foreign_key "fund_requests", "users"
+  add_foreign_key "gold_loans", "users"
+  add_foreign_key "houseloans", "users"
   add_foreign_key "instant_loans", "users"
   add_foreign_key "personal_loans", "users"
   add_foreign_key "refund_requests", "users"

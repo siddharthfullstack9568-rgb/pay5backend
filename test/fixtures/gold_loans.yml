@@ -1,0 +1,47 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  mobile_number: MyString
+  first_name: MyString
+  last_name: MyString
+  pan: MyString
+  email: MyString
+  pincode: MyString
+  loan_amount: 9.99
+  consumer_consent_date: 2026-03-09 14:36:14
+  consumer_consent_ip: MyString
+  utm_id: MyString
+  utm_campaign: MyString
+  utm_source: MyString
+  utm_medium: MyString
+  utm_content: MyString
+  utm_term: MyString
+  pid: MyString
+  sub_id1: MyString
+  sub_id2: MyString
+  sub_id3: MyString
+  lead_id: MyString
+  user: one
+
+two:
+  mobile_number: MyString
+  first_name: MyString
+  last_name: MyString
+  pan: MyString
+  email: MyString
+  pincode: MyString
+  loan_amount: 9.99
+  consumer_consent_date: 2026-03-09 14:36:14
+  consumer_consent_ip: MyString
+  utm_id: MyString
+  utm_campaign: MyString
+  utm_source: MyString
+  utm_medium: MyString
+  utm_content: MyString
+  utm_term: MyString
+  pid: MyString
+  sub_id1: MyString
+  sub_id2: MyString
+  sub_id3: MyString
+  lead_id: MyString
+  user: two
