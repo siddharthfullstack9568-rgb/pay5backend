@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_09_090614) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_02_120134) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -43,6 +43,18 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_09_090614) do
     t.datetime "updated_at", null: false
     t.index ["api_key"], name: "index_api_clients_on_api_key", unique: true
     t.index ["user_code"], name: "index_api_clients_on_user_code", unique: true
+  end
+
+  create_table "api_services", force: :cascade do |t|
+    t.string "name"
+    t.string "title"
+    t.decimal "balance", precision: 10, scale: 2
+    t.string "api_key"
+    t.string "api_secret"
+    t.string "user_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["api_key"], name: "index_api_services_on_api_key", unique: true
   end
 
   create_table "banks", force: :cascade do |t|
@@ -82,6 +94,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_09_090614) do
     t.decimal "commission_rate"
     t.index ["scheme_id"], name: "index_commissions_on_scheme_id"
     t.index ["service_product_item_id"], name: "index_commissions_on_service_product_item_id"
+  end
+
+  create_table "departments", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "dmt_transactions", force: :cascade do |t|
@@ -266,6 +285,101 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_09_090614) do
     t.index ["user_id"], name: "index_instant_loans_on_user_id"
   end
 
+  create_table "leads", force: :cascade do |t|
+    t.string "name"
+    t.string "mobile"
+    t.string "email"
+    t.text "address"
+    t.string "director"
+    t.string "loan_type"
+    t.string "loan_ac"
+    t.decimal "total_outstanding"
+    t.text "borrower_info"
+    t.decimal "emi_amount"
+    t.integer "service_id"
+    t.integer "user_id"
+    t.integer "lawyer_id"
+    t.string "adhaar_image"
+    t.string "pan_image"
+    t.string "notice_image"
+    t.string "check_image"
+    t.string "address_proof"
+    t.decimal "amount"
+    t.string "status"
+    t.string "account_number"
+    t.date "date"
+    t.string "image"
+    t.string "area"
+    t.string "bank_name"
+    t.string "branch_address"
+    t.string "officer_name"
+    t.string "designation"
+    t.string "borrower_name"
+    t.string "co_borrower"
+    t.string "loan_account_number"
+    t.text "borrower_address"
+    t.decimal "outstanding_amount"
+    t.date "npa_date"
+    t.date "notice_132_date"
+    t.date "expiry_date"
+    t.text "property_address"
+    t.string "survey_number"
+    t.string "north_boundary"
+    t.string "south_boundary"
+    t.string "east_boundary"
+    t.string "west_boundary"
+    t.string "possession_type"
+    t.date "possession_date"
+    t.string "possession_place"
+    t.date "notice_issue_date"
+    t.string "issue_place"
+    t.integer "category_id"
+    t.text "pending_message"
+    t.text "reject_message"
+    t.integer "ca_id"
+    t.string "document_permission_status"
+    t.string "lead_status"
+    t.integer "befor_sumbit_mca_status"
+    t.string "document_status"
+    t.string "payment_status"
+    t.string "review_status"
+    t.string "step_status"
+    t.string "service_type"
+    t.string "lead_ref_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "leave_requests", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "parent_id"
+    t.date "start_date"
+    t.date "end_date"
+    t.integer "total_days"
+    t.text "reason"
+    t.string "status"
+    t.text "reject_note"
+    t.text "approve_note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_leave_requests_on_user_id"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.decimal "amount"
+    t.string "status"
+    t.string "payment_method"
+    t.string "transaction_id"
+    t.string "gateway"
+    t.string "reference_id"
+    t.string "ip"
+    t.string "location"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_payments_on_user_id"
+  end
+
   create_table "personal_loans", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -317,6 +431,20 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_09_090614) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "salaries", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "month"
+    t.integer "year"
+    t.integer "total_days"
+    t.integer "leave_days"
+    t.integer "working_days"
+    t.float "per_day_salary"
+    t.float "total_salary"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_salaries_on_user_id"
+  end
+
   create_table "schemes", force: :cascade do |t|
     t.string "scheme_name"
     t.string "scheme_type"
@@ -360,6 +488,102 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_09_090614) do
     t.integer "position"
   end
 
+  create_table "staffs", force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.string "password_digest"
+    t.string "role"
+    t.string "otp"
+    t.string "verify_otp"
+    t.datetime "otp_expires_at"
+    t.string "phone_number"
+    t.string "country_code"
+    t.string "alternative_number"
+    t.string "aadhaar_number"
+    t.string "pan_card"
+    t.date "date_of_birth"
+    t.string "gender"
+    t.string "business_name"
+    t.string "business_owner_type"
+    t.string "business_nature_type"
+    t.string "business_registration_number"
+    t.string "gst_number"
+    t.string "pan_number"
+    t.text "address"
+    t.string "city"
+    t.string "state"
+    t.string "pincode"
+    t.string "landmark"
+    t.string "username"
+    t.string "scheme"
+    t.string "referred_by"
+    t.string "bank_name"
+    t.string "account_number"
+    t.string "ifsc_code"
+    t.string "account_holder_name"
+    t.text "notes"
+    t.string "session_token"
+    t.integer "role_id"
+    t.boolean "status"
+    t.string "company_type"
+    t.string "company_name"
+    t.string "cin_number"
+    t.string "registration_certificate"
+    t.integer "user_admin_id"
+    t.string "confirm_password"
+    t.string "domain_name"
+    t.string "pan_card_image"
+    t.string "aadhaar_image"
+    t.string "passport_photo"
+    t.string "store_shop_photo"
+    t.string "address_proof_photo"
+    t.integer "parent_id"
+    t.string "set_pin"
+    t.string "confirm_pin"
+    t.float "latitude"
+    t.float "longitude"
+    t.datetime "captured_at"
+    t.datetime "last_seen_at"
+    t.string "ip_address"
+    t.string "location"
+    t.string "kyc_status"
+    t.string "kyc_method"
+    t.string "aadhaar_front_image"
+    t.string "aadhaar_back_image"
+    t.string "aadhaar_otp"
+    t.string "pan_otp"
+    t.string "pan_status"
+    t.string "aadhaar_status"
+    t.string "image"
+    t.boolean "kyc_verifications"
+    t.datetime "kyc_verified_at"
+    t.jsonb "kyc_data"
+    t.string "email_otp"
+    t.datetime "email_otp_sent_at"
+    t.string "set_mpin"
+    t.string "confirm_mpin"
+    t.boolean "status_mpin"
+    t.boolean "status_pin"
+    t.string "email_otp_status"
+    t.datetime "email_otp_verified_at"
+    t.boolean "set_pin_status"
+    t.string "user_code"
+    t.boolean "eko_onboard_first_step"
+    t.boolean "eko_profile_second_step"
+    t.string "eko_status_otp"
+    t.string "eko_verify_otp"
+    t.boolean "eko_biometric_kyc"
+    t.text "permanent_address"
+    t.string "permanent_landmark"
+    t.string "permanent_postal_code"
+    t.string "permanent_city"
+    t.string "permanent_state"
+    t.string "permanent_pincode"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "support_tickets", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "ticket_number"
@@ -380,6 +604,27 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_09_090614) do
     t.datetime "updated_at", null: false
     t.index ["parent_id"], name: "index_support_tickets_on_parent_id"
     t.index ["user_id"], name: "index_support_tickets_on_user_id"
+  end
+
+  create_table "tasks", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.string "priority"
+    t.string "status"
+    t.string "task_status"
+    t.datetime "deadline"
+    t.bigint "user_id", null: false
+    t.integer "assigned_to"
+    t.text "pending_note"
+    t.text "approved_note"
+    t.text "note"
+    t.integer "lead_id"
+    t.integer "staff_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "department_id"
+    t.index ["department_id"], name: "index_tasks_on_department_id"
+    t.index ["user_id"], name: "index_tasks_on_user_id"
   end
 
   create_table "transaction_commissions", force: :cascade do |t|
@@ -581,6 +826,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_09_090614) do
     t.decimal "balance"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "service_type"
     t.index ["user_id"], name: "index_wallets_on_user_id"
   end
 
@@ -598,12 +844,17 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_09_090614) do
   add_foreign_key "gold_loans", "users"
   add_foreign_key "houseloans", "users"
   add_foreign_key "instant_loans", "users"
+  add_foreign_key "leave_requests", "users"
+  add_foreign_key "payments", "users"
   add_foreign_key "personal_loans", "users"
   add_foreign_key "refund_requests", "users"
+  add_foreign_key "salaries", "users"
   add_foreign_key "schemes", "users"
   add_foreign_key "service_product_items", "categories"
   add_foreign_key "service_products", "categories"
   add_foreign_key "support_tickets", "users"
+  add_foreign_key "tasks", "departments"
+  add_foreign_key "tasks", "users"
   add_foreign_key "transaction_commissions", "service_product_items"
   add_foreign_key "transaction_commissions", "transactions"
   add_foreign_key "transaction_commissions", "users"

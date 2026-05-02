@@ -114,13 +114,15 @@ def bank_list
   end
 
   def balance
-    total_balance = Wallet.find_by(user_id: current_user.id).balance.round(2)
-    p "=============total_balance===="
-    if total_balance
-      render json: { total_balance: total_balance }
-    else
-      render json: { balance: 0.0 }
-    end
+    wallet = Wallet.find_by(user_id: current_user.id)
+    legal_wallet = Wallet.find_by(user_id: current_user.id, service_type: "legal")
+    p "=========legal_walletlegal_wallet=========="
+    p legal_wallet
+    total_balance = wallet&.balance.to_f + legal_wallet&.balance.to_f
+  
+    render json: {
+      total_balance: sprintf('%.2f', total_balance)
+    }
   end
 
   def wallet_history

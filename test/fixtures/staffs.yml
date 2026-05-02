@@ -1,0 +1,191 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  first_name: MyString
+  last_name: MyString
+  email: MyString
+  password_digest: MyString
+  role: MyString
+  otp: MyString
+  verify_otp: MyString
+  otp_expires_at: 2026-05-02 12:01:17
+  phone_number: MyString
+  country_code: MyString
+  alternative_number: MyString
+  aadhaar_number: MyString
+  pan_card: MyString
+  date_of_birth: 2026-05-02
+  gender: MyString
+  business_name: MyString
+  business_owner_type: MyString
+  business_nature_type: MyString
+  business_registration_number: MyString
+  gst_number: MyString
+  pan_number: MyString
+  address: MyText
+  city: MyString
+  state: MyString
+  pincode: MyString
+  landmark: MyString
+  username: MyString
+  scheme: MyString
+  referred_by: MyString
+  bank_name: MyString
+  account_number: MyString
+  ifsc_code: MyString
+  account_holder_name: MyString
+  notes: MyText
+  session_token: MyString
+  role_id: 1
+  status: false
+  company_type: MyString
+  company_name: MyString
+  cin_number: MyString
+  registration_certificate: MyString
+  user_admin_id: 1
+  confirm_password: MyString
+  domain_name: MyString
+  scheme_id: 1
+  service_id: 1
+  pan_card_image: MyString
+  aadhaar_image: MyString
+  passport_photo: MyString
+  store_shop_photo: MyString
+  address_proof_photo: MyString
+  parent_id: 1
+  set_pin: MyString
+  confirm_pin: MyString
+  latitude: 1.5
+  longitude: 1.5
+  captured_at: 2026-05-02 12:01:17
+  last_seen_at: 2026-05-02 12:01:17
+  ip_address: MyString
+  location: MyString
+  kyc_status: MyString
+  kyc_method: MyString
+  aadhaar_front_image: MyString
+  aadhaar_back_image: MyString
+  aadhaar_otp: MyString
+  pan_otp: MyString
+  pan_status: MyString
+  aadhaar_status: MyString
+  image: MyString
+  kyc_verifications: false
+  kyc_verified_at: 2026-05-02 12:01:17
+  kyc_data: 
+  email_otp: MyString
+  email_otp_sent_at: 2026-05-02 12:01:17
+  set_mpin: MyString
+  confirm_mpin: MyString
+  status_mpin: false
+  status_pin: false
+  email_otp_status: MyString
+  email_otp_verified_at: 2026-05-02 12:01:17
+  set_pin_status: false
+  user_code: MyString
+  eko_onboard_first_step: false
+  eko_profile_second_step: false
+  eko_status_otp: MyString
+  eko_verify_otp: MyString
+  eko_biometric_kyc: false
+  permanent_address: MyText
+  permanent_landmark: MyString
+  permanent_postal_code: MyString
+  permanent_city: MyString
+  permanent_state: MyString
+  permanent_pincode: MyString
+
+two:
+  first_name: MyString
+  last_name: MyString
+  email: MyString
+  password_digest: MyString
+  role: MyString
+  otp: MyString
+  verify_otp: MyString
+  otp_expires_at: 2026-05-02 12:01:17
+  phone_number: MyString
+  country_code: MyString
+  alternative_number: MyString
+  aadhaar_number: MyString
+  pan_card: MyString
+  date_of_birth: 2026-05-02
+  gender: MyString
+  business_name: MyString
+  business_owner_type: MyString
+  business_nature_type: MyString
+  business_registration_number: MyString
+  gst_number: MyString
+  pan_number: MyString
+  address: MyText
+  city: MyString
+  state: MyString
+  pincode: MyString
+  landmark: MyString
+  username: MyString
+  scheme: MyString
+  referred_by: MyString
+  bank_name: MyString
+  account_number: MyString
+  ifsc_code: MyString
+  account_holder_name: MyString
+  notes: MyText
+  session_token: MyString
+  role_id: 1
+  status: false
+  company_type: MyString
+  company_name: MyString
+  cin_number: MyString
+  registration_certificate: MyString
+  user_admin_id: 1
+  confirm_password: MyString
+  domain_name: MyString
+  scheme_id: 1
+  service_id: 1
+  pan_card_image: MyString
+  aadhaar_image: MyString
+  passport_photo: MyString
+  store_shop_photo: MyString
+  address_proof_photo: MyString
+  parent_id: 1
+  set_pin: MyString
+  confirm_pin: MyString
+  latitude: 1.5
+  longitude: 1.5
+  captured_at: 2026-05-02 12:01:17
+  last_seen_at: 2026-05-02 12:01:17
+  ip_address: MyString
+  location: MyString
+  kyc_status: MyString
+  kyc_method: MyString
+  aadhaar_front_image: MyString
+  aadhaar_back_image: MyString
+  aadhaar_otp: MyString
+  pan_otp: MyString
+  pan_status: MyString
+  aadhaar_status: MyString
+  image: MyString
+  kyc_verifications: false
+  kyc_verified_at: 2026-05-02 12:01:17
+  kyc_data: 
+  email_otp: MyString
+  email_otp_sent_at: 2026-05-02 12:01:17
+  set_mpin: MyString
+  confirm_mpin: MyString
+  status_mpin: false
+  status_pin: false
+  email_otp_status: MyString
+  email_otp_verified_at: 2026-05-02 12:01:17
+  set_pin_status: false
+  user_code: MyString
+  eko_onboard_first_step: false
+  eko_profile_second_step: false
+  eko_status_otp: MyString
+  eko_verify_otp: MyString
+  eko_biometric_kyc: false
+  permanent_address: MyText
+  permanent_landmark: MyString
+  permanent_postal_code: MyString
+  permanent_city: MyString
+  permanent_state: MyString
+  permanent_pincode: MyString

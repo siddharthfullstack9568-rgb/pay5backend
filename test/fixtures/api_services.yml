@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  title: MyString
+  balance: 9.99
+  api_key: MyString
+  api_secret: MyString
+  user_code: MyString
+
+two:
+  name: MyString
+  title: MyString
+  balance: 9.99
+  api_key: MyString
+  api_secret: MyString
+  user_code: MyString

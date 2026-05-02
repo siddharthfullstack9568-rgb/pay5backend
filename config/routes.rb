@@ -171,7 +171,6 @@ Rails.application.routes.draw do
     post "wallets/add_fund"
     post "wallets/create_fund"
 
-
     get "sessions/login"
     post "sessions/create"
     delete "sessions/destroy"
@@ -248,6 +247,8 @@ Rails.application.routes.draw do
 
 
         resources :schemes
+
+        resources :staffs
         resources :banks
         resources :wallets, only: [ :index, :create ] do
           collection do
@@ -255,6 +256,7 @@ Rails.application.routes.draw do
             get :bank_details
             get :admin_bank
             get :wallet_history
+            get :legal_balance
           end
         end
 
@@ -296,6 +298,9 @@ Rails.application.routes.draw do
         resources :support_tickets, only: [ :create, :index, :show ] do
           patch :update_status, on: :member
         end
+        resources :staffs
+        resources :tasks
+        resources :departments
 
         post "reports/index"
         post "reports/loan_report"
@@ -368,6 +373,7 @@ Rails.application.routes.draw do
         get "/eko/check_kyc", to: "eko#check_kyc"
 
         get "dashboards/index"
+        get "dashboards/dashboard_data"
         post "sessions/login"
         post "sessions/create"
         get "sessions/role"
@@ -430,6 +436,9 @@ Rails.application.routes.draw do
           end
         end
 
+        resources :staffs
+        resources :leads
+
         resources :reatailer_profiles, only: [ :index ]
         get "reatailer_profiles/user_profile"
         post "reatailer_profiles/set_pin"
@@ -479,10 +488,13 @@ Rails.application.routes.draw do
         get "eko_fund_requests/bank"
         get "eko_fund_requests/balance_api"
 
-        resources :refunds, only: [ :index, :create ] do
+        resources :refunds, only: [:index, :create] do
           post :refund_transaction, on: :collection
           post :refund_verify_otp, on: :collection
         end
+        
+        resources :legal_services, only: [:index]
+        resources :payments
         #
       end
     end

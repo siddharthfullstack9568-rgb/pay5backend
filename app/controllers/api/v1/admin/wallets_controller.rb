@@ -50,6 +50,24 @@ class Api::V1::Admin::WalletsController < Api::V1::Auth::BaseController
     }
   end
 
+  def legal_balance
+    response = LegalService::WalletService.balance
+    p "==========response======="
+    p response
+    if response.present?
+      render json: {
+        success: true,
+        message: "ohhhh yes",
+        total_balance: response["total_balance"].to_f
+      }, status: :ok
+    else
+      render json: {
+        success: false,
+        message: "Unable to fetch balance"
+      }, status: :unprocessable_entity
+    end
+  end
+
   def bank_details
     bank_id = params[:id]
 
@@ -78,10 +96,9 @@ class Api::V1::Admin::WalletsController < Api::V1::Auth::BaseController
 
 
   def create
-    # Required validations (API safe)
     required = %i[deposit_bank your_bank transaction_type amount mode account_number]
     missing = required.select { |p| params[p].blank? }
-
+  
     if missing.any?
       return render json: {
         status: 400,
@@ -89,33 +106,31 @@ class Api::V1::Admin::WalletsController < Api::V1::Auth::BaseController
         message: "Missing required fields: #{missing.join(', ')}"
       }, status: :bad_request
     end
-
+  
     image_url = nil
     if params[:image].present?
-      uploaded_image = Cloudinary::Uploader.upload(params[:image])
-      image_url = uploaded_image["secure_url"]
+      uploaded = Cloudinary::Uploader.upload(params[:image])
+      image_url = uploaded["secure_url"]
     end
-
+  
     fund_request = FundRequest.new(
-      fund_request_params.merge(
+      params.permit(:deposit_bank, :your_bank, :transaction_type, :amount, :mode).merge(
         status: "pending",
         user_id: @current_user.id,
+        requested_by: @current_user.parent_id,
         deposit_ifsc_code: params[:deposit_ifsc_code],
         deposit_account_no: params[:deposit_account_number],
         account_number: params[:account_number],
         ifsc_code: params[:ifsc_code],
-        requested_by: @current_user.parent_id,
         image: image_url
       )
     )
-
+  
     if fund_request.save
-      # Initialize wallet
       wallet = Wallet.find_or_create_by(user_id: @current_user.id) { |w| w.balance = 0 }
-
-      # Generate TXN
+  
       txn_id = "TXN#{rand(100000..999999)}"
-
+  
       WalletTransaction.create!(
         tx_id: txn_id,
         wallet_id: wallet.id,
@@ -123,16 +138,31 @@ class Api::V1::Admin::WalletsController < Api::V1::Auth::BaseController
         transaction_type: fund_request.transaction_type,
         amount: fund_request.amount,
         status: "pending",
-        fund_request_id: fund_request.id,
-        description: "Fund request created by user #{@current_user.id}"
+        fund_request_id: fund_request.id
       )
-
+  
+      # 🔥 Legal API call
+      if params[:service_type] == "legal"
+        LegalService::WalletService.create_wallet({
+          deposit_bank: params[:deposit_bank],
+          your_bank: params[:your_bank],
+          transaction_type: params[:transaction_type],
+          amount: params[:amount],
+          mode: params[:mode],
+          account_number: params[:account_number],
+          ifsc_code: params[:ifsc_code],
+          deposit_account_number: params[:deposit_account_number],
+          deposit_ifsc_code: params[:deposit_ifsc_code],
+          user_id: @current_user.id
+        })
+      end
+  
       render json: {
         status: 201,
         message: "Fund request created successfully",
         fund_request: fund_request
       }, status: :created
-
+  
     else
       render json: {
         status: 422,

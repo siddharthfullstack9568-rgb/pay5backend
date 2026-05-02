@@ -1,0 +1,33 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  description: MyText
+  priority: MyString
+  status: MyString
+  task_status: MyString
+  deadline: 2026-05-02 12:25:27
+  user: one
+  department: one
+  assigned_to: 1
+  pending_note: MyText
+  approved_note: MyText
+  note: MyText
+  lead_id: 1
+  staff_id: 1
+
+two:
+  title: MyString
+  description: MyText
+  priority: MyString
+  status: MyString
+  task_status: MyString
+  deadline: 2026-05-02 12:25:27
+  user: two
+  department: two
+  assigned_to: 1
+  pending_note: MyText
+  approved_note: MyText
+  note: MyText
+  lead_id: 1
+  staff_id: 1
