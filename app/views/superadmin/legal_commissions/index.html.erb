@@ -1,0 +1,100 @@
+<div class="p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">
+        Legal & Compliance Commissions
+      </h1>
+      <p class="text-gray-500 mt-1">
+        Manage and configure commission distribution for BBPS and Recharge & DTH Commission transactions
+      </p>
+    </div>
+
+    <a href="<%= new_superadmin_legal_commission_path %>"
+       class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg flex items-center gap-2 shadow">
+      ➕ Create Legal & Compliance Commission
+    </a>
+  </div>
+
+  <!-- Table Card -->
+  <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+    <table class="w-full text-sm text-left">
+      
+      <!-- Table Head -->
+      <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+        <tr>
+          <th class="px-6 py-3">ID</th>
+          <th class="px-6 py-3">Scheme</th>
+          <th class="px-6 py-3">Commission Type</th>
+          <th class="px-6 py-3">From Role</th>
+          <th class="px-6 py-3">To Role</th>
+          <th class="px-6 py-3">Value</th>
+          <th class="px-6 py-3">Service Item</th>
+          <th class="px-6 py-3">Created At</th>
+          <th class="px-6 py-3">Actions</th>
+        </tr>
+      </thead>
+
+      <!-- Table Body -->
+      <tbody class="divide-y">
+
+        <!-- Row -->
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 font-semibold">#6</td>
+          <td class="px-6 py-4">Gold</td>
+          <td class="px-6 py-4">percentage</td>
+
+          <td class="px-6 py-4">
+            <span class="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded">
+              superadmin
+            </span>
+          </td>
+
+          <td class="px-6 py-4">
+            <span class="bg-green-100 text-green-600 text-xs px-2 py-1 rounded">
+              admin
+            </span>
+          </td>
+
+          <td class="px-6 py-4 font-bold text-gray-600">100.0%</td>
+          <td class="px-6 py-4">North Bihar Power</td>
+          <td class="px-6 py-4 text-gray-500">31 Jan 2026</td>
+
+          <td class="px-6 py-4 flex gap-2">
+            <button class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded">
+              ✏️ Edit
+            </button>
+            <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
+              🗑 Delete
+            </button>
+          </td>
+        </tr>
+
+        <!-- Duplicate rows -->
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4 font-semibold">#5</td>
+          <td class="px-6 py-4">Gold</td>
+          <td class="px-6 py-4">percentage</td>
+          <td class="px-6 py-4">
+            <span class="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded">
+              superadmin
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <span class="bg-green-100 text-green-600 text-xs px-2 py-1 rounded">
+              admin
+            </span>
+          </td>
+          <td class="px-6 py-4 font-bold text-gray-600">100.0%</td>
+          <td class="px-6 py-4">LIC</td>
+          <td class="px-6 py-4 text-gray-500">30 Jan 2026</td>
+          <td class="px-6 py-4 flex gap-2">
+            <button class="bg-orange-500 text-white px-3 py-1 rounded">✏️ Edit</button>
+            <button class="bg-red-500 text-white px-3 py-1 rounded">🗑 Delete</button>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>

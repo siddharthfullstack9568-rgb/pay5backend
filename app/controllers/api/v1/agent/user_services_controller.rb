@@ -2,6 +2,8 @@ class Api::V1::Agent::UserServicesController < Api::V1::Auth::BaseController
   # protect_from_forgery with: :null_session
 
   def index
+    p "=================user service"
+    p current_user
     service_lists = UserService
     .where(assignee_id: current_user.id)
     .includes(:service, :assigner)

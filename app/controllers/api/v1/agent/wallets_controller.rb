@@ -115,10 +115,12 @@ def bank_list
 
   def balance
     wallet = Wallet.find_by(user_id: current_user.id)
-    legal_wallet = Wallet.find_by(user_id: current_user.id, service_type: "legal")
-    p "=========legal_walletlegal_wallet=========="
-    p legal_wallet
-    total_balance = wallet&.balance.to_f + legal_wallet&.balance.to_f
+    p "=========wallet=========="
+    p wallet
+    # legal_wallet = Wallet.find_by(user_id: current_user.id, service_type: "legal")
+    # p "=========legal_walletlegal_wallet=========="
+    # p legal_wallet
+    total_balance = wallet&.balance.to_f
   
     render json: {
       total_balance: sprintf('%.2f', total_balance)

@@ -57,7 +57,7 @@ class Api::V1::Admin::WalletsController < Api::V1::Auth::BaseController
     if response.present?
       render json: {
         success: true,
-        message: "ohhhh yes",
+        message: "Wallet balance fetched successfully",
         total_balance: response["total_balance"].to_f
       }, status: :ok
     else

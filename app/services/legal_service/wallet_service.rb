@@ -24,6 +24,14 @@ module LegalService
       def self.notice(params)
         BaseClient.post('/api/v1/admin/notices', body: params)
       end
+
+      def self.service
+        BaseClient.get('/api/v1/superadmin/surpass_services')
+      end
+
+      def self.service_category(params)
+        BaseClient.post("/api/v1/admin/surepass/surpass_category", body: params)
+      end
   
     end
   end

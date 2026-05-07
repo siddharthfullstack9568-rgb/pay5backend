@@ -1,0 +1,2 @@
+class LegalCategory < ApplicationRecord
+end

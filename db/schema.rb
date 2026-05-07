@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_02_120134) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_06_101200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -363,6 +363,27 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_02_120134) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_leave_requests_on_user_id"
+  end
+
+  create_table "legal_categories", force: :cascade do |t|
+    t.string "title"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "legal_commissions", force: :cascade do |t|
+    t.string "commission_type"
+    t.string "from_role"
+    t.string "to_role"
+    t.decimal "value"
+    t.bigint "scheme_id", null: false
+    t.decimal "commission_rate"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "legal_category_id", null: false
+    t.index ["legal_category_id"], name: "index_legal_commissions_on_legal_category_id"
+    t.index ["scheme_id"], name: "index_legal_commissions_on_scheme_id"
   end
 
   create_table "payments", force: :cascade do |t|
@@ -845,6 +866,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_02_120134) do
   add_foreign_key "houseloans", "users"
   add_foreign_key "instant_loans", "users"
   add_foreign_key "leave_requests", "users"
+  add_foreign_key "legal_commissions", "legal_categories"
+  add_foreign_key "legal_commissions", "schemes"
   add_foreign_key "payments", "users"
   add_foreign_key "personal_loans", "users"
   add_foreign_key "refund_requests", "users"

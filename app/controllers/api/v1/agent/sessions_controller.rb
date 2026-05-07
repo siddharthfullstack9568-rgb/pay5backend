@@ -126,10 +126,14 @@ class Api::V1::Agent::SessionsController < ApplicationController
   #   roles = Role.all
   #   render json: { code: 200, message: "role list", roles: roles}
   # end
-
   def role
-    roles = Role.where(title: ["master", "dealer", "retailer"])
-
+    roles = Role.where(title: ["master", "dealer", "retailer", "individual"])
+                .map do |role|
+                  role.as_json.merge(
+                    title: role.title.capitalize
+                  )
+                end
+  
     render json: {
       code: 200,
       message: "role list",

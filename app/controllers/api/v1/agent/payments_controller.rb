@@ -32,7 +32,9 @@ class Api::V1::Agent::PaymentsController < Api::V1::Auth::BaseController
   
     # Wallet check
     wallet = Wallet.find_by(user_id: current_user.id)
-  
+    p "============wallet============"
+    p wallet
+   
     return render json: { success: false, message: "Wallet not found" }, status: :not_found unless wallet
     return render json: { success: false, message: "Insufficient wallet balance" }, status: :unprocessable_entity if wallet.balance < amount
   
@@ -81,7 +83,7 @@ class Api::V1::Agent::PaymentsController < Api::V1::Auth::BaseController
       message: "Payment successful",
       data: payment
     }, status: :created
-  
+
   rescue ActiveRecord::RecordInvalid => e
     render json: {
       success: false,

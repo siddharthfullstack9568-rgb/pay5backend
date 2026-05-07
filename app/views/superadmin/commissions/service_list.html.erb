@@ -31,17 +31,19 @@
         <% @services.each do |service| %>
           <% 
             # यहाँ आप प्रत्येक service के लिए route तय कर सकते हैं
-            link_path = case service.title
-              when "BBPS"
-                superadmin_commissions_index_path(id: service.id, category_id: @category_id)
-              when "Mobile Recharge"
-                superadmin_commissions_index_path(id: service.id, category_id: @category_id)
-              when "Loan & Credit"
-                superadmin_commissions_path # या appropriate path
-              when "DMT"
-                superadmin_dmt_commissions_index_path
-              else
-                "#" # default path
+            link_path = case service.title.to_s.downcase
+            when "bbps"
+              superadmin_commissions_index_path(id: service.id, category_id: @category_id)
+            when "mobile recharge"
+              superadmin_commissions_index_path(id: service.id, category_id: @category_id)
+            when "loan & credit"
+              superadmin_commissions_path
+            when "dmt"
+              superadmin_dmt_commissions_index_path
+            when "complince services"
+              superadmin_legal_commissions_path
+            else
+              "#"
             end
             
             # Icon mapping

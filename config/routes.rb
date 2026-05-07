@@ -301,6 +301,7 @@ Rails.application.routes.draw do
         resources :staffs
         resources :tasks
         resources :departments
+        resources :legal_commissions
 
         post "reports/index"
         post "reports/loan_report"
@@ -329,6 +330,9 @@ Rails.application.routes.draw do
 
         # CREATE USER (Retailer / Agent / Dealer)
         post "register", to: "sessions#create"
+
+        post "verify_registration_email", to: "sessions#verify_registration_email"
+
 
         # ROLE LIST
         get "roles", to: "sessions#role"
@@ -379,6 +383,7 @@ Rails.application.routes.draw do
         get "sessions/role"
         post "sessions/verify_email"
         post "enquires/create"
+        post "enquires/verify_email"
 
         get "user_services/index"
         post "user_services/service_category"
@@ -587,6 +592,9 @@ Rails.application.routes.draw do
         delete :prodcut_item_destroy
       end
     end
+
+    resources :legal_commissions
+    get "fetch_categories", to: "legal_commissions#fetch_categories"
 
 
     namespace :dealer do
