@@ -24,7 +24,7 @@ default: &default
 
 development:
   <<: *default
-  database: credicle_panel_development
+  database: sm_fintech_development
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -58,7 +58,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: credicle_panel_test
+  database: sm_fintech_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -82,6 +82,6 @@ test:
 #
 production:
   <<: *default
-  database: credicle_panel_production
-  username: credicle_panel
+  database: sm_fintech_production
+  username: sm_fintech
   password: <%= ENV["QUICK_CRED_DATABASE_PASSWORD"] %>
