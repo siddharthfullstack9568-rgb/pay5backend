@@ -19,7 +19,8 @@ module Eko
       cable: 17,
       landline: 9,
       lpg_cylinder: 18,
-      insurance: 20
+      insurance: 20,
+      education: 14
     }
 
     def self.fetch(category_name)

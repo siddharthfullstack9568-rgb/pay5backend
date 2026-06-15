@@ -235,6 +235,7 @@ Rails.application.routes.draw do
           collection do
             get :service_list
             get :scheme_list
+            get :scheme_role
             get :role_list
             post :master_role
             post :dealer_role
@@ -247,6 +248,7 @@ Rails.application.routes.draw do
 
 
         resources :schemes
+        post :scheme_list, to: "schemes#scheme_list", as: :admin_scheme_list
 
         resources :staffs
         resources :banks

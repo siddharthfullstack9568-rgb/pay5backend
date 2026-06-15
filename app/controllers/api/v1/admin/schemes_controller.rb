@@ -21,6 +21,32 @@ class Api::V1::Admin::SchemesController < Api::V1::Auth::BaseController
     }
   end
 
+  def scheme_list
+    required = %i[master_id]
+    missing = required.select { |p| params[p].blank? }
+
+    if missing.any?
+      return render json: { success: false, message: "Missing: #{missing.join(', ')}" }, status: :bad_request
+    end
+
+    user = User.find_by(id: params[:master_id])
+
+    schemes = Scheme.where(id: user.scheme_id)
+
+    render json: {
+      code: 200,
+      message: "Scheme list fetched successfully",
+      schemes: schemes.map { |s|
+        {
+          id: s.id,
+          scheme_name: s.scheme_name,
+          scheme_type: s.scheme_type,
+          commision_rate: s.commision_rate
+        }
+      }
+    }
+  end
+
   # POST /admin/schemes
   def create
     required = %i[scheme_name scheme_type]

@@ -55,9 +55,28 @@ class Api::V1::Admin::UserServicesController < Api::V1::Auth::BaseController
     }
   end
 
+  # def master_role
+  #   users = User.joins(:role)
+  #   .where(roles: { title: "master" }, parent_id: current_user.id, scheme_id: params[:scheme_id])
+
+  #   if users.exists?
+  #     render json: {
+  #       code: 200,
+  #       message: "Master users fetched successfully",
+  #       users: users
+  #     }
+  #   else
+  #     render json: {
+  #       code: 404,
+  #       message: "Master not found",
+  #       users: []
+  #     }
+  #   end
+  # end
+
   def master_role
     users = User.joins(:role)
-    .where(roles: { title: "master" }, parent_id: current_user.id, scheme_id: params[:scheme_id])
+    .where(roles: { title: "master" }, parent_id: current_user.id)
 
     if users.exists?
       render json: {
@@ -133,20 +152,43 @@ class Api::V1::Admin::UserServicesController < Api::V1::Auth::BaseController
   end
 
   def scheme_list
-    schemes = current_user.schemes.select(:id, :scheme_name, :scheme_type, :commision_rate)
+    p "--------------------"
+    p current_user
+    scheme_id = current_user.scheme_id
+    scheme = Scheme.find_by(id: scheme_id)
 
-    render json: {
-      code: 200,
-      message: "Scheme list fetched successfully",
-      schemes: schemes.map { |s|
-        {
-          id: s.id,
-          scheme_name: s.scheme_name,
-          scheme_type: s.scheme_type,
-          commision_rate: s.commision_rate
-        }
+    if scheme.present?
+      render json: {
+        code: 200,
+        message: "Scheme found",
+        scheme: scheme
       }
-    }
+    else
+      render json: {
+        code: 404,
+        message: "Scheme not found"
+      }
+    end
+  end
+
+   def scheme_role
+    p "--------------------"
+    p current_user
+    scheme_id = current_user.scheme_id
+    scheme = Scheme.find_by(id: scheme_id)
+
+    if scheme.present?
+      render json: {
+        code: 200,
+        message: "Scheme found",
+        scheme: scheme
+      }
+    else
+      render json: {
+        code: 404,
+        message: "Scheme not found"
+      }
+    end
   end
 
 
