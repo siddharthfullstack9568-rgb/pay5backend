@@ -5,11 +5,10 @@ require "base64"
 require "uri"
 
 class EkoDmt::DmtOtpVerifyService
-  BASE_URL = "https://api.eko.in:25002/ekoicici/v3/customer/account"
+  BASE_URL = "https://api.eko.in:25002/ekoicici/v3/customer/payment/dmt-fino/sender"
 
-  def initialize(customer_id:, user_code:, initiator_id:, otp:, otp_ref_id:, kyc_request_id:)
+  def initialize(customer_id:, initiator_id:, otp:, otp_ref_id:, kyc_request_id:)
     @customer_id     = customer_id
-    @user_code       = user_code
     @initiator_id    = initiator_id
     @otp             = otp
     @otp_ref_id      = otp_ref_id
@@ -21,7 +20,7 @@ class EkoDmt::DmtOtpVerifyService
 
   def call
     timestamp = (Time.now.to_f * 1000).to_i.to_s
-    url = "#{BASE_URL}/#{@customer_id}/dmt-fino/otp/verify"
+    url = "#{BASE_URL}/#{@customer_id}/otp/verify"
 
     headers = generate_headers(timestamp)
     body    = request_body
@@ -31,10 +30,10 @@ class EkoDmt::DmtOtpVerifyService
     Rails.logger.info "Headers => #{headers}"
     Rails.logger.info "Body => #{body}"
 
-    response = HTTParty.post(
+    response = HTTParty.put(
       url,
       headers: headers,
-      body: URI.encode_www_form(body),
+      body: body.to_json,
       verify: false
     )
 
@@ -56,14 +55,14 @@ class EkoDmt::DmtOtpVerifyService
       "developer_key"        => @developer_key,
       "secret-key"           => secret,
       "secret-key-timestamp" => timestamp,
-      "Content-Type"         => "application/x-www-form-urlencoded"
+      "content-type"         => "application/json"
     }
   end
 
   def request_body
     {
-      user_code:      @user_code.to_s,
       initiator_id:   @initiator_id.to_s,
+      client_ref_id:  Time.current.strftime("%Y%m%d%H%M%S%L"),
       otp:            @otp.to_s,
       otp_ref_id:     @otp_ref_id.to_s,
       kyc_request_id: @kyc_request_id.to_s

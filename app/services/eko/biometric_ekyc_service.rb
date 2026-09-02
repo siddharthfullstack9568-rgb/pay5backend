@@ -1,119 +1,143 @@
-# app/services/eko/biometric_ekyc_service.rb
+# frozen_string_literal: true
 require "httparty"
 require "openssl"
 require "base64"
-require "uri"
-
+require "json"
+require "rexml/document"
 module Eko
   class BiometricEkycService
-    BASE_URL = "https://api.eko.in:25002/ekoicici/v3/customer/account"
-
-    def initialize(customer_id:, user_code:, initiator_id:, aadhar:, piddata:)
-      @customer_id  = customer_id
-      @user_code    = user_code
-      @initiator_id = initiator_id
-      @aadhar       = aadhar
-      @piddata      = piddata
-
-      @developer_key = ENV["EKO_DEV_KEY"]
-      @secret_key    = ENV["EKO_SECRET_KEY"]
+    include HTTParty
+    BASE_URL = "https://api.eko.in:25002/ekoicici/v3/customer/payment/dmt-fino/sender"
+    def initialize(customer_id:, initiator_id:, client_ref_id:, aadhar:, piddata:)
+      @customer_id   = customer_id
+      @initiator_id  = initiator_id
+      @client_ref_id = client_ref_id
+      @aadhar        = aadhar
+      @piddata       = piddata
+      @developer_key = "ed8971aba51cada1198401b919c2a813"
+      @secret_key    = "467784cf-b3a3-467e-bf31-2a2ec4380558"
     end
-
     def call
-      timestamp = current_timestamp
-      url       = endpoint_url
-      headers   = build_headers(timestamp)
-      body      = build_body
-
-      log_request(url, headers, body)
-
-      response = HTTParty.post(
-        url,
-        headers: headers,
-        body: URI.encode_www_form(body),
-        timeout: 30,
-        verify: false
+      validate!
+      timestamp = (Time.now.to_f * 1000).to_i.to_s
+      encoded_secret = Base64.strict_encode64(@secret_key)
+      digest = OpenSSL::HMAC.digest(
+        "SHA256",
+        encoded_secret,
+        timestamp
       )
-
-      parsed = response.parsed_response
-
-      log_response(response, parsed)
-
-      parsed
-    rescue => e
-      Rails.logger.error "[EKO EKYC] ❌ Exception => #{e.class}: #{e.message}"
-      Rails.logger.error e.backtrace.join("\n")
-      { "status" => -1, "message" => "Internal error" }
-    end
-
-    private
-
-    # ================== HELPERS ==================
-
-    def endpoint_url
-      "#{BASE_URL}/#{@customer_id}/dmt-fino/ekyc"
-    end
-
-    def current_timestamp
-      (Time.now.to_f * 1000).to_i.to_s
-    end
-
-    def build_headers(timestamp)
-      encoded_key = Base64.strict_encode64(@secret_key)
-      hmac        = OpenSSL::HMAC.digest("SHA256", encoded_key, timestamp)
-      secret      = Base64.strict_encode64(hmac)
-
-      {
+      secret = Base64.strict_encode64(digest)
+      url = "#{BASE_URL}/#{@customer_id}/otp"
+      fixed_piddata = inject_wadh(@piddata.to_s.strip)
+      headers = {
         "developer_key"        => @developer_key,
         "secret-key"           => secret,
         "secret-key-timestamp" => timestamp,
-        "Content-Type"         => "application/x-www-form-urlencoded"
+        "Content-Type"         => "application/json"
       }
-    end
-
-    def build_body
-      {
-        user_code:    @user_code,
+      payload = {
         initiator_id: @initiator_id,
-        aadhar:       @aadhar.to_s,
-        piddata:      @piddata
+        client_ref_id: @client_ref_id,
+        aadhar: @aadhar,
+        piddata: fixed_piddata
+      }
+
+      # ✅ FIX: `payload.to_json` (ActiveSupport override) ki jagah `JSON.generate(payload)`
+      # (Ruby stdlib) use karo. Rails ka `to_json`, agar
+      # `escape_html_entities_in_json` config true hai, piddata XML ke andar
+      # ke `<`, `>`, `&` characters ko `\u003c`, `\u003e`, `\u0026` jaise
+      # unicode escapes mein convert kar deta tha — jisse Eko ko bheja gaya
+      # piddata corrupted/malformed ho jata tha. `JSON.generate` ye HTML
+      # escaping nahi karta, raw JSON deta hai — DailyKycService mein bhi
+      # yehi approach use hota hai.
+      json_payload = JSON.generate(payload)
+
+      Rails.logger.info "================ EKO REQUEST ================"
+      Rails.logger.info "URL => #{url}"
+      Rails.logger.info "Headers =>"
+      Rails.logger.info headers.merge("secret-key" => "********")
+      Rails.logger.info "Payload Keys => #{payload.keys}"
+      Rails.logger.info "PIDDATA PRESENT => #{@piddata.present?}"
+      Rails.logger.info "PIDDATA LENGTH => #{@piddata}"
+      if @piddata.present?
+        Rails.logger.info "PIDDATA FIRST 200 => #{@piddata.first(200)}"
+      end
+      Rails.logger.info "Payload JSON =>"
+      Rails.logger.info json_payload
+      response = self.class.put(
+        url,
+        headers: headers,
+        body: json_payload,
+        timeout: 60,
+        verify: false
+      )
+      Rails.logger.info "================ EKO RESPONSE ================"
+      Rails.logger.info "HTTP STATUS => #{response.code}"
+      Rails.logger.info response.body
+      JSON.parse(response.body)
+    rescue JSON::ParserError
+      {
+        status: response.code,
+        message: response.body
+      }
+    rescue StandardError => e
+      Rails.logger.error "================ EKO ERROR ================"
+      Rails.logger.error e.class
+      Rails.logger.error e.message
+      Rails.logger.error e.backtrace.join("\n")
+      {
+        status: 0,
+        message: e.message
       }
     end
+    private
+    def inject_wadh(piddata)
+      return piddata if piddata.blank?
+      begin
+        document = REXML::Document.new(piddata)
+        pid_data = document.root
+        return piddata unless pid_data
+        wadh = pid_data.elements["wadh"]
+        if wadh.nil?
+          wadh = pid_data.add_element("wadh")
+          wadh.text = ENV.fetch("EKO_WADH_VALUE")
+        elsif wadh.text.to_s.strip.empty?
+          wadh.text = ENV.fetch("EKO_WADH_VALUE")
+        end
+        # FrozenError fix
+        xml_body = String.new
+        formatter = REXML::Formatters::Default.new
+        formatter.write(pid_data, xml_body)
 
-    # ================== LOGGING ==================
+        # ✅ FIX: Eko ke official curl example mein piddata seedha `<PidData>...`
+        # se start hota hai — `<?xml version="1.0"?>` declaration nahi hota.
+        # Pehle agar original piddata mein declaration tha, toh hum use wapas
+        # prepend kar dete the. Ab hum declaration kabhi nahi bhejte, chahe
+        # original piddata mein ho ya na ho — sirf root element (`<PidData>...`)
+        # bhejte hain, jaisa Eko expect karta hai.
 
-    def log_request(url, headers, body)
-      Rails.logger.info "================ EKO BIOMETRIC EKYC START ================"
-      Rails.logger.info "[URL] #{url}"
-      Rails.logger.info "[TIMESTAMP] #{headers['secret-key-timestamp']}"
-      Rails.logger.info "[HEADERS] #{masked_headers(headers)}"
-      Rails.logger.info "[BODY] #{masked_body(body)}"
+        # ✅ FIX: REXML formatter original piddata ke tags ke beech ka
+        # whitespace (newline + indentation spaces) waise hi preserve kar
+        # deta tha, jisse payload mein `<PidData>\n  <Resp .../>` jaisa extra
+        # space/newline chala jata tha. Eko ka apna example compact hai
+        # (`<PidData><Resp .../></PidData>`, koi whitespace nahi). Isliye
+        # sirf structural whitespace — jo `>` ke baad aur `<` se pehle ho —
+        # hata rahe hain. Andar ka actual content (Skey/Hmac/Data base64
+        # values) is se untouched rehta hai kyunki wahan `>` ke bilkul baad
+        # whitespace nahi hota.
+        xml_body.gsub(/>\s+</, "><")
+      rescue REXML::ParseException
+        piddata
+      end
     end
-
-    def log_response(response, parsed)
-      Rails.logger.info "================ EKO BIOMETRIC EKYC RESPONSE ================"
-      Rails.logger.info "[HTTP STATUS] #{response.code}"
-      Rails.logger.info "[RESPONSE] #{parsed}"
-    end
-
-    # ================== MASKING ==================
-
-    def masked_headers(headers)
-      headers.merge(
-        "secret-key" => "****MASKED****"
-      )
-    end
-
-    def masked_body(body)
-      body.merge(
-        aadhar: mask_aadhar(body[:aadhar]),
-        piddata: "****PID XML****"
-      )
-    end
-
-    def mask_aadhar(aadhar)
-      return nil if aadhar.blank?
-      "XXXX-XXXX-#{aadhar.to_s.last(4)}"
+    def validate!
+      raise "Developer Key Missing" if @developer_key.blank?
+      raise "Secret Key Missing" if @secret_key.blank?
+      raise "Customer ID Missing" if @customer_id.blank?
+      raise "Initiator ID Missing" if @initiator_id.blank?
+      raise "Client Ref ID Missing" if @client_ref_id.blank?
+      raise "Aadhaar Missing" if @aadhar.blank?
+      raise "PIDDATA Missing" if @piddata.blank?
     end
   end
 end

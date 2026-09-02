@@ -6,10 +6,10 @@ module Eko
     ACCESS_KEY = ENV["EKO_SECRET_KEY"]
     DEV_KEY    = ENV["EKO_DEV_KEY"]
 
-    # EKO_DEV_KEY = 753595f07a59eb5a52341538fad5a63d
-    # EKO_SECRET_KEY = 854313b5-a37a-445a-8bc5-a27f4f0fe56a
-    # EKO_INITIATOR_ID = 9212094999
-    # EKO_USER_CODE = 38130001
+    # EKO_DEV_KEY = ed8971aba51cada1198401b919c2a813
+    # EKO_SECRET_KEY = 467784cf-b3a3-467e-bf31-2a2ec4380558
+    # EKO_INITIATOR_ID = 6268075916
+    # EKO_USER_CODE = 20500001
 
     def self.generate_headers
       timestamp = (Time.now.to_f * 1000).to_i.to_s

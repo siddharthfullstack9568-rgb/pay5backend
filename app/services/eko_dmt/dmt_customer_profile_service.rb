@@ -8,7 +8,7 @@ class EkoDmt::DmtCustomerProfileService
 
   def initialize(customer_id:, user_code:)
     @customer_id  = customer_id
-    @initiator_id = "9212094999"
+    @initiator_id = "6268075916"
     @user_code    = user_code
 
     @developer_key = ENV["EKO_DEV_KEY"]

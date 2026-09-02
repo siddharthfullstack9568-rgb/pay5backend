@@ -326,7 +326,7 @@ class Api::V1::Admin::UserServicesController < Api::V1::Auth::BaseController
       #   # EKO USER ONBOARD
       #   # -------------------------------
       #   response = EkoDmt::UserOnboardService.new(
-      #     initiator_id: "9212094999",
+      #     initiator_id: "6268075916",
       #     pan_number:   user.pan_card,
       #     mobile:       user.phone_number,
       #     first_name:   user.first_name,
@@ -362,7 +362,7 @@ class Api::V1::Admin::UserServicesController < Api::V1::Auth::BaseController
       #   # -------------------------------
       #   resp = EkoDmt::DmtCustomerCreateService.new(
       #     customer_id:       user.phone_number,
-      #     initiator_id:      "9212094999",
+      #     initiator_id:      "6268075916",
       #     user_code:         user.user_code,
       #     name:              user.first_name,
       #     dob:               user.date_of_birth,

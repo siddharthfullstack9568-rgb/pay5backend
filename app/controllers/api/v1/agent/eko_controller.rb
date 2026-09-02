@@ -5,8 +5,8 @@ require 'json'
 class Api::V1::Agent::EkoController < Api::V1::Auth::BaseController
 
   def check_kyc
-    initiator_id = "9212094999"
-    user_code = "38130001"
+    initiator_id = "6268075916"
+    user_code = "20500001"
 
     url = URI("https://api.eko.in:25002/ekoicici/v1/user/profile?initiator_id=#{initiator_id}&user_code=#{user_code}")
       # url = URI("https://api.eko.in:25002/ekoicici/v1/telco/catalog/recharge/plan/")

@@ -297,6 +297,16 @@ Rails.application.routes.draw do
           end
         end
 
+        resources :dmts do
+          collection do
+            get "scheme_list"
+            post "dmt_commissions"
+            post "commission_list"
+            post "show_dmt_commission"
+          end
+        end
+
+
         resources :support_tickets, only: [ :create, :index, :show ] do
           patch :update_status, on: :member
         end
@@ -462,6 +472,7 @@ Rails.application.routes.draw do
         post "commission_reports/index"
         get "commission_reports/earn_commission"
 
+        post "dmts/get_customer"
         get "dmts/dmt_transactions_list"
         post "dmts/sender_details"
         post "dmts/verify_eko_otp"
@@ -470,7 +481,8 @@ Rails.application.routes.draw do
         post "dmts/update_dmt_transaction"
         post "dmts/benfisries_dmt_transaction"
         post "dmts/beneficiary_fetch"
-        get "dmts/beneficiary_list"
+        post "dmts/beneficiary_list"
+        get "dmts/all_beneficiary"
         post "dmts/user_onboard"
         post "dmts/check_profile"
         post "dmts/create_customer"
@@ -498,6 +510,13 @@ Rails.application.routes.draw do
         resources :refunds, only: [:index, :create] do
           post :refund_transaction, on: :collection
           post :refund_verify_otp, on: :collection
+        end
+
+        resources :beneficiaries do
+          collection do
+            post "send_otp"
+            post "verify_otp"
+          end
         end
         
         resources :legal_services, only: [:index]

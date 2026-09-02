@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_06_101200) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_11_110100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -103,6 +103,42 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_06_101200) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "dmt_commission_slab_ranges", force: :cascade do |t|
+    t.decimal "min_amount"
+    t.decimal "max_amount"
+    t.decimal "bank_fee_percent", default: "1.0"
+    t.decimal "eko_fee", default: "7.0"
+    t.decimal "surcharge", default: "0.0"
+    t.decimal "tds_percent", default: "2.0"
+    t.decimal "gst_percent", default: "2.0"
+    t.string "from_role"
+    t.string "to_role"
+    t.decimal "value"
+    t.boolean "active", default: true
+    t.bigint "scheme_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "dmt_commission_slabs", force: :cascade do |t|
+    t.decimal "min_amount"
+    t.decimal "max_amount"
+    t.decimal "bank_fee_percent", default: "1.0"
+    t.decimal "eko_fee", default: "7.0"
+    t.decimal "surcharge", default: "0.0"
+    t.decimal "tds_percent", default: "2.0"
+    t.decimal "gst_percent", default: "2.0"
+    t.string "from_role"
+    t.string "to_role"
+    t.decimal "value"
+    t.boolean "active", default: true
+    t.bigint "scheme_id"
+    t.bigint "dmt_commission_slab_range_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dmt_commission_slab_range_id"], name: "index_dmt_commission_slabs_on_dmt_commission_slab_range_id"
+  end
+
   create_table "dmt_transactions", force: :cascade do |t|
     t.bigint "dmt_id", null: false
     t.bigint "user_id", null: false
@@ -155,8 +191,14 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_06_101200) do
     t.string "txstatus_desc"
     t.decimal "collectable_amount"
     t.bigint "user_id"
+    t.bigint "vendor_user_id"
+    t.boolean "bank_verify_status", default: false
+    t.string "txn_id"
+    t.boolean "transaction_status", default: false
     t.index ["parent_id"], name: "index_dmts_on_parent_id"
+    t.index ["txn_id"], name: "index_dmts_on_txn_id", unique: true
     t.index ["user_id"], name: "index_dmts_on_user_id"
+    t.index ["vendor_user_id"], name: "index_dmts_on_vendor_user_id"
   end
 
   create_table "eko_banks", force: :cascade do |t|
@@ -812,6 +854,18 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_06_101200) do
     t.index ["service_id"], name: "index_users_on_service_id"
   end
 
+  create_table "vendor_users", force: :cascade do |t|
+    t.string "full_name"
+    t.string "phone_number"
+    t.string "otp"
+    t.datetime "vendor_expiry_otp"
+    t.boolean "vendor_verify_status", default: false
+    t.boolean "addhar_kyc_status", default: false
+    t.string "user_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "wallet_histories", force: :cascade do |t|
     t.bigint "wallet_id", null: false
     t.integer "user_id"
@@ -857,9 +911,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_06_101200) do
   add_foreign_key "categories", "services"
   add_foreign_key "commissions", "schemes"
   add_foreign_key "commissions", "service_product_items"
+  add_foreign_key "dmt_commission_slabs", "dmt_commission_slab_ranges"
   add_foreign_key "dmt_transactions", "dmts"
   add_foreign_key "dmt_transactions", "users"
   add_foreign_key "dmts", "users"
+  add_foreign_key "dmts", "vendor_users"
   add_foreign_key "enquiries", "roles"
   add_foreign_key "fund_requests", "users"
   add_foreign_key "gold_loans", "users"

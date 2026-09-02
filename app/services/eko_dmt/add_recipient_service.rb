@@ -94,7 +94,7 @@ module EkoDmt
     # ================= HELPER METHODS =================
 
     def self.generate_secret_key(timestamp, initiator_id)
-      secret = ENV["EKO_SECRET_KEY"] || "854313b5-a37a-445a-8bc5-a27f4f0fe56a"
+      secret = ENV["EKO_SECRET_KEY"] || "467784cf-b3a3-467e-bf31-2a2ec4380558"
       data   = "#{initiator_id}#{timestamp}"
 
       Base64.strict_encode64(

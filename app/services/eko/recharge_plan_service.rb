@@ -7,9 +7,9 @@ require "json"
 module Eko
   class RechargePlanService
 
-    AUTH_KEY = "854313b5-a37a-445a-8bc5-a27f4f0fe56a"   # Your authenticator key
-    DEV_KEY  = "753595f07a59eb5a52341538fad5a63d"      # Your developer_key
-    INITIATOR = "9212094999"                           # Your initiator_id
+    AUTH_KEY = "467784cf-b3a3-467e-bf31-2a2ec4380558"   # Your authenticator key
+    DEV_KEY  = "ed8971aba51cada1198401b919c2a813"      # Your developer_key
+    INITIATOR = "6268075916"                           # Your initiator_id
 
     # Generate HMAC + Base64 secret-key (signature)
     def self.generate_secret_key

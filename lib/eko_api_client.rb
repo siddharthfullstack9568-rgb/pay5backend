@@ -6,8 +6,8 @@ require "uri"
 class EkoApiClient
 p "==========EkoApiClient================"
  def self.activate_service(service_code:, initiator_id:, user_code:, latlong:)
-  developer_key = "753595f07a59eb5a52341538fad5a63d"
-  access_key    = "854313b5-a37a-445a-8bc5-a27f4f0fe56a"
+  developer_key = "ed8971aba51cada1198401b919c2a813"
+  access_key    = "467784cf-b3a3-467e-bf31-2a2ec4380558"
 
   encoded_key = Base64.strict_encode64(access_key)
   timestamp = (Time.now.to_f * 1000).to_i.to_s

@@ -15,7 +15,7 @@ class EkoDmt::DmtCustomerCreateService
     @dob                = dob
     @residence_address  = residence_address
 
-    @developer_key = ENV["EKO_DEV_KEY"]    || "753595f07a59eb5a52341538fad5a63d"
+    @developer_key = ENV["EKO_DEV_KEY"]    || "ed8971aba51cada1198401b919c2a813"
     @secret_key    = ENV["EKO_SECRET_KEY"] || "lY0Gq3hm2aBcVsT60bZbXCJCcs9ZnBN3fQgx0HIlQos="
   end
 

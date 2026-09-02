@@ -9,8 +9,8 @@ module Eko
 
     def self.transfer(params)
       timestamp     = (Time.now.to_f * 1000).to_i.to_s
-      developer_key = ENV["EKO_DEV_KEY"] || "753595f07a59eb5a52341538fad5a63d"
-      access_key    = ENV["EKO_SECRET_KEY"] || "854313b5-a37a-445a-8bc5-a27f4f0fe56a"
+      developer_key = ENV["EKO_DEV_KEY"] || "ed8971aba51cada1198401b919c2a813"
+      access_key    = ENV["EKO_SECRET_KEY"] || "467784cf-b3a3-467e-bf31-2a2ec4380558"
 
       encoded_key = Base64.strict_encode64(access_key)
       hmac        = OpenSSL::HMAC.digest("SHA256", encoded_key, timestamp)
@@ -25,8 +25,8 @@ module Eko
       }
 
       payload = {
-        initiator_id: "9212094999",
-        user_code: "38130001",
+        initiator_id: "6268075916",
+        user_code: "20500001",
         recipient_id: params[:recipient_id],
         amount: params[:amount],
         timestamp: timestamp,

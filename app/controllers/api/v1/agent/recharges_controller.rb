@@ -54,8 +54,8 @@ class Api::V1::Agent::RechargesController < Api::V1::Auth::BaseController
   def activate_eko_service
     result = EkoApiClient.activate_service(
       service_code: 43,
-      initiator_id: 9212094999,
-      user_code: "38130001",
+      initiator_id: 6268075916,
+      user_code: "20500001",
       latlong: "28.613939,77.209023"
     )
     render json: result

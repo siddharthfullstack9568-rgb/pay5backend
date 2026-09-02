@@ -15,7 +15,7 @@ class EkoMobileRechargeService
     vehicle_no = params[:vehicle_no]
     p "==========card_number==========="
     p card_number
-    user_code     = ENV["EKO_USER_CODE"]      # 38130001
+    user_code     = ENV["EKO_USER_CODE"]      # 20500001
     access_key    = ENV["EKO_SECRET_KEY"]     # authenticator password
     dev_key       = ENV["EKO_DEV_KEY"]
     initiator     = ENV["EKO_INITIATOR_ID"]
@@ -99,7 +99,7 @@ class EkoMobileRechargeService
       }
     else
       payload = {
-        initiator_id: "9212094999",
+        initiator_id: "6268075916",
         source_ip: "121.121.1.1",
         user_code: user_code,
         amount: amount,

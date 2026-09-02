@@ -5,7 +5,7 @@ module Eko
     def self.add_recipient(sender_mobile, params)
       timestamp     = (Time.now.to_f * 1000).to_i.to_s
       developer_key = ENV["EKO_DEV_KEY"] || "becbbce45f79c6f5109f848acd540567"
-      access_key    = ENV["EKO_SECRET_KEY"] || "854313b5-a37a-445a-8bc5-a27f4f0fe56a"
+      access_key    = ENV["EKO_SECRET_KEY"] || "467784cf-b3a3-467e-bf31-2a2ec4380558"
 
       encoded_key = Base64.strict_encode64(access_key)
       hmac        = OpenSSL::HMAC.digest("SHA256", encoded_key, timestamp)
