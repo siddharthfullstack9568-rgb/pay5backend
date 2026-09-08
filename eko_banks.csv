@@ -1,0 +1,711 @@
+ BankID , BANK_NAME                                                                 ,BANK CODE, IMPS_Status , NEFT_Status ,VERIFICATION
+1, Axis Bank                                                                 ,IDIB000N120, Enabled     , Enabled     , On                     
+2, Bank of Baroda                                                            ,ANDB0000001, Enabled     , Enabled     , On                     
+3, Bank of India                                                             ,UTIB0000073, Enabled     , Enabled     , On                     
+4, Central Bank of India                                                     ,BARB0MAINOF, Enabled     , Enabled     , On                     
+5, Citibank                                                                  ,BKID0000150, Enabled     , Enabled     , On                     
+6, HDFC Bank                                                                 ,MAHB0000001, Enabled     , Enabled     , On                     
+7, ICICI Bank                                                                ,BACB0000001, Enabled     , Enabled     , On                     
+8, IDBI Bank                                                                 ,BNPA0000001, Enabled     , Enabled     , On                     
+9, Indian Bank                                                               ,CNRB0000001, Enabled     , Enabled     , On                     
+10, Indian Overseas Bank                                                      ,CSBK0000001, Enabled     , Enabled     , On                     
+11, Punjab National Bank                                                      ,CBIN0281467, Enabled     , Enabled     , On                     
+12, State Bank of Bikaner and Jaipur                                          ,CITI0000001, Enabled     , Enabled     , On                     
+13, Union Bank of India                                                       ,CORP0000001, Enabled     , Enabled     , On                     
+14, UCO Bank                                                                  ,COSB0000001, Enabled     , Enabled     , On                     
+16, Yes Bank                                                                  ,BKDN0710564, Enabled     , Enabled     , On                     
+17, Dena Bank                                                                 ,DBSS0IN0811, Enabled     , Enabled     , On                     
+18, Abhyudaya Co-Op Bank                                                      ,DCBL0000046, Enabled     , Enabled     , On                     
+19, Abu Dhabi Commercial Bank                                                 ,DLXB0000001, Disabled    , Enabled     , Off                    
+20, Allahabad Bank                                                            ,DNSB0000050, Enabled     , Enabled     , On                     
+21, Andhra Bank                                                               ,FDRL0000001, Enabled     , Enabled     , On                     
+22, Bank of America                                                           ,HDFC0000001, Enabled     , Enabled     , Off                    
+23, Bank of Bahrain and Kuwait                                                ,HSBC0110002, Disabled    , Enabled     , Off                    
+24, Bank of Ceylon                                                            ,ICIC0000001, Disabled    , Enabled     , Off                    
+25, Bank of Maharashtra                                                       ,IBKL0000001, Enabled     , Enabled     , On                     
+26, Bank Of Tokyo Mitsubishi Ufj Ltd                                          ,IDIB000N120, Disabled    , Enabled     , Off                    
+27, Barclays Bank                                                             ,IOBA0000255, Enabled     , Enabled     , On                     
+28, Bassein Catholic Co-Op Bank                                               ,INDB0000001, Enabled     , Enabled     , On                     
+29, Bnp Paribas Bank                                                          ,JAKA0MASTER, Enabled     , Enabled     , On                     
+30, Canara Bank                                                               ,JSBP0000008, Enabled     , Enabled     , On                     
+32, Catholic Syrian Bank                                                      ,KARB0000001, Enabled     , Enabled     , On                     
+33, Chinatrust Commercial Bank                                                ,KVBL0004108, Disabled    , Enabled     , Off                    
+34, Citizen Credit Co-Op Bank                                                 ,KKBK0000958, Enabled     , Enabled     , On                     
+35, City Union Bank                                                           ,LAVB0000661, Enabled     , Enabled     , On                     
+37, Corporation Bank                                                          ,MSNU0000001, Enabled     , Enabled     , On                     
+38, Credit Agricole Corporate And Investment Bank Calyon Bank                 ,NTBL0DEL038, Disabled    , Enabled     , Off                    
+39, DBS Bank                                                                  ,NKGS0000088, Enabled     , Enabled     , On                     
+41, Deutsche Bank AG                                                          ,PUNB0172910, Disabled    , Enabled     , Off                    
+42, Development Credit Bank                                                   ,PMCB0000030, Enabled     , Enabled     , On                     
+43, Dhanlaxmi Bank                                                            ,PUNB0012000, Enabled     , Enabled     , On                     
+44, Deposit Insurance and Credit Guarantee Corporation                        ,SRCB0000001, Disabled    , Enabled     , Off                    
+45, Dombivli Nagari Sahakari Bank                                             ,SIBL0000430, Enabled     , Enabled     , On                     
+46, Firstrand Bank                                                            ,SCBL0036001, Disabled    , Enabled     , Off                    
+47, HSBC                                                                      ,SBIN0001266, Enabled     , Enabled     , On                     
+48, IndusInd Bank                                                             ,CNRB0000404, Enabled     , Enabled     , On                     
+49, ING Vysya Bank                                                            ,TMBL0000223, Enabled     , Enabled     , On                     
+50, Janakalyan Sahakari Bank                                                  ,TJSB0000002, Enabled     , Enabled     , On                     
+51, Janata Sahakari Bank Pune                                                 ,APMC, Enabled     , Enabled     , On                     
+52, JP Morgan Chase Bank                                                      ,GBCB0000001, Disabled    , Enabled     , Off                    
+53, Kapole Co-Op Bank                                                         ,UCBA0000003, Disabled    , Enabled     , Off                    
+54, Karnataka Bank                                                            ,UBIN0551945, Enabled     , Enabled     , On                     
+55, Karur Vysya Bank                                                          ,PUNB0012001, Enabled     , Enabled     , On                     
+56, Kotak Mahindra Bank                                                       ,VIJB, Enabled     , Enabled     , On                     
+57, Mahanagar Co-Op Bank                                                      ,YESB0000001, Enabled     , Enabled     , On                     
+58, Maharashtra State Co-Op Bank                                              ,RATN0000001, Enabled     , Enabled     , On                     
+59, Mashreq Bank PSC                                                          ,PUCB, Disabled    , Enabled     , Off                    
+60, Mizuho Corporate Bank                                                     ,UBIN0RRBKGS, Disabled    , Enabled     , Off                    
+61, New India Co-Op Bank Ltd                                                  ,PSIB0000002, Disabled    , Enabled     , Off                    
+62, NKGSB Co-Op Bank                                                          ,JANA0000001, Enabled     , Enabled     , On                     
+63, Nutan Nagarik Sahakari Bank                                               ,PJSB0000016, Enabled     , Enabled     , On                     
+64, Oman International Bank Saog                                              ,HDFC0CTGCUB, Disabled    , Enabled     , Off                    
+65, Oriental Bank of Commerce                                                 ,KAIJ0000001, Enabled     , Enabled     , On                     
+66, Parsik Janata Sahakari Bank                                               ,MAHG0004221, Enabled     , Enabled     , On                     
+67, Punjab And Maharashtra Co-Op Bank                                         ,HDFC0CDACUB, Disabled    , Enabled     , On                     
+68, Punjab and Sind Bank                                                      ,SDCB0000001, Enabled     , Enabled     , On                     
+69, Rajkot Nagarik Sahakari Bank                                              ,HDFC0CSUCOB, Enabled     , Enabled     , On                     
+70, Reserve Bank of India                                                     ,YESB0NBL002, Disabled    , Enabled     , Off                    
+71, Shinhan Bank                                                              ,HDFC0CPCUBL, Enabled     , Enabled     , Off                    
+72, Societe Generale Bank                                                     ,CIUB0000001, Disabled    , Enabled     , Off                    
+73, South Indian Bank                                                         ,KCCB0ISP019, Enabled     , Enabled     , On                     
+74, Standard Chartered Bank                                                   ,ICIC00ARIHT, Enabled     , Enabled     , On                     
+75, State Bank of Hyderabad                                                   ,ASBL0000056, Enabled     , Enabled     , On                     
+76, State Bank of Mauritius                                                   ,IBKL0548PPC, Disabled    , Enabled     , Off                    
+77, State Bank of Mysore                                                      ,SMCB0001002, Enabled     , Enabled     , On                     
+78, State Bank of Travancore                                                  ,HDFC0CPCB01, Enabled     , Enabled     , On                     
+79, State Bank of Patiala                                                     ,HDFC0CPCB03, Enabled     , Enabled     , On                     
+80, Syndicate Bank                                                            ,HDFC0CPCB04, Enabled     , Enabled     , On                     
+81, Tamilnad Mercantile Bank                                                  ,HDFC0CPCB05, Enabled     , Enabled     , On                     
+82, Bank of Nova Scotia                                                       ,HDFC0CPCB06, Disabled    , Enabled     , Off                    
+83, Ahmedabad Mercantile Co-Op Bank                                           ,HDFC0CPCB07, Enabled     , Enabled     , On                     
+84, Bharat Co-Op Bank Mumbai                                                  ,HDFC0CPCB08, Enabled     , Enabled     , On                     
+85, Cosmos Co-Op Bank                                                         ,HDFC0CPCB09, Enabled     , Enabled     , On                     
+86, Federal Bank                                                              ,HDFC0CPCB10, Enabled     , Enabled     , On                     
+87, Greater Bombay Co-Op Bank                                                 ,HDFC0CPCB11, Enabled     , Enabled     , On                     
+88, Jammu and Kashmir Bank                                                    ,HDFC0CPCB12, Enabled     , Enabled     , On                     
+89, Kalupur Commercial Co-Op Bank                                             ,HDFC0CPCB13, Enabled     , Enabled     , On                     
+90, Karnataka State Apex Co-Op Bank                                           ,THRS, Disabled    , Enabled     , Off                    
+91, Kalyan Janata Sahakari Bank                                               ,VARA0000001, Enabled     , Enabled     , On                     
+92, Lakshmi Vilas Bank                                                        ,HDFC0CJALOR, Enabled     , Enabled     , On                     
+93, Mehsana Urban Co-Op Bank                                                  ,HDFC0CJBMLG, Enabled     , Enabled     , On                     
+94, Nainital Bank                                                             ,ICIC00SBSBN, Enabled     , Enabled     , On                     
+95, The Ratnakar Bank Ltd                                                     ,BARB0BUPGBX, Enabled     , Enabled     , On                     
+96, Royal Bank of Scotland                                                    ,KKBK0SPCB01, Disabled    , Enabled     , Off                    
+97, Saraswat Co-Op Bank                                                       ,KLGB0040101, Enabled     , Enabled     , On                     
+98, Shamrao Vithal Co-Op Bank                                                 ,PKGB0011063, Enabled     , Enabled     , On                     
+99, The Surat Peoples Co-Op Bank                                              ,MUBL0000019, Enabled     , Enabled     , On                     
+100, Thane Janata Sahakari Bank                                                ,ABHY0065013, Enabled     , Enabled     , On                     
+101, Tamilnadu State Apex Co-Op Bank                                           ,GSCB0000001, Enabled     , Enabled     , On                     
+102, West Bengal State Co-Op Bank                                              ,YESB0YLNS01, Disabled    , Enabled     , Off                    
+103, Vijaya Bank                                                               ,YESB0YLNS02, Enabled     , Enabled     , On                     
+108, State Bank of India                                                       ,YESB0YLNS03, Enabled     , Enabled     , On                     
+109, A P Mahesh Co-Op Urban Bank Ltd                                           ,YESB0YLNS04, Enabled     , Enabled     , On                     
+110, Karad Urban Co-Op Bank                                                    ,YESB0YLNS05, Enabled     , Enabled     , On                     
+111, Karnataka State Co-Op Apex Bank                                           ,ICIC00HSBLW, Disabled    , Enabled     , Off                    
+112, Nashik Merchants Co-Op Bank                                               ,ICIC00ADRSH, Disabled    , Enabled     , Off                    
+113, UBS AG Bank                                                               ,HCBL0000001, Disabled    , Enabled     , Off                    
+114, United Bank of India                                                      ,ICIC00TMUCB, Enabled     , Enabled     , On                     
+115, Kangra Co-Op Bank                                                         ,ICIC00PUCCB, Disabled    , Enabled     , Off                    
+116, Kangra Central Co-Op Bank                                                 ,ICIC00RUCBL, Enabled     , Enabled     , On                     
+117, Prathama Bank                                                             ,GSCB0ADC001, Enabled     , Enabled     , On                     
+119, Chaitanya Godavari Grameena Bank                                          ,KJSB0000001, Enabled     , Enabled     , On                     
+120, Allahabad UP Gramin Bank                                                  ,RSBL0000001, Disabled    , Disabled    , On                     
+121, Rushikulya Gramin Bank                                                    ,SVSH, Disabled    , Enabled     , Off                    
+122, Sharda Gramin Bank                                                        ,VSBL0000001, Disabled    , Enabled     , Off                    
+123, Nainital Almora Kshetriya Gramin Bank                                     ,BARB0BRGBXX, Disabled    , Enabled     , Off                    
+124, Baroda Rajasthan Gramin Bank                                              ,HDFC0CTRUMC, Enabled     , Enabled     , On                     
+125, Baroda Uttar Pradesh Gramin Bank                                          ,BDBL0001014, Enabled     , Enabled     , On                     
+126, Baroda Gujarat Gramin Bank                                                ,IDFB0041204, Enabled     , Enabled     , On                     
+127, Jhabua Dhar Kshetriya Gramin Bank                                         ,SBIN0RRUKGB, Disabled    , Enabled     , Off                    
+128, Dena Gujarat Gramin Bank                                                  ,NNSB0000001, Enabled     , Enabled     , Off                    
+129, Durg Rajnandgaon Gramin Bank                                              ,KVGB0000001, Disabled    , Enabled     , Off                    
+130, Baitarani Gramin Bank                                                     ,APGB0005059, Disabled    , Enabled     , Off                    
+131, Aryavart Gramin Bank                                                      ,SBIN0RRSRGB, Disabled    , Enabled     , Off                    
+133, Wainganga Krishna Gramin Bank                                             ,RMGB0000376, Disabled    , Enabled     , Off                    
+134, Uttar Bihar Gramin Bank                                                   ,SBIN0RRPUGB, Disabled    , Enabled     , Off                    
+135, Ballia Etawah Gramin Bank                                                 ,BARB0BGGBXX, Disabled    , Enabled     , Off                    
+136, Hadoti Kshetriya Gramin Bank                                              ,IBKL0478LOK, Disabled    , Enabled     , Off                    
+137, Surguja Kshetriya Gramin Bank                                             ,MCBL0960013, Disabled    , Enabled     , Off                    
+138, South Malabar Gramin Bank                                                 ,HDFC0CSUVRN, Disabled    , Enabled     , Off                    
+139, Chickmangalur Kodagu Gramin Bank                                          ,SUTB0248001, Disabled    , Enabled     , Off                    
+140, Pragathi Gramin Bank                                                      ,HDFC0CCUB01, Disabled    , Enabled     , Off                    
+141, Shreyas Gramin Bank                                                       ,APGV0004206, Disabled    , Enabled     , Off                    
+142, Satpura Narmada Kshetriya Gramin Bank                                     ,ITBL, Disabled    , Enabled     , Off                    
+143, Uttar Banga Kshetriya Gramin Bank                                         ,TBSB0000001, Disabled    , Enabled     , Off                    
+144, Vidharbha Kshetriya Gramin Bank                                           ,HDFC0CPCSBL, Disabled    , Enabled     , Off                    
+145, Madhya Bharat Gramin Bank                                                 ,HDFC0CSBB01, Disabled    , Enabled     , Off                    
+146, Gurgaon Gramin Bank                                                       ,SBIN0RRUTGB, Disabled    , Enabled     , Off                    
+147, Malwa Gramin Bank                                                         ,IBKL0101MCB, Disabled    , Enabled     , Off                    
+148, Mewar Anchalik Gramin Bank                                                ,BARC0000001, Disabled    , Enabled     , Off                    
+149, Pallavan Grama Bank                                                       ,PUNB0SUPGB5, Disabled    , Enabled     , Off                    
+150, Neelachal Gramya Bank                                                     ,BCBM0000012, Disabled    , Enabled     , Off                    
+151, Pandyan Gramin Bank                                                       ,PSIB0SGB002, Enabled     , Enabled     , Off                    
+152, Puduvai Bharathiar Grama Bank                                             ,JAKA0GRAMEN, Disabled    , Enabled     , Off                    
+153, J&K Grameen Bank                                                          ,SBIN0RRCHGB, Enabled     , Enabled     , On                     
+154, Maharashtra Gramin Bank                                                   ,SBIN0RRMEGB, Enabled     , Enabled     , On                     
+156, Rajasthan Gramin Bank                                                     ,SBIN0RRVCGB, Disabled    , Enabled     , Off                    
+157, Sarva UP Gramin Bank                                                      ,BKID0NAMRGB, Enabled     , Enabled     , On                     
+158, Sutlej Gramin Bank                                                        ,SBIN0RRDCGB, Enabled     , Enabled     , On                     
+159, Himachal Gramin Bank                                                      ,IOBA0ROGB01, Enabled     , Enabled     , Off                    
+160, Madhya Bihar Gramin Bank                                                  ,SVCB0000250, Enabled     , Enabled     , On                     
+161, Sarva Haryana Gramin Bank                                                 ,SBIN0RRLDGB, Enabled     , Enabled     , On                     
+162, Andhra Pradesh Grameena Vikas Bank                                        ,SBIN0RRARGB, Enabled     , Enabled     , On                     
+163, Arunachal Pradesh Rural Bank                                              ,SBIN0RRMIGB, Enabled     , Enabled     , On                     
+164, MG Baroda Gramin Bank                                                     ,JPCB0000001, Disabled    , Enabled     , Off                    
+165, Telangana Grameena Bank                                                   ,HDFC0CMBANK, Enabled     , Enabled     , On                     
+166, Chhattisgarh Gramin Bank                                                  ,IBKL0087PSB, Enabled     , Enabled     , On                     
+167, Ellaqui Dehati Bank                                                       ,VVSB, Enabled     , Enabled     , Off                    
+168, Mizoram Rural Bank                                                        ,HDFC0CPNSBL, Enabled     , Enabled     , On                     
+169, Jharkhand Gramin Bank                                                     ,IBKL0116MCO, Disabled    , Enabled     , Off                    
+170, Kaveri Grameena Bank                                                      ,HDFC0CJMCBL, Enabled     , Enabled     , On                     
+171, Vidisha Bhopal Kshetriya Gramin Bank                                      ,IBKL0027K01, Disabled    , Enabled     , Off                    
+172, Krishna Gramin Bank                                                       ,RNSB0000001, Disabled    , Enabled     , Off                    
+173, Langpi Dehangi Rural Bank                                                 ,HDFC0CIUCBL, Enabled     , Enabled     , On                     
+174, Meghalaya Rural Bank                                                      ,HDFC0CSUCUB, Enabled     , Enabled     , On                     
+176, Parvatiya Gramin Bank                                                     ,AJHC, Disabled    , Enabled     , Off                    
+177, Purvanchal Gramin Bank                                                    ,AIRP0000001, Enabled     , Enabled     , On                     
+179, Saurashtra Gramin Bank                                                    ,ESFB0017002, Enabled     , Enabled     , On                     
+180, Samastipur Kshetriya Gramin Bank                                          ,HDFC0CSBL02, Disabled    , Enabled     , Off                    
+181, Uttarakhand Gramin Bank                                                   ,UJVN0004428, Enabled     , Enabled     , On                     
+182, Utkal Gramya Bank                                                         ,JASB00000001, Enabled     , Enabled     , On                     
+184, Karnataka Vikas Grameena Bank                                             ,KKBK0PNSB01, Enabled     , Enabled     , On                     
+185, Andhra Pragathi Grameena Bank                                             ,UUCB0000001, Enabled     , Enabled     , On                     
+186, North Malabar Gramin Bank                                                 ,HPSC, Disabled    , Enabled     , Off                    
+187, Assam Gramin Vikash Bank                                                  ,YESB0MSB002, Enabled     , Enabled     , Off                    
+188, Kashi Gomati Samyut Gramin Bank                                           ,YESB0MSB003, Enabled     , Enabled     , On                     
+189, Mahakaushal Kshetriya Gramin Bank                                         ,YESB0MSB004, Disabled    , Enabled     , Off                    
+190, Bihar Kshetriya Gramin Bank                                               ,YESB0MSB005, Enabled     , Enabled     , On                     
+191, Kalinga Gramya Bank                                                       ,YESB0MSB006, Disabled    , Enabled     , Off                    
+192, Jaipur Thar Gramin Bank                                                   ,YESB0MSB007, Disabled    , Enabled     , Off                    
+193, Paschim Banga Gramin Bank                                                 ,UTIB0SBPP02, Enabled     , Enabled     , Off                    
+194, Rewa Sidhi Gramin Bank                                                    ,UTIB0SBPP03, Disabled    , Enabled     , Off                    
+195, Bangiya Gramin Bank                                                       ,UTIB0SBPP04, Disabled    , Enabled     , Off                    
+196, Manipur Rural Bank                                                        ,UTIB0SBPP05, Enabled     , Enabled     , Off                    
+197, Tripura Gramin Bank                                                       ,UTIB0SBPP06, Enabled     , Enabled     , Off                    
+198, Visveshwaraya Gramin Bank                                                 ,UTIB0SBPP07, Disabled    , Enabled     , Off                    
+199, Swarna Bharat Trust Cyber Grameen                                         ,UTIB0SBPP08, Disabled    , Enabled     , Off                    
+200, Neft Malwa Gramin Bank                                                    ,UTIB0SBPP09, Disabled    , Enabled     , Off                    
+201, ABN Amro Bank Credit Card                                                 ,UTIB0SBPP10, Disabled    , Enabled     , Off                    
+202, Barclays Credit Card                                                      ,UTIB0SBPP11, Disabled    , Enabled     , Off                    
+203, Citibank Credit Card                                                      ,UTIB0SBPP12, Disabled    , Enabled     , Off                    
+204, HDFC Bank Credit Card                                                     ,AKJB, Disabled    , Enabled     , Off                    
+205, HSBC Credit Card                                                          ,SPCB0251016, Disabled    , Enabled     , Off                    
+206, ICICI Bank Credit Card                                                    ,CCBL0209002, Disabled    , Enabled     , Off                    
+207, Kotak Mahindra Credit Card                                                ,ESMF0001102, Disabled    , Enabled     , Off                    
+208, State Bank of India Credit Card                                           ,SBIN0RRELGB, Disabled    , Enabled     , Off                    
+209, Standard Chartered Credit Card                                            ,SURY0BK0000, Disabled    , Enabled     , Off                    
+210, UTI Axis Bank Credit Card                                                 ,ICIC00UMUCB, Disabled    , Enabled     , Off                    
+211, Vijaya Credit Card                                                        ,HDFC0CAACOB, Disabled    , Enabled     , Off                    
+212, American Express Credit Card                                              ,APBL, Disabled    , Enabled     , Off                    
+213, Janaseva Sahakari Bank                                                    ,ORCB0ANG001, Enabled     , Enabled     , On                     
+214, Kallappanna Awade Ichalkaranji Janata Sahkari Bank                        ,ORCB0ASK001, Enabled     , Enabled     , On                     
+215, Pandharpur Merchant Co-Op Bank                                            ,ORCB0BLS001, Enabled     , Enabled     , On                     
+216, The Gayatri Co Operative Urban Bank Ltd                                   ,ORCB0BNK001, Enabled     , Enabled     , On                     
+217, Pochampally Co-Op Urban Bank                                              ,ORCB0BER001, Enabled     , Enabled     , On                     
+218, Dr Annasaheb Chougule Urban Co-Op Bank                                    ,ORCB0BWP001, Enabled     , Enabled     , On                     
+219, Surat District Co-Op Bank                                                 ,ORCB0BLR001, Enabled     , Enabled     , On                     
+220, Suco Souharda Sahakari Bank                                               ,ORCB0BOU001, Enabled     , Enabled     , On                     
+221, Pune Peoples Co-Op Bank                                                   ,ORCB0CTC001, Enabled     , Enabled     , On                     
+222, Shri Arihant Co-Op Bank                                                   ,ORCB0KJR001, Enabled     , Enabled     , On                     
+223, The National Co-Op Bank Ltd                                               ,ORCB0KHU001, Enabled     , Enabled     , On                     
+224, Parshwanath Co-Op Bank                                                    ,ORCB0KPT001, Enabled     , Enabled     , On                     
+225, Apna Sahakari Bank                                                        ,ORCB0MYB001, Enabled     , Enabled     , On                     
+226, Jalore Nagrik Sahakari Bank                                               ,ORCB0NGR001, Enabled     , Enabled     , On                     
+227, Varachha Co-Op Bank                                                       ,ORCB0SBP001, Enabled     , Enabled     , On                     
+228, Janata Co-Op Bank Malegaon                                                ,IBKL0041SCB, Enabled     , Enabled     , On                     
+229, Shri Basaveshwar Sahakari Bank Niyamit Bagalkot                           ,YESB0SHBK01, Enabled     , Enabled     , On                     
+230, Shirpur Peoples Co-Op Bank                                                ,SIDC0001013, Enabled     , Enabled     , On                     
+231, Bhartiya Mahila Bank                                                      ,ORCB0SUN001, Enabled     , Enabled     , On                     
+232, Kerala Gramin Bank                                                        ,TSAB0000001, Enabled     , Enabled     , On                     
+233, Pragathi Krishna Gramin Bank                                              ,ORCB, Enabled     , Enabled     , On                     
+234, Yadagiri Lakshmi Narasimha Swamy Co-Op Urban Bank                         ,GSCB0SKB001, Enabled     , Enabled     , On                     
+235, Hutatma Sahakari Bank                                                     ,TNSC0000001, Enabled     , Enabled     , On                     
+236, Himachal Pradesh State Co-Op Bank                                         ,ORCB0UPN001, Enabled     , Enabled     , On                     
+237, Adarsh Urban Co-Op Bank Hyderabad                                         ,KUCB, Enabled     , Enabled     , On                     
+238, Mayani Urban Co-Op Bank                                                   ,SBIN0RRNLGB, Enabled     , Enabled     , On                     
+239, Pandharpur Urban Co-Op Bank                                               ,ALLA0AU1002, Enabled     , Enabled     , On                     
+240, Vananchal Gramin Bank                                                     ,PUNB0HGB001, Enabled     , Enabled     , On                     
+241, Punjab Gramin Bank                                                        ,FINO0001089, Enabled     , Enabled     , Off                    
+242, Shri Veershaiv Co-Op Bank Ltd                                             ,IBKL0548PMC, Enabled     , Enabled     , On                     
+243, Thrissur District Central Co-Op Bank                                      ,HDFC0CKUCBL, Enabled     , Enabled     , On                     
+244, Vishweshwar Sahakari Bank Ltd                                             ,CRUB0000002, Enabled     , Enabled     , On                     
+245, Raipur Urban Mercantile Co-Op Bank                                        ,HDFC0CMAN01, Enabled     , Enabled     , On                     
+246, Zila Sahkari Bank                                                         ,IBKL0497LUC, Disabled    , Enabled     , Off                    
+247, Titwala                                                                   ,PMEC0000001, Disabled    , Enabled     , Off                    
+248, Dombivli East                                                             ,IBKL0068GP1, Disabled    , Enabled     , Off                    
+250, MGCB Main                                                                 ,UTIB0S63SBC, Disabled    , Enabled     , Off                    
+251, Sindhudurg District Central Co-Op Bank                                    ,ICIC00VSCBL, Enabled     , Enabled     , On                     
+252, Hamirpur District Co-Op Bank Mahoba                                       ,ICIC00ETAWH, Disabled    , Enabled     , Off                    
+253, Shivalik Mercantile Co-Op Bank                                            ,HDFC0CBHLUB, Enabled     , Enabled     , On                     
+254, Hasti Co-Op Bank                                                          ,HDFC0CS1812, Enabled     , Enabled     , On                     
+255, Rajgurunagar Sahakari Bank                                                ,JSBL0000002, Enabled     , Enabled     , On                     
+256, Bandhan Bank                                                              ,HDFC0CEENAD, Enabled     , Enabled     , On                     
+257, Dapoli Urban Co-Op Bank                                                   ,PUNB0HPGB04, Disabled    , Enabled     , Off                    
+258, Gujarat State Co-Op Bank                                                  ,PUNB0MBGB06, Enabled     , Enabled     , On                     
+259, Municipal Co-Op Bank                                                      ,PUNB0PGB003, Enabled     , Enabled     , On                     
+260, Rajapur Urban Co-Op Bank                                                  ,PUNB0SUPGB5, Enabled     , Enabled     , On                     
+261, Ahmedabad District Central Co-Op Bank                                     ,RRBP, Enabled     , Enabled     , On                     
+262, IDFC Bank                                                                 ,CLBL0000001, Enabled     , Enabled     , On                     
+263, Rajasthan Marudhara Gramin Bank                                           ,AUBL0002220, Enabled     , Enabled     , On                     
+264, Suvarnayug Sahakari Bank                                                  ,UTKS0001514, Enabled     , Enabled     , On                     
+265, Sutex Co-Op Bank                                                          ,PYTM0123456, Enabled     , Enabled     , On                     
+266, Nagar Sahkari Bank                                                        ,SRCB0CNS001, Disabled    , Enabled     , Off                    
+267, Irinjalakuda Town Co-Op Bank                                              ,IBKL0116AUC, Enabled     , Enabled     , On                     
+268, Shivajirao Bhosale Sahakari Bank                                          ,HDFC0CPDCCB, Enabled     , Enabled     , On                     
+269, Thane Bharat Sahakari Bank                                                ,YESB0BCBL02, Enabled     , Enabled     , On                     
+270, Maratha Co-Op Bank                                                        ,IBKL0553MSC, Enabled     , Enabled     , On                     
+271, Pithoragarh Jila Sahkari Bank                                             ,HDFC0CSTUCB, Enabled     , Enabled     , On                     
+272, Pune Cantonment Sahakari Bank                                             ,IBKL0768PJS, Enabled     , Enabled     , On                     
+273, Uttarakhand Gramin Bank                                                   ,GSCB0USAURA, Enabled     , Enabled     , On                     
+274, The Malad Sahakari Bank Ltd                                               ,YESB0GUCB01, Enabled     , Enabled     , On                     
+275, Shree Mahalaxmi Co-Op Bank                                                ,UCBA0RRBBKG, Enabled     , Enabled     , On                     
+276, Moradabad Zila Sahkari Bank                                               ,PUNB0RRBBGB, Disabled    , Enabled     , Off                    
+277, Siwan Central Co-Op Bank                                                  ,YESB0BSCB01, Enabled     , Enabled     , Off                    
+278, Madhyanchal Gramin Bank                                                   ,GSCB0BKD001, Enabled     , Enabled     , On                     
+279, Triveni Kshetriya Gramin Bank                                             ,FSFB0000001, Disabled    , Enabled     , Off                    
+280, The Ratnakar Bank Credit Card                                             ,YESB0AZSB01, Disabled    , Enabled     , Off                    
+281, Punjab National Bank Credit Card                                          ,GSCB0BRD001, Disabled    , Enabled     , Off                    
+283, IndusInd Bank Credit Card                                                 ,BNSB0000002, Disabled    , Enabled     , Off                    
+284, Canara Bank Credit Card                                                   ,HDFC0CDUCBL, Disabled    , Enabled     , Off                    
+285, IDBI Bank Credit Card                                                     ,YESB0PSB002, Disabled    , Enabled     , Off                    
+286, Andhra Bank Credit Card                                                   ,YESB0PSB003, Disabled    , Enabled     , Off                    
+287, Bank Of India Credit Card                                                 ,YESB0PSB004, Disabled    , Enabled     , Off                    
+288, Bank Of Baroda Credit Card                                                ,YESB0PSB005, Disabled    , Enabled     , Off                    
+289, Odisha Gramya Bank                                                        ,YESB0PSB006, Enabled     , Enabled     , On                     
+290, The Udaipur Mahila Samridhi Urban Co-Op Bank Ltd                          ,YESB0PSB007, Enabled     , Enabled     , On                     
+291, Delhi State Co-Op Bank                                                    ,YESB0PSB008, Disabled    , Enabled     , Off                    
+292, Citizen Co-Op Bank Noida                                                  ,HDFC0CSWSBL, Enabled     , Enabled     , On                     
+293, Chikhli Urban Co-Op Bank                                                  ,TTCB, Enabled     , Enabled     , On                     
+294, Poornawadi Nagrik Sahakari Bank                                           ,YESB0MCA002, Enabled     , Enabled     , On                     
+295, Ahmednagar Mer Co-Op Bank                                                 ,NMCB0000002, Enabled     , Enabled     , On                     
+296, Pavana Sahakari Bank                                                      ,NVNM0000002, Enabled     , Enabled     , On                     
+297, Fingrowth Co-Op Bank Ltd                                                  ,YESB0PMCB02, Enabled     , Enabled     , On                     
+298, Airtel Payments Bank                                                      ,GSCB0UUNJBL, Enabled     , Enabled     , On                     
+299, Jalgaon Peoples Co-Op Bank                                                ,HDFC0CPDPBK, Enabled     , Enabled     , On                     
+300, Vasai Vikas Co-Op Bank                                                    ,ANDB0CGGBHO, Enabled     , Enabled     , On                     
+301, Equitas Small Finance Bank                                                ,CBIN0CGDCBN, Enabled     , Enabled     , On                     
+302, Noble Co-Op Bank                                                          ,UTIB0SUCTBL, Enabled     , Enabled     , On                     
+303, Jalaun District Co-Op Bank                                                ,SRCB0SAM001, Disabled    , Enabled     , Off                    
+304, Vaidyanath Urban Co-Op Bank                                               ,MSBL, Disabled    , Enabled     , Off                    
+305, Sapthagiri Grameena Bank                                                  ,HDFC0CJMS01, Disabled    , Enabled     , Off                    
+306, Ambarnath Jai Hind Co-Op Bank                                             ,MSLM, Enabled     , Enabled     , On                     
+307, Seva Vikas Co-Op Bank                                                     ,IOBA0PGB001, Disabled    , Enabled     , Off                    
+308, Pachora Peoples Co-Op Bank                                                ,MSCI0082002, Disabled    , Enabled     , Off                    
+309, India Post Payments Bank,IBKL070TGZS, Enabled     , Enabled     , On                     
+310, Bombay Mercantile Co-Op Bank                                              ,IDUK0000032, Disabled    , Enabled     , Off                    
+311, Malda District Central Co-Op Bank                                         ,HDFC0CTBCBL, Disabled    , Enabled     , Off                    
+312, Ujjivan Small Finance Bank                                                ,SBLS0000001, Enabled     , Enabled     , On                     
+313, Jamia Co-Op Bank                                                          ,HDFC0CMPLTB, Disabled    , Enabled     , Off                    
+314, Integral Urban Co-Op Bank                                                 ,ICIC00SMSBL, Enabled     , Enabled     , Off                    
+315, ESAF Small Finance Bank                                                   ,ICIC00DDNSB, Enabled     , Enabled     , On                     
+316, Mogaveera Co-Op Bank                                                      ,ICIC00JDCCB, Disabled    , Enabled     , Off                    
+317, Akhand Anand Co-Op Bank                                                   , IBKL0485SDC, Enabled     , Enabled     , On                     
+318, Sardar Bhiladwala Pardi Peoples Co-Op Bank                                ,YESB0DZSB01, Enabled     , Enabled     , On                     
+319, Manvi Pattana Souharda Sahakari Bank                                      ,ADCC, Enabled     , Enabled     , On                     
+320, Shree Sharada Sahakari Bank                                               ,ICIC00TUCBD, Enabled     , Enabled     , On                     
+321, Aircel Smart Money                                                        ,ICIC00LKUCB, Enabled     , Enabled     , On                     
+322, Mumbai District Central Co-Op Bank                                        ,SRCB0SSB001, Enabled     , Enabled     , Off                    
+323, The Thane District Central Co-Op Bank                                     ,SRCB0SSB002, Disabled    , Enabled     , Off                    
+324, Zoroastrian Co-Op Bank                                                    ,SRCB0SSB003, Disabled    , Enabled     , Off                    
+325, Saurashtra Co-Op Bank                                                     ,SRCB0SSB004, Enabled     , Enabled     , Off                    
+326, Kurmanchal Nagar Sahkari Bank                                             ,SRCB0SSB005, Disabled    , Enabled     , Off                    
+327, Suryoday Small Finance Bank                                               ,SRCB0SSB006, Enabled     , Enabled     , On                     
+328, Akola Janata Commercial Co-Op Bank                                        ,SRCB0SSB007, Enabled     , Enabled     , On                     
+329, Sahebrao Deshmukh Co-Op Bank                                              ,SRCB0SSB008, Disabled    , Enabled     , Off                    
+330, Shri Chhatrapati Rajarshi Shahu Urban Co-Op Bank                          ,SRCB0SSB009, Disabled    , Enabled     , Off                    
+331, Akola District Central Co-Op Bank                                         ,SRCB0SSB010, Enabled     , Enabled     , On                     
+332, Hindusthan Co-Op Bank                                                     ,SRCB0SSB011, Enabled     , Enabled     , Off                    
+333, Sadhana Sahakari Bank                                                     ,SRCB0SSB012, Enabled     , Enabled     , On                     
+334, Sabarkantha District Central Co-Op Bank                                   ,SRCB0SSB013, Enabled     , Enabled     , On                     
+335, Sharad Sahakari Bank Manchar                                              ,SRCB0SSB014, Disabled    , Enabled     , Off                    
+336, Udaipur Urban Co-Op Bank                                                  ,SRCB0SSB015, Enabled     , Enabled     , On                     
+337, Vikas Souharda Co-Op Bank                                                 ,SRCB0SSB016, Enabled     , Enabled     , On                     
+338, Priyadarshani Nagari Sahakari Bank                                        ,SRCB0SSB017, Enabled     , Enabled     , On                     
+339, Kaira District Central Co-Op Bank                                         ,SRCB0SSB018, Disabled    , Enabled     , Off                    
+340, Murshidabad District Central Co-Op Bank                                   ,SRCB0SSB019, Disabled    , Enabled     , Off                    
+341, Kottayam Co-Op Urban Bank                                                 ,SRCB0SSB020, Enabled     , Enabled     , On                     
+342, Panipat Urban Co-Op Bank                                                  ,SRCB0SSB021, Disabled    , Enabled     , Off                    
+343, Telangana State Co-Op Apex Bank                                           ,SRCB0SSB022, Enabled     , Enabled     , On                     
+344, Assam Co-Op Apex Bank                                                     ,SRCB0SSB023, Disabled    , Enabled     , Off                    
+345, Paytm Payments Bank                                                       ,SRCB0SSB024, Enabled     , Enabled     , On                     
+346, Surat National Co-Op Bank                                                 ,SRCB0SSB099, Enabled     , Enabled     , On                     
+347, FINO Payments Bank                                                        ,IBKL0299RDC, Enabled     , Enabled     , On                     
+348, Narmada Malwa Gramin Bank                                                 ,YESB0NDCB01, Disabled    , Enabled     , Off                    
+349, Markandey Nagari Sahakari Bank                                            ,HDFC0CKUB01, Disabled    , Enabled     , Off                    
+350, Bijnor Urban Co-Op Bank                                                   ,HDFC0CMANCB, Disabled    , Enabled     , Off                    
+351, Adarsh Mahila Mercantile Co-Op Bank                                       ,IBKL0722CCB, Disabled    , Enabled     , Off                    
+352, Adarsh Co-Op Bank Rajasthan                                               ,PUNB0RRBAGB, Enabled     , Enabled     , On                     
+353, The Baramati Sahakari Bank Ltd                                            ,MAHB000CB01, Enabled     , Enabled     , On                     
+354, Jalna Merchant Co-Op Bank                                                 ,PUNB0RRBTGB, Enabled     , Enabled     , On                     
+355, Kanaka Mahalakshmi Co-Op Bank                                             ,HDFC0CMCUBL, Enabled     , Enabled     , On                     
+356, Lokmangal Co-Op Bank                                                      ,HDFC0CJCCBL, Enabled     , Enabled     , On                     
+357, Odisha State Co-Op Bank                                                   ,YESB0CSB001, Enabled     , Enabled     , On                     
+358, Prime Co-Op Bank Ltd                                                      ,YESB0SMCB05, Enabled     , Enabled     , On                     
+359, Solapur Janata Sahakari Bank                                              ,HDFC0CCUCBL, Disabled    , Enabled     , Off                    
+360, Raigad District Central Co-Op Bank                                        ,HDFC0CBLMSB, Enabled     , Enabled     , On                     
+361, Sangli District Central Co-Op Bank                                        ,HDFC0CGNCBL, Disabled    , Enabled     , Off                    
+362, Urban Co-Op Bank Siddharthanagar                                          ,KSCB0016001, Enabled     , Enabled     , On                     
+363, Zila Sahakari Bank Lucknow                                                ,GSCB0UTKCBL, Enabled     , Enabled     , Off                    
+364, AU Small Finance Bank                                                     ,HDFC0CWUCBL, Enabled     , Enabled     , On                     
+365, District Co-Op Bank Agra                                                  ,YESB0SSBL01, Disabled    , Enabled     , Off                    
+366, Janata Sahakari Bank Osmanabad                                            ,ABPB0000001, Disabled    , Enabled     , Off                    
+367, Rajarshi Shahu Sah Bank Pune                                              ,HDFC0CAPCBL, Enabled     , Enabled     , On                     
+368, Sant Sopankaka Sahakari Bank Saswad                                       ,ICIC00MCUBL, Disabled    , Enabled     , Off                    
+369, Deccan Merchants Co-Op Bank                                               ,HDFC0CMCBLD, Disabled    , Enabled     , Off                    
+370, Nanded Disctrict Central Co-Op Bank                                       ,HDFC0CSACBL, Disabled    , Enabled     , Off                    
+371, Bhagalpur Central Co-Op Bank                                              ,KKBK0BCCB04, Disabled    , Enabled     , Off                    
+372, Almora Urban Co-Op Bank                                                   ,ICIC00ZSBLL, Disabled    , Enabled     , Off                    
+373, Zila Sahakari Bank Haridwar                                               ,BKDN0700000, Enabled     , Enabled     , Off                    
+374, Etah District Co-Op bank                                                  ,HDFC0CTCCBK, Disabled    , Enabled     , Off                    
+375, Andhra Pradesh State Co-Op Bank                                           ,GSCB0USJSBL, Enabled     , Enabled     , On                     
+376, Jharkhand State Co-Op Bank                                                ,UTIB0CSCB22, Disabled    , Enabled     , Off                    
+377, Sangamner Merchant Co-Op Bank                                             ,YESB0BRCB01, Enabled     , Enabled     , Off                    
+378, The Satara District Central Co-Op Bank Ltd                                ,UTBI0RRBMRB, Disabled    , Enabled     , Off                    
+379, Pune District Central Co-Op Bank                                          ,YESB0NCCB01, Enabled     , Enabled     , On                     
+380, The Khamgaon Urban Co-Op Bank Ltd                                         ,IBKL0459SBS, Enabled     , Enabled     , Off                    
+381, Chartered Sahakari Bank Niyamitha                                         ,ICIC00ZSBHA, Enabled     , Enabled     , Off                    
+382, The Gandhinagar Urban Co-Op Bank Ltd                                      ,UTIB0SSSKCB, Disabled    , Enabled     , Off                    
+383, Valsad District Central Co-Op Bank Ltd                                    ,YESB0AMSB01, Enabled     , Enabled     , Off                    
+384, Jijamata Mahila Sah Bank Ltd Pune                                         ,IBKL0763OCB, Enabled     , Enabled     , Off                    
+385, Capital Small Finance Bank                                                ,ICIC00AMSBL, Enabled     , Enabled     , On                     
+386, The Muslim Co-Op Bank Ltd                                                 ,GSCB0ASCB02, Enabled     , Enabled     , On                     
+387, The Gandhinagar Nagrik Co-Op Bank Ltd                                     ,KACE0000002, Enabled     , Enabled     , On                     
+388, The Rajasthan State Co-Op Bank Ltd                                        ,UTIB0SVAUB1, Disabled    , Enabled     , Off                    
+389, Ratnagiri District Central Co-Op Bank Ltd                                 ,ICIC00KAIRA, Disabled    , Enabled     , Off                    
+390, Jila Sahakari Kendriya Bank Khandwa                                       ,HDFC0CTVCBL, Enabled     , Enabled     , On                     
+391, Jila Sahakari Kendriya Bank Maryadit Rajnandgaon                          ,GSCB0RJT001, Disabled    , Enabled     , Off                    
+392, Kokan Mercantile Co-Op Bank Ltd                                           ,EBIL0000001, Disabled    , Enabled     , Off                    
+393, Annasaheb Savant Co-Op Urban Bank                                         ,IBKL0427NCB, Disabled    , Enabled     , Off                    
+394, Prerana Co-Op Bank Ltd                                                    ,WBSC0BUCB01, Enabled     , Enabled     , On                     
+395, The Chembur Nagarik Sahakari Bank Ltd                                     ,YESB0DCBU01, Enabled     , Enabled     , On                     
+396, The Bhagyodaya Co-Op Bank Ltd                                             ,YESB0SANB99, Enabled     , Enabled     , On                     
+397, Saibaba Nagari Sahakari Bank Ltd                                          ,HDFC0CVMCBA, Enabled     , Enabled     , Off                    
+398, Central Madhya Pradesh Gramin Bank                                        ,CBIN0MPABAA, Disabled    , Enabled     , Off                    
+399, Jio Payments Bank Ltd                                                     ,ICIC0006405, Enabled     , Enabled     , On                     
+400, The Co-Op Bank Of Rajkot Gandhigram                                       ,ICIC00BALUC, Disabled    , Enabled     , Off                    
+401, Vijay Commercial Co-Op Bank                                               ,IBKL0157001, Enabled     , Enabled     , Off                    
+402, Samarth Sahakari Bank Ltd                                                 ,SVCB0016101, Enabled     , Enabled     , Off                    
+403, Khalilabad Nagar Sah Bank Semariawa                                       ,GSCB0MSN001, Disabled    , Enabled     , Off                    
+404, Zila Sahakari Bank Ltd Rampur                                             ,IBKL01077KD, Disabled    , Enabled     , Off                    
+405, Zila Sahakari Bank Ltd Moradabad                                          ,YESB0BHN001, Disabled    , Enabled     , Off                    
+406, Narmada Jhabua Gramin Bank                                                ,IBKL0041Y01, Disabled    , Enabled     , Off                    
+407, Home Credit Finance Bank                                                  ,SVCB0001002, Enabled     , Enabled     , Off                    
+408, DCB Bank                                                                  ,IBKL01192AC, Enabled     , Enabled     , On                     
+409, Bajaj Finance Bank                                                        ,IBKL01066RC, Enabled     , Enabled     , Off                    
+410, Rae Bareli District Co-Op Bank Ltd                                        ,KDCB0000001, Enabled     , Enabled     , Off                    
+411, Karnala Nagari Sahakari Bank                                              ,HDFC0CUCOBL, Enabled     , Enabled     , Off                    
+412, Meghalaya Co-Op Apex Bank                                                 ,YESB0KCUB01, Enabled     , Enabled     , On                     
+413, Bharuch District Central Co-Op Bank Ltd                                   ,GSCB0UPATAN, Enabled     , Enabled     , Off                    
+414, Gopinath Patil Parsik Janata Sahakari Bank Ltd                            ,UTIB0NBGKP1, Enabled     , Enabled     , Off                    
+415, Rbl Bank Limited                                                          ,JIOP0000001, Disabled    , Enabled     , Off                    
+416, Aditya Birla Idea Payments Bank                                           ,IBKL0150KMC, Enabled     , Enabled     , On                     
+417, Indrayani Co-Op Bank Ltd                                                  ,SNBK, Disabled    , Enabled     , Off                    
+418, Contai Co-Op Bank Ltd                                                     ,NCUB, Disabled    , Enabled     , Off                    
+419, The Punjab State Co-Op Bank                                               ,IBKL0008BCB, Disabled    , Enabled     , Off                    
+420, Kolhapur Mahila Sahakari Bank Ltd                                         ,HDFC0CMUCBL, Enabled     , Enabled     , On                     
+421, The Chandigarh State Co-Op Bank Ltd                                       ,IBKL0464PNS, Enabled     , Enabled     , Off                    
+422, The Villupuram District Central Co-Op Bank Ltd                            ,IBKL0269KTC, Disabled    , Enabled     , Off                    
+423, Uttar Pradesh State Co-Op Bank Ltd                                        ,YESB0FINCO2, Disabled    , Enabled     , Off                    
+424, The Ajara Urban Co-Op Bank Ltd                                            ,YESB0MSCB01, Enabled     , Enabled     , Off                    
+426, Samata Co-Op Development Bank                                             ,SRCB0BCB808, Disabled    , Enabled     , Off                    
+427, Bhagini Nivedita Sahakari Bank Ltd                                        ,HDFC0CADARS, Enabled     , Enabled     , Off                    
+428, Model Co-Op Bank Ltd                                                      ,GSCB0UKPCBL, Disabled    , Enabled     , Off                    
+429, The Satara Sahakari Bank Ltd                                              ,HDFC0CMPSSB, Enabled     , Enabled     , Off                    
+430, The Mehsana Nagrik Sahakari Bank Ltd                                      ,BARA, Disabled    , Enabled     , Off                    
+431, Tehri Garhwal Zila Sahakari Bank Ltd                                      ,HDFC0CMALAD, Enabled     , Enabled     , On                     
+432, Utkarsh Small Finance Bank                                                ,HDFC0CKMB01, Enabled     , Enabled     , On                     
+433, Shivajirao Bhosale Sahakari Bank Ltd                                      ,GDCB, Disabled    , Enabled     , Off                    
+435, Shahjahanpur District Central Co-Op Bank Ltd                              ,HDFC0CTUCBL, Disabled    , Enabled     , Off                    
+436, The Kolhapur Urban Co-Op Bank Ltd Kolhapur                                ,HDFC0CTSMCB, Enabled     , Enabled     , On                     
+437, Uttar Daudpur Samabay Krishi Unnayan Samity Ltd                           ,IBKL0341PUB, Disabled    , Enabled     , Off                    
+438, Durgapur Steel Peoples Co-Op Bank Ltd                                     ,IBKL0078MCC, Disabled    , Enabled     , Off                    
+439, The Sitamarhi Central Co-Op Bank                                          ,JSFB0000001, Disabled    , Enabled     , Off                    
+440, Shree Kadi Nagarik Sahakari Bank Ltd                                      ,IPOS0000001, Enabled     , Enabled     , On                     
+441, The Ahmednagar District Central Co-Op Bank Ltd                            ,HDFC0CNB311, Enabled     , Enabled     , On                     
+442, Sardargunj Mercantile Co-Op Bank Ltd                                      ,GSCB0BRC001, Enabled     , Enabled     , On                     
+443, Himatnagar Nagrik Sahakari Bank Ltd                                       ,IBKL01076SB, Enabled     , Enabled     , On                     
+444, Pali Urban Co-Op Bank Ltd                                                 ,IBKL0776SPS, Enabled     , Enabled     , On                     
+445, Janata Sahakari Bank Ltd Ajara                                            ,HDFC0CRANUJ, Enabled     , Enabled     , On                     
+446," Dr.Appashab urf Sa.Re.Patil Jasingpur Udgaon Sahakari Bank Ltd,Jaysingpur ",UTBI0SUPCB1, Enabled     , Enabled     , On                     
+447, The Ranuj Nagrik Sahakari Bank Ltd                                        ,ICIC00JUSBL, Enabled     , Enabled     , On                     
+448, Sandur Pattana Souharda Sahakari Bank Ltd                                 ,IBKL0116JSB, Enabled     , Enabled     , On                     
+449, Nirmal Urban Co-Op Bank Nagpur                                            ,HDFC0CPUB03, Enabled     , Enabled     , On                     
+450, The Mangalore Catholic Co-Op Bank Ltd                                     ,UTIB0SKCUB1, Enabled     , Enabled     , On                     
+451, Peoples Urban Co-Op Bank Ltd                                              ,UTIB0SKRN01, Enabled     , Enabled     , On                     
+452, Kheda Peoples Co-Op Bank Ltd                                              ,HDFC0CSVCBA, Enabled     , Enabled     , On                     
+453, Bhadradri Co-Op Urban Bank Ltd                                            ,JJSB, Enabled     , Enabled     , On                     
+454, The Manipur State Co-Op Bank                                              ,IBKL0218HNS, Enabled     , Enabled     , On                     
+455, The Financial Co-Op Bank Ltd                                              ,HDFC0CUCBNR, Enabled     , Enabled     , On                     
+456, The Kodungallur Town Co-Op Bank Ltd                                       ,UTIB0SSMC01, Enabled     , Enabled     , On                     
+457, Shree Panchganga Nagari Sahakari Bank                                     ,ICIC00ADCCB, Enabled     , Enabled     , On                     
+458, Malviya Urban Co-Op Bank Ltd                                              ,YESB0KNB006, Enabled     , Enabled     , On                     
+459, Nilambur Urban Co-Op Bank Ltd                                             ,YESB0KURLA1, Enabled     , Enabled     , On                     
+460, Saraspur Nagrik Sahakari Bank                                             ,IBKL01642C1, Enabled     , Enabled     , On                     
+461, Patan Nagarik Sahakari Bank Ltd                                           ,IBKL0164210, Enabled     , Enabled     , On                     
+462, The Mehsana District Central Co-Op Bank Ltd                               ,IBKL0116JCB, Enabled     , Enabled     , On                     
+463, Khagaria District Central Co-Op Bank Ltd                                  ,IBKL0232UCB, Enabled     , Enabled     , On                     
+464, The Yavatmal Urban Co-Op Bank Ltd                                         ,RSSB0000001, Enabled     , Enabled     , On                     
+465, The Aurangabad District Central Co-Op Bank Ltd                            ,NESF0000001, Enabled     , Enabled     , On                     
+466, The Rohika Central Co-Op Bank Ltd Madhubani                               ,UTIB0SADC83, Enabled     , Enabled     , On                     
+467, Uttrakhand Co-Op Bank Ltd                                                 ,IBKL070CZSB, Enabled     , Enabled     , On                     
+468, Khattri Co-Op Urban Bank Ltd                                              ,HDFC0CNICBL, Enabled     , Enabled     , On                     
+469, The Surat Mercantile Co-Op Bank Ltd                                       ,HDFC0CKMNSB, Enabled     , Enabled     , On                     
+470, Chittorgarh Urban Co-Op Bank Ltd                                          ,GSCB0UTSNBL, Enabled     , Enabled     , On                     
+471, The Kanara District Central Co-Op Bank Ltd Sirsi                          ,CBIN0MPDCAE, Enabled     , Enabled     , On                     
+472, The Karnavati Co-Op Bank Ltd                                              ,HDFC0CKAMCO, Enabled     , Enabled     , On                     
+473, The Washim Urban Co-Op Bank Ltd Washim                                    ,ICIC00SEVUC, Enabled     , Enabled     , On                     
+474, Sarvodaya Sahakari Bank Ltd                                               ,ICIC00BNDCB, Enabled     , Enabled     , On                     
+475, Ambajogai Peoples Co-Op Bank Ltd                                          ,IBKL0116DPC, Enabled     , Enabled     , On                     
+476, Manjeri Co-Op Urban Bank Ltd                                              ,IBKL0364BCB, Enabled     , Enabled     , On                     
+477, Mansing Co-Op Bank Ltd Dudhondi                                           ,GSCB0VDC001, Enabled     , Enabled     , On                     
+478, Shri Adinath Co-Op Bank Ltd                                               ,HDFC0CSSSBN, Enabled     , Enabled     , On                     
+479, The Commercial Co-Op Bank Ltd Kolhapur                                    ,ICIC00RCCBL, Enabled     , Enabled     , On                     
+480, The Vijay Co-Op Bank Ltd                                                  ,ICIC00USCBD, Enabled     , Enabled     , On                     
+481, Veraval Mercantile Co-Op Bank                                             ,ICIC00USNDC, Enabled     , Enabled     , On                     
+482, The Baroda City Co-Op Bank Ltd                                            ,GSCB0UTBNBL, Enabled     , Enabled     , On                     
+483, Shri Janata Sahakari Bank Ltd Halol                                       ,HDFC0CBCCBL, Enabled     , Enabled     , On                     
+484, The Bhavana Rishi Co-Op Urban Bank Ltd                                    ,NSPB0000001, Enabled     , Enabled     , On                     
+485, Adarsh Mahila Nagari Sahakari Bank Ltd Aurangabad                         ,HDFC0CSHSBL, Enabled     , Enabled     , On                     
+486, Associate Co-Op Bank Ltd                                                  ,IBKL0087PCS, Enabled     , Enabled     , On                     
+487, Uttarkashi Zila Sahakari Bank Ltd                                         ,HDFC0CTBMCB, Enabled     , Enabled     , On                     
+488, Sampada Sahakari Bank Ltd                                                 ,HDFC0CKNB02, Enabled     , Enabled     , On                     
+489, The Ottapalam Co-Op Urban Bank Ltd                                        ,HDFC0COMMCO, Enabled     , Enabled     , On                     
+490, The Nawanagar Co-Op Bank                                                  ,GSCB0UNNCBL, Enabled     , Enabled     , On                     
+491, The Deola Merchant Co-Op Bank Ltd                                         ,UTIB0SGUCB1, Enabled     , Enabled     , On                     
+492, Madhya Pradesh Rajya Sahakari Bank Maryadit                               ,IBKL0031MCB, Enabled     , Enabled     , On                     
+493, Aman Sahakari Bank Ltd Ichalkaranji                                       ,HDFC0CSIDDH, Enabled     , Enabled     , On                     
+494, The Manmandir Co-Op Bank Ltd Vita                                         ,YESB0CDC016, Enabled     , Enabled     , On                     
+495, Balotra Urban Co-Op Bank Ltd                                              ,KSBK0000101, Enabled     , Enabled     , On                     
+496, Rajkot District Central Co-Op Bank                                        ,UTIB0SMUB01, Enabled     , Enabled     , On                     
+497, Bhatpara Naihati Co-Op Bank Ltd                                           ,IBKL0031VCB, Enabled     , Enabled     , On                     
+498, Wai Urban Co-Op Bank Ltd                                                  ,YESB0AUCB01, Enabled     , Enabled     , On                     
+499, Navi Mumbai Co-Op Bank Ltd                                                ,HDFC0CJNB08, Disabled    , Enabled     , Off                    
+500, Sudha Co-Op Urban Bank Ltd                                                ,IBKL0443SCC, Enabled     , Enabled     , On                     
+501, Angul Central Co-Op Bank Ltd                                              ,IBKL0140PCC, Enabled     , Enabled     , On                     
+502, Balasore Bhadrak Central Co-Op Bank                                       ,IBKL0065SDC, Enabled     , Enabled     , On                     
+503, Banki Central Co-Op Bank Ltd                                              ,YESB0ACB002, Enabled     , Enabled     , On                     
+504, Berhampore Central Co-Op Bank Ltd                                         ,IBKL0101BZR, Enabled     , Enabled     , On                     
+505, Bhawanipatna Central Co-Op Bank Ltd                                       ,IBKL0510WUC, Enabled     , Enabled     , On                     
+506, Bolangir Central Co-Op Bank Ltd                                           ,YESB0MAB001, Enabled     , Enabled     , On                     
+507, Boudh Central Co-Op Bank Ltd                                              ,DMKJ0000024, Enabled     , Enabled     , On                     
+508, Cuttack Central Co-Op Bank Ltd                                            ,IBKL0452ND1, Enabled     , Enabled     , On                     
+509, Khurda Central Co-Op Bank Ltd                                             ,HDFC0CVB222, Enabled     , Enabled     , On                     
+510, Mayurbhanj Central Co-Op Bank Ltd                                         ,MDCB0680265, Enabled     , Enabled     , On                     
+511, Nayagarh Central Co-Op Bank Ltd                                           ,UTIB0SJKCB1, Enabled     , Enabled     , On                     
+512, Sambalpur Central Co-Op Bank Ltd                                          ,TGMB, Enabled     , Enabled     , On                     
+513, Samruddhi Co-Op Bank Ltd                                                  ,SHBK, Enabled     , Enabled     , On                     
+514, The District Co-Op Bank Ltd                                               ,IBKL01642SD, Disabled    , Enabled     , Off                    
+515, Sundargarh Central Co-Op Bank Ltd                                         ,UTIB0SSNS01, Enabled     , Enabled     , On                     
+516, United Puri Nimapara Central Co-Op Bank                                   ,IBKL01642RP, Enabled     , Enabled     , On                     
+517, Abhinandan Urban Co-Op Bank Ltd                                           ,HDFC0CKBS01, Enabled     , Enabled     , On                     
+518, Bhilwara Urban Co-Op Bank Ltd                                             ,IBKL0JIVAN1, Enabled     , Enabled     , On                     
+519, Sumerpur Merchantile Urban Co-Op Bank Ltd                                 ,GSCB0UGACBL, Enabled     , Enabled     , On                     
+520, The Eenadu Co-Op Urban Bank Ltd                                           ,HDFC0CDUCBE, Enabled     , Enabled     , On                     
+521, M S Co-Op Bank Ltd                                                        ,SVCB0008011, Enabled     , Enabled     , On                     
+522, Sterling Urban Co-Op Bank Ltd                                             ,HDFC0CSMSSB, Enabled     , Enabled     , On                     
+523, Vallabh Vidyanagar Commercial Co-Op Bank Ltd                              ,HDFC0CMFUCB, Enabled     , Enabled     , On                     
+524, Godavari Urban Co-Op Bank Ltd Vazirabad                                   ,ICIC0000104, Enabled     , Enabled     , On                     
+525, Baroda Central Co-Op Bank                                                 ,IBKL0029T03, Enabled     , Enabled     , On                     
+526, Darussalam Co-Op Urban Bank Ltd                                           ,YESB0GCUB01, Enabled     , Enabled     , On                     
+527, Shree Warana Sahakari Bank Ltd                                            ,HDFC0CAMCBK, Enabled     , Enabled     , On                     
+528, The Panchsheel Mercantile Co-Op Bank Ltd                                  ,HDFC0CNSBMV, Enabled     , Enabled     , On                     
+529, Unjha Nagarik Sahakari Bank Ltd                                           ,HDFC0CUDYAM, Enabled     , Enabled     , On                     
+530, Adar P D Patil Sahakari Bank                                              ,YESB0TCB002, Enabled     , Enabled     , On                     
+531, C G Rajya Sahakari Bank Maryadit Raipur                                   ,YESB0UMA002, Enabled     , Enabled     , On                     
+532, Samata Sahakari Bank Ltd                                                  ,HDFC0CSSMSB, Enabled     , Enabled     , On                     
+533, Mahesh Sahakari Bank Pune                                                 ,CBIN0MPDCAR, Enabled     , Enabled     , On                     
+534, The Madanapalle Co-Op Town Bank Ltd                                       ,CBIN0MPDCBM, Enabled     , Enabled     , On                     
+535, Shrimant Malojiraje Sahakari Bank Ltd                                     ,IBKL01708SB, Enabled     , Enabled     , On                     
+536, Deendayal Nagari Sahakari Bank Ltd                                        ,YESB0TSSB01, Enabled     , Enabled     , On                     
+537, District Co-Op Bank Ltd Dehradun                                          ,HDFC0CSRCBL, Enabled     , Enabled     , On                     
+538, The Urban Co-Op Bank Ltd Dharangaon                                       ,BOFA0MM6205, Enabled     , Enabled     , On                     
+539, Lakhimpur Urban Co-Op Bank Ltd                                            ,IBKL0868GRS, Enabled     , Enabled     , On                     
+540, Sundarlal Sawaji Urban Co-Op Bank Ltd                                     ,IBKL0069S01, Enabled     , Enabled     , On                     
+541, Manorma Co-Op Bank Ltd Solapur                                            ,HDFC0CNUCBK, Enabled     , Enabled     , On                     
+542, Junagadh Commercial Co-Op Bank Ltd                                        ,CBIN0MPDCBL, Enabled     , Enabled     , On                     
+543, Fincare Small Finance Bank Ltd                                            ,HDFC0CSLABK, Enabled     , Enabled     , On                     
+544, Idukki District Co-Op Bank Ltd                                            ,HDFC0CCBL06, Enabled     , Enabled     , On                     
+545, Jalgaon Janata Sahakari Bank Ltd                                          ,CBIN0MPDCAJ, Enabled     , Enabled     , On                     
+546, Janaseva Sahakari Bank Borivali Ltd                                       ,HDFC0CPCBLD, Enabled     , Enabled     , On                     
+547, Textile Traders Co-Op Bank Ltd                                            ,CBIN0MPDCAK, Enabled     , Enabled     , On                     
+548, Pragati Sahakari Bank Ltd                                                 ,HDFC0CPIMCO, Enabled     , Enabled     , On                     
+549, Bhavnagar District Central Co-Op Bank Ltd                                 ,YESB0MUDC01, Enabled     , Enabled     , On                     
+550, The Banaskantha District Central Co-Op Bank Ltd                           ,ICIC00INPRS, Enabled     , Enabled     , On                     
+551, Pune Merchants Co-Op Bank Ltd                                             ,KKBK0VCCB01, Enabled     , Enabled     , On                     
+552, Latur Urban Co-Op Bank                                                    ,HDFC0CVVCCB, Enabled     , Enabled     , On                     
+553, The Gandevi Peoples Co-Op Bank Ltd                                        ,GSCB0UCOBML, Enabled     , Enabled     , On                     
+554, Rajarambapu Sahakari Bank Ltd                                             ,UTIB0SKCU78, Enabled     , Enabled     , On                     
+555, Central Co-Op Bank Ltd Ara                                                ,CBIN0MPDCAV, Enabled     , Enabled     , On                     
+556, Mahaveer Co-Op Urban Bank Ltd                                             ,UTIB0SAPRR2, Enabled     , Enabled     , On                     
+557, The Jalgaon District Central Co-Op Bank Ltd                               ,HDFC0CPRCBL, Enabled     , Enabled     , On                     
+558, Etawah District Co-Op Bank Ltd Etawah                                     ,YESB0MNSB01, Enabled     , Enabled     , On                     
+559, Bihar State Co-Op Bank Ltd                                                ,HDFC0CTMCBL, Enabled     , Enabled     , On                     
+560, Almora Zila Sahakari Bank Ltd                                             ,KKBK0MNSB01, Enabled     , Enabled     , On                     
+561, Nainital District Co-Op Bank Ltd                                          ,ICIC00TPZCB, Enabled     , Enabled     , On                     
+562, North East Small Finance Bank Ltd                                         ,UTIB0SPSB01, Enabled     , Enabled     , On                     
+563, Alapuzha District Co-Op Bank Ltd                                          ,UTIB0SJCUB2, Enabled     , Enabled     , On                     
+564, Chamoli Zila Sahakari Bank Ltd                                            ,SBIN0RRCKGB, Enabled     , Enabled     , On                     
+565, Navsarjan Industrial Co-OP Bank Ltd                                       ,SUNB0000017, Enabled     , Enabled     , On                     
+566, Kankaria Maninagar Nagrik Sahakari Bank Ltd                               ,CBIN0MPDCAN, Enabled     , Enabled     , On                     
+567, The Sarvodaya Nagrik Sahkari Bank Ltd                                     ,CBIN0MPDCAO, Enabled     , Enabled     , On                     
+568, The Kurla Nagarik Sahakari Bank Ltd                                       ,HDFC0CNUCBN, Enabled     , Enabled     , On                     
+569, The Bharat Co-Op Bank Ltd                                                 ,YESB0DUCB01, Enabled     , Enabled     , On                     
+570, Jana Small Finance Bank Ltd                                               ,GSCB0PDC001, Enabled     , Enabled     , On                     
+571, Gadchiroli District Central Co-Op Bank                                    ,IBKL0041SSB, Enabled     , Enabled     , On                     
+572, Shri Anand Nagari Sahakari Bank Limited                                   ,CBIN0MPDCAH, Enabled     , Enabled     , On                     
+573, Belagavi Shree Basveshwar Co-Op Bank Ltd                                  ,YESB0MAN001, Enabled     , Enabled     , On                     
+574, Bhopal Co-Op Central Bank Ltd                                             ,CBIN0MPDCAW, Enabled     , Enabled     , On                     
+575, Kashmir Mercantile Co-Op Bank Ltd Kashmir                                 ,SMNB0000002, Enabled     , Enabled     , On                     
+576, The Sevalia Urban Co-Op Bank Ltd                                          ,HDFC0CANSCB, Enabled     , Enabled     , On                     
+577, The Laxmi Co-Op Bank Ltd Solapur                                          ,HDFC0CTUB02, Enabled     , Enabled     , On                     
+578, The Sarvodaya Co-Op Bank Ltd Mum                                          ,ICIC00AGDCB, Disabled    , Enabled     , Off                    
+579, Janakalyan Co-Op Bank Ltd                                                 ,ICIC00SIDRH, Disabled    , Enabled     , Off                    
+580, Deogiri Nagari Sahakari Bank Ltd                                          ,IBKL01248NC, Disabled    , Enabled     , Off                    
+581, The Kapurthala Central Co-Op Bank Ltd                                     ,IBKL0452JSB, Disabled    , Enabled     , Off                    
+582, Patliputra Central Co-Op Bank Ltd                                         ,YESB0NCB001, Enabled     , Enabled     , Off                    
+583, The Begusarai District Central Co-Op Bank                                 ,HARC, Disabled    , Enabled     , Off                    
+584, Kozhikode District Co-Op Bank                                             ,KKBK0SMSB01, Enabled     , Enabled     , On                     
+585, Shushruti Souharda Sahakara Bank Niyamita                                 ,GSCB0UGMCBL, Enabled     , Enabled     , On                     
+586, The Rajkot Commercial Co-Op Bank Ltd                                      ,UTIB0SRECB1, Enabled     , Enabled     , On                     
+587, The Bardoli Nagrik Sahakari bank Ltd                                      ,YESB0ASSB01, Enabled     , Enabled     , Off                    
+588, Urban Co-Op Bank Ltd Bareilly                                             ,UTIB0SIPSB1, Enabled     , Enabled     , On                     
+589, The United Co-Op Bank Ltd                                                 ,UTIB0SMCB51, Disabled    , Enabled     , Off                    
+590, The Faridabad Central Co-Op Bank Ltd                                      ,YESB0KLMDCB, Disabled    , Enabled     , Off                    
+591, The Muzaffarpur Central Co-Op Bank Ltd                                    ,IBKL0501VSB, Disabled    , Enabled     , Off                    
+592, The South Canara District Central Co-Op Bank                              ,YESB0PUCB01, Disabled    , Enabled     , Off                    
+593, The Ernakulam District Co-Op Bank Ltd                                     ,GSCB0UCHANA, Disabled    , Enabled     , Off                    
+594, Vasai Janata Sahkari Bank Ltd                                             ,UTIB0SKDC01, Disabled    , Enabled     , Off                    
+595, Sangli Sahakari Bank Ltd                                                  ,HDFC0CSSBMJ, Enabled     , Enabled     , On                     
+596, Australia And New Zealand Banking Group Ltd                               ,UTIB0SKCTBL, Disabled    , Enabled     , Off                    
+597, DMK Jaoli Bank                                                            ,TNSC0010000, Enabled     , Enabled     , On                     
+598, Doha Bank                                                                 ,INDB0BCCB02, Disabled    , Enabled     , Off                    
+599, Emirates Nbd India                                                        ,HDFC0CMNSBM, Enabled     , Enabled     , Off                    
+600, Export Import Bank Of India                                               ,HDFC0CNUCBL, Disabled    , Enabled     , Off                    
+601, Haryana State Co-Op Bank                                                  ,UTIB0SSVA01, Enabled     , Enabled     , On                     
+602, Woori Bank                                                                ,ICIC00GCUBL, Disabled    , Enabled     , Off                    
+603, Bank Internasional Indonesia                                              ,UTIB0SVNS01, Disabled    , Enabled     , Off                    
+604, Industrial Bank Of Korea                                                  ,HDFC0CBUCBG, Disabled    , Enabled     , Off                    
+605, Industrial And Commercial Bank Of China Ltd                               ,GSCB0AMR001, Disabled    , Enabled     , Off                    
+606, Keb Hana Bank                                                             ,IBKL0123NMC, Disabled    , Enabled     , Off                    
+607, Krung Thai Bank Pcl                                                       ,KKBK0KMCB02, Disabled    , Enabled     , Off                    
+608, Sir M Visvesvaraya Co-Op Bank Ltd                                         ,KKBK0MSCB01, Disabled    , Enabled     , Off                    
+609, National Australia Bank Ltd                                               ,HDFC0CSVSBL, Disabled    , Enabled     , Off                    
+610, National Bank Of Abu Dhabi PJSC                                           ,ICIC00NIDHI, Disabled    , Enabled     , Off                    
+611, National Bank For Agriculture And Rural Development                       ,YESB0ACUB01, Disabled    , Enabled     , Off                    
+612, Nagpur Nagrik Sahakari Bank Ltd                                           ,SVBL, Disabled    , Enabled     , Off                    
+613, Nagar Urban Co-Op Bank                                                    ,IBKL0078GOK, Disabled    , Enabled     , Off                    
+614, The Navnirman Co-Op Bank Ltd                                              ,ICIC00TJUCB, Enabled     , Enabled     , On                     
+615, Qatar National Bank Saq                                                   ,HDFC0CTKNSB, Disabled    , Enabled     , Off                    
+616, Rabobank International                                                    , MDBK0000034, Disabled    , Enabled     , Off                    
+617, IDRBT Bank                                                                ,HDFC0CBNSBL, Disabled    , Enabled     , Off                    
+618, Sber Bank                                                                 ,ICIC00ZSKTW, Disabled    , Enabled     , Off                    
+619, Small Industries Development Bank Of India                                ,UTIB0SSMCBL, Disabled    , Enabled     , Off                    
+620, Shikshak Sahakari Bank Ltd                                                ,GSCB0KDT001, Disabled    , Enabled     , Off                    
+621, Tumkur Grain Merchants Co-Op Bank Ltd                                     ,VIJB0SSB001, Enabled     , Enabled     , On                     
+622, United Overseas Bank Ltd                                                  ,HDFC0CLSABL, Disabled    , Enabled     , Off                    
+623, Westpac Banking Corporation                                               ,YESB0AUBHO1, Disabled    , Enabled     , Off                    
+624, Credit Suisse AG Bank                                                     ,UTIB0SSBDVG, Disabled    , Enabled     , Off                    
+625, Sumitomo Mitsui Banking Co-Op Bank                                        ,GSCB0JND001, Disabled    , Enabled     , Off                    
+626, Tripura State Co-Op Bank Ltd                                              ,STCB0000065, Disabled    , Enabled     , Off                    
+627, The Yamuna Nagar Central Co-Op Bank Ltd                                   ,UTIB0JSBR01, Disabled    , Enabled     , Off                    
+628, The Banaskantha Mercantile Co-Op Bank Ltd                                 ,INDB0NSBG01, Enabled     , Enabled     , On                     
+629, Kota Nagrik Sahkari Bank Ltd kota                                         ,CBIN0MPDCAZ, Enabled     , Enabled     , On                     
+630, The Commercial Co-Op Bank Ltd                                             ,KSCB0011001, Enabled     , Enabled     , On                     
+631, The Naroda Nagrik Co-Op Bank Ltd                                          ,UTIB0SSNSBK, Enabled     , Enabled     , On                     
+632, The Godhra Urban Co-Op Bank Ltd                                           ,IBKL0463KDC, Enabled     , Enabled     , On                     
+633, Solapur Siddheshwar Sahakari Bank Ltd                                     ,IBKL01992L1, Enabled     , Enabled     , On                     
+634, Sharad Nagari Sahakari Bank Ltd                                           ,GSCB0UTMNBL, Disabled    , Enabled     , Off                    
+635, The Tarn Taran Central Co-Op Bank Ltd                                     ,HDFC0CDMCBL, Disabled    , Enabled     , Off                    
+636, Purnea District Central Co-Op Bank                                        ,UTIB0SHUCBL, Disabled    , Enabled     , Off                    
+637, The Panchkula Central Co-Op Bank Ltd                                      ,HDFC0CSUDHA, Disabled    , Enabled     , Off                    
+638, The Kottakkal Co-Op Urban Bank Ltd                                        ,UTIB0BCCB01, Enabled     , Enabled     , On                     
+639, Jampeta Urban Co-Op Bank                                                  ,KSCB, Enabled     , Enabled     , On                     
+640, Karnataka Gramin Bank                                                     ,HDFC0CBHRAT, Enabled     , Enabled     , On                     
+641, Ahmednagar Sahar Sahakari Bank Maryadit                                   ,INDB0SCSC01, Enabled     , Enabled     , On                     
+642, Gujarat Ambuja Co-Op Bank Ltd                                             ,INDB0SCSC02, Enabled     , Enabled     , On                     
+643, The Business Co-Op Bank Ltd                                               ,INDB0SCSC03, Enabled     , Enabled     , On                     
+644, The Nawada Central Co-Op Bank Ltd                                         ,INDB0SCSC04, Enabled     , Enabled     , On                     
+645, The Adinath Co-Op Bank Ltd                                                ,INDB0SCSC05, Enabled     , Enabled     , On                     
+646, Shree Dharati Co-Op Bank Ltd                                              ,INDB0SCSC06, Enabled     , Enabled     , On                     
+647, Rajkot Peoples Co-Op Bank Ltd                                             ,INDB0SCSC07, Enabled     , Enabled     , On                     
+648, Sirsi Urban Sahakari Bank Ltd                                             ,INDB0SCSC08, Enabled     , Enabled     , On                     
+649, Sangola Urban Co-Op Bank Ltd                                              ,INDB0SCSC09, Disabled    , Enabled     , Off                    
+650, The Hoshiarpur Central Co-Op Bank Ltd                                     ,INDB0SCSC10, Disabled    , Enabled     , Off                    
+651, Vaijapur Merchants Bank                                                   ,HDFC0CSCB11, Disabled    , Enabled     , Off                    
+652, Jila Sahakari Kendriya Bank Maryadit Dhar                                 ,UTIB0SJSD01, Enabled     , Enabled     , On                     
+653, Peoples Co-Op Bank Ltd Dholka                                             ,NICB, Enabled     , Enabled     , On                     
+654, The Udaipur Mahila Urban Co-Op Bank Ltd                                   ,HDFC0CSMNSB, Enabled     , Enabled     , On                     
+655, The Aska Co-Op Central Bank Ltd                                           ,ICIC00RAMPR, Enabled     , Enabled     , On                     
+656, Keonjhar Central Co-Op Bank Ltd                                           ,HDFC0CCPUBL, Enabled     , Enabled     , On                     
+657, The Koraput Central Co-Op Bank Ltd                                        ,IBKL01011GC, Enabled     , Enabled     , On                     
+658, Nagaland Rural Bank                                                       ,IBKL0004MCB, Enabled     , Enabled     , On                     
+659, The Udupi Co-Op Town Bank                                                 ,HDFC0CICBLP, Enabled     , Enabled     , On                     
+660, Coastal Local Area Bank Ltd                                               ,HDFC0CCMCBL, Enabled     , Enabled     , On                     
+661, The Bhagyalakshmi Mahila Sah Bank                                         ,UTIB0SBUBRN, Enabled     , Enabled     , On                     
+662, The Ssk Co-Op Bank Ltd                                                    ,UTIB0SICB25, Enabled     , Enabled     , On                     
+663, Valmiki Urban Co-Op Bank Ltd                                              ,UTIB0SSUSSB, Enabled     , Enabled     , On                     
+664, The Bhandara District Central Co-Op Bank Ltd                              ,HDFC0CGCBLG, Enabled     , Enabled     , On                     
+665, The Nagar Sahakari Bank Ltd                                               ,ICIC00KHIRI, Enabled     , Enabled     , On                     
+666, The Uttarsanda Peoples Co-Op Bank                                         ,BBKM, Enabled     , Enabled     , On                     
+667, The Kakatiya Co-Op Urban Bank                                             ,UTIB0SCJMSB, Enabled     , Enabled     , On                     
+668, The Kranthi Co-Op Urban Bank Ltd                                          ,CBIN0MPDCAL, Enabled     , Enabled     , On                     
+669, Sri Vasavamba Co-Op Bank Ltd                                              ,IBKL0158SCU, Enabled     , Enabled     , On                     
+670, The Union Co-Op Bank Ltd                                                  ,IBKL0103901, Enabled     , Enabled     , On                     
+671, Citizens Co-Op Bank Ltd                                                   ,UTIB0SCSMSB, Enabled     , Enabled     , On                     
+672, Jawahar Sahakari Bank Ltd                                                 ,YESB0RAJ001, Enabled     , Enabled     , On                     
+673, Bapuji Co-Op Bank Ltd                                                     ,CBIN0MPDCAS, Enabled     , Enabled     , On                     
+674, Uttrakhand State Co-Co Bank Ltd                                           ,INDB0SSBN01, Enabled     , Enabled     , On                     
+675, Udham Singh Nagar District Co-Op Bank Ltd                                 ,DURG0000001, Enabled     , Enabled     , On                     
+676, The Burdwan Central Co-Op Bank Ltd                                        ,UTIB0SYDC01, Enabled     , Enabled     , On                     
+677, Pimpri Chinchwad Sahakari Bank                                            ,IBKL0101BBU, Enabled     , Enabled     , On                     
+678, The Maharaja Co-Op Urban Bank Ltd                                         ,HDFC0CGCCB1, Enabled     , Enabled     , On                     
+679, The Kerala State Co-Op Bank Ltd                                           ,YESB0SDC001, Enabled     , Enabled     , On                     
+680, The Visakhapatnam Co-Op Bank Ltd                                          ,HDFC0CSLKUB, Enabled     , Enabled     , On                     
+681, Sarvodaya Commercial Co-Op Bank Ltd                                       ,AMCB, Enabled     , Enabled     , On                     
+682, The Samastipur District Central Co-Op Bank Ltd                            ,UPCB0000039, Enabled     , Enabled     , On                     
+683, Belgaum Zilla Rani Channamma Mahila Sahakari Bank Niyamit                 ,PUNB0MBGB06, Enabled     , Enabled     , On                     
+684, The Chandrapur District Central Co-Op Bank Ltd                            ,DMTR, Enabled     , Enabled     , On                     
+685, Ajantha Urban Co-Op Bank Ltd                                              ,BKID0ARYAGB, Enabled     , Enabled     , On                     
+686, Mudgal Urban Co-Op Bank Ltd                                               ,BKID0NAMRGB, Enabled     , Enabled     , On                     
+687, Jodhpur Nagrik Sahakari Bank Ltd                                          ,PUNB0MBGB06, Enabled     , Enabled     , On                     
+688, Wardhman Urban Co-Op Bank Ltd                                             ,"ICIC00TSCBL\
+", Enabled     , Enabled     , On                     
+689, Mizoram Co-Op Apex Bank Ltd                                               ,IBKL0187401, Enabled     , Enabled     , On                     
+690, The Naval Dockyard Co-Op Bank Ltd                                         ,PUNB0RRBBGB, Enabled     , Enabled     , On                     
+691, Vardhaman Mahila Co-Op Urban Bank Ltd                                     ,ORCB0GUR100, Enabled     , Enabled     , On                     
+692, Jammu And Kashmir State Co-Op Bank                                        ,IDIB000N120, Enabled     , Enabled     , On                     
+693, Jivan Commercial Co-Op Bank Ltd                                           ,ANDB0000001, Enabled     , Enabled     , On                     
+694, Krishna Bhima Samruddhi Local Area Bank                                   ,UTIB0000073, Enabled     , Enabled     , On                     
+695, The Dahod Urban Co-Op Bank Ltd                                            ,BARB0MAINOF, Enabled     , Enabled     , On                     
+696, Shri Mahila Sewa Sahakari Bank Ltd                                        ,BKID0000150, Enabled     , Enabled     , On                     
+697, Mahatma Fule Urban Co-Op Bank Ltd Amravati                                ,MAHB0000001, Enabled     , Enabled     , On                     
+698, The Tiruvalla East Co-Op Bank                                             ,BACB0000001, Enabled     , Enabled     , On                     
+699, The Gandhi Co-Op Urban Bank Ltd                                           ,BNPA0000001, Enabled     , Enabled     , On                     
+700, The Anand Mercantile Co-Op Bank Ltd                                       ,CNRB0000001, Enabled     , Enabled     , On                     
+701, Nagrik Sahakari Bank Maryadit Vidisha                                     ,CSBK0000001, Enabled     , Enabled     , On                     
+702, Udyam Vikas Sahakari bank                                                 ,CBIN0281467, Enabled     , Enabled     , On                     
+703, The Texco Co-Op Bank Ltd                                                  ,CITI0000001, Enabled     , Enabled     , On                     
+704, Uma Co-Op Bank Ltd                                                        ,CORP0000001, Enabled     , Enabled     , On                     
+705, Shri Shivayogi Murughendra Swami Urban Co-Op Bank Ltd                     ,COSB0000001, Enabled     , Enabled     , On                     
+706, Jila Sahakari Kendriya Bank Maryadit Vidisha                              ,BKDN0710564, Enabled     , Enabled     , On                     
+707, Jila Sahakari Kendriya Bank Maryadit Ujjain                               ,DBSS0IN0811, Enabled     , Enabled     , On                     
+708, Jila Sahakari Kendriya Bank Maryadit Dewas                                ,DCBL0000046, Enabled     , Enabled     , On                     
+709, The Sultan S Battery Co-Op Urban Bank Ltd                                 ,DLXB0000001, Enabled     , Enabled     , On                     
+710, Sri Rama Co-Op Bank Ltd                                                   ,DNSB0000050, Enabled     , Enabled     , On                     
+711, Sri Guru Raghavendra Sahakara Bank Niyamitha                              ,FDRL0000001, Enabled     , Enabled     , On                     
+712, Navanagara Urban Co-Op Bank Ltd                                           ,HDFC0000001, Enabled     , Enabled     , On                     
+713, Subhadra Local Area Bank Ltd                                              ,HSBC0110002, Enabled     , Enabled     , On                     
+714, Parbhani District Central Co-Op Bank                                      ,ICIC0000001, Disabled    , Enabled     , Off                    
+715, The Gopalganj Central Gopalganj Co-Op Bank Ltd                            ,IBKL0000001, Disabled    , Enabled     , Off                    
+716, The Bhatkal Urban Co-Op Bank Ltd                                          ,IDIB000N120, Disabled    , Enabled     , Off                    
+717, Vaishya Nagari Sahakari Bank Ltd                                          ,IOBA0000255, Enabled     , Enabled     , On                     
+718, The Fatehgarh Sahib Central Co-Op Bank Ltd                                ,INDB0000001, Disabled    , Enabled     , Off                    
+719, Indore Cloth Mkt Co-Op Bank                                               ,JAKA0MASTER, Disabled    , Enabled     , Off                    
+720, The Solapur Dist Central Co-Op Bank                                       ,JSBP0000008, Disabled    , Enabled     , Off                    
+721, Latur District Central Co-Op Bank Ltd                                     ,KARB0000001, Disabled    , Enabled     , Off                    
+722, NSDL Payment Bank Limited                                                 ,KVBL0004108, Enabled     , Enabled     , On                     
+723, The Pimpalgaon Merchants Co-Op Bank Ltd                                   ,KKBK0000958, Enabled     , Enabled     , On                     
+724, Mizoram Urban Co-Op Development Bank                                      ,LAVB0000661, Enabled     , Enabled     , On                     
+725, Indore Paraspar Sahakari Bank Ltd                                         ,MSNU0000001, Enabled     , Enabled     , On                     
+726, The Co-Op Bank Of Mehsana Ltd                                             ,NTBL0DEL038, Enabled     , Enabled     , On                     
+727, The Gurgaon Central Co-Op Bank Ltd                                        ,NKGS0000088, Disabled    , Enabled     , Off                    
