@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "eps": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@ekoindia/eps-context-mcp@latest"
+      ],
+      "env": {}
+    }
+  }
+}

@@ -7,6 +7,7 @@ require "openssl"
 require "base64"
 
 class EkoBiometricKycService
+  p "============EkoBiometricKycService==========ccc===="
   BASE_URL = "https://api.eko.in:25002/ekoicici"
 
   def self.biometric_kyc(customer_id:, aadhar:, piddata:, user_code:)

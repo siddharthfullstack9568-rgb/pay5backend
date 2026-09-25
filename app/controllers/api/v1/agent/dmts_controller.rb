@@ -2,6 +2,7 @@ class Api::V1::Agent::DmtsController < Api::V1::Auth::BaseController
   # protect_from_forgery with: :null_session
 
  def get_customer
+  p "===========ddddd"
     if params[:phone_number].blank?
       return render json: {
         status: 400,
@@ -18,10 +19,19 @@ class Api::V1::Agent::DmtsController < Api::V1::Auth::BaseController
       }, status: :not_found
     end
 
+    eko_profile = EkoDmt::GetSenderProfileService.new(
+      customer_id: params[:phone_number],
+      user_code:   user.user_code
+    ).call
+
+    p "============eko_profile=========="
+    p eko_profile
+
     render json: {
       status: 200,
       message: "Customer found",
-      data: user
+      data: user,
+      eko_profile: eko_profile
     }
   end
 
@@ -211,21 +221,36 @@ class Api::V1::Agent::DmtsController < Api::V1::Auth::BaseController
 # EKO_INITIATOR_ID = 6268075916
 # EKO_USER_CODE = 20500001
 # EKO_INITIATOR_ID = 6268075916
-# EKO_USER_CODE = 38130001
+# EKO_USER_CODE = 20500001
   def biometric
-  result = Eko::BiometricEkycService.new(
-    customer_id: params[:customerMobile],
-    initiator_id: "6268075916",
-    client_ref_id: Time.current.strftime("%Y%m%d%H%M%S%L"),
-    aadhar: params[:aadhaarNumber],
-    piddata: params[:piddata]
-  ).call
+    user_wallet = current_user.wallet
+    if user_wallet.nil? || user_wallet.balance.to_f < 10
+      return render json: {
+        status: false,
+        message: "Low balance for KYC"
+      }, status: :unprocessable_entity
+    end
 
-  render json: result
-end
+    result = Eko::BiometricEkycService.new(
+      customer_id: params[:customerMobile],
+      initiator_id: "6268075916",
+      client_ref_id: Time.current.strftime("%Y%m%d%H%M%S%L"),
+      aadhar: params[:aadhaarNumber],
+      piddata: params[:piddata]
+    ).call
+
+    if result["status"] == 0
+      user_code = result.dig("data", "user_code")
+      if user_code.present?
+        User.find_by(phone_number: params[:customerMobile])&.update(user_code: user_code)
+      end
+    end
+
+    render json: result
+  end
 
   def verify_otp
-    required = %i[otp otp_ref_id kyc_request_id]
+    required = %i[otp otp_ref_id kyc_request_id customerMobile]
 
     missing = required.select { |k| params[k].blank? }
     if missing.any?
@@ -235,8 +260,13 @@ end
       }, status: :bad_request
     end
 
-    Rails.logger.info "========phone_number======="
-    Rails.logger.info current_user.phone_number
+    target_user = User.find_by(phone_number: params[:customerMobile])
+    unless target_user
+      return render json: {
+        status: false,
+        message: "Customer not found"
+      }, status: :not_found
+    end
 
     # ✅ WALLET CHECK (before API call)
     user_wallet = current_user.wallet
@@ -256,7 +286,7 @@ end
 
     # 🔹 Call EKO OTP Verify API
     resp = EkoDmt::DmtOtpVerifyService.new(
-      customer_id:    current_user.phone_number,
+      customer_id:    params[:customerMobile],
       initiator_id:   "6268075916",
       otp:            params[:otp],
       otp_ref_id:     params[:otp_ref_id],
@@ -266,11 +296,15 @@ end
     Rails.logger.info "========EKO OTP VERIFY RESPONSE========"
     Rails.logger.info resp.inspect
 
+    user_code = resp.dig("data", "user_code")
+    kyc_attrs = { eko_biometric_kyc: true }
+    kyc_attrs[:user_code] = user_code if user_code.present?
+
     status = resp.dig("data", "status") || resp["status"]
     # ✅ SUCCESS CASE
     if status == 0
       ActiveRecord::Base.transaction do
-        current_user.update!(eko_biometric_kyc: true)
+        target_user.update!(kyc_attrs)
         user_wallet.update!(balance: user_wallet.balance.to_f - 10)
       end
     end
@@ -284,7 +318,7 @@ end
 
     if success_descriptions.include?(description)
       ActiveRecord::Base.transaction do
-        current_user.update!(eko_biometric_kyc: true)
+        target_user.update!(kyc_attrs)
         user_wallet.update!(balance: user_wallet.balance.to_f - 10)
       end
 
@@ -317,6 +351,7 @@ end
 
 
   def biometric_kyc
+    p "==========biometric_kyc==============="
     customer_id = params[:customer_id]
     aadhar      = params[:aadhar]
     pidfile     = params[:piddata]
@@ -397,7 +432,7 @@ end
       account_number: params[:account_number],
       initiator_id: "6268075916",
       customer_id:  "6268075916",
-      user_code:    "38130001",
+      user_code:    "20500001",
       client_ref_id: "BANKVERIFY#{Time.now.to_i}"
     ).call
 
@@ -606,7 +641,7 @@ def sender_details
     # 🔹 Call EKO DMT Transfer
     resp = EkoDmt::TransferService.call(
       initiator_id: "6268075916",
-      user_code: user_check.user_code,
+      user_code: "20500001",
       recipient_id: params[:recipient_id],
       amount: params[:amount],
       customer_id: params[:customer_id]
@@ -804,7 +839,7 @@ def sender_details
   response = EkoDmt::AddRecipientService.call(
     sender_mobile: vendor_user.phone_number,
     initiator_id: "6268075916",
-    user_code: vendor_user.user_code,
+    user_code: "20500001",
     recipient_mobile: params[:receiver_mobile_number],
     recipient_type: 3,
     recipient_name: params[:receiver_name],
@@ -963,7 +998,7 @@ end
   # EKO API CALL - DO NOT MODIFY
   response = EkoDmt::FinoTransferService.call(
     initiator_id: "6268075916",
-    user_code: user_check.user_code,
+    user_code: "20500001",
     recipient_id: params[:recipient_id],
     amount: params[:amount],
     customer_id: user_check.phone_number,

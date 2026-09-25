@@ -79,6 +79,15 @@ module EkoDmt
         response.body
       end
 
+      # Eko sometimes returns a plain-text body (e.g. 5xx "Internal server error")
+      # instead of JSON. Normalize to a Hash so callers can safely use dig/[].
+      # Status must be a non-zero string-keyed value: callers check
+      # `response["status"] || response.dig("data", "status")` against
+      # Eko's own 0-means-success convention, where `nil.to_i == 0`.
+      unless parsed_response.is_a?(Hash)
+        parsed_response = { "status" => 1, "message" => parsed_response.to_s }
+      end
+
       Rails.logger.info "Parsed Response: #{parsed_response}"
 
       parsed_response
@@ -88,7 +97,7 @@ module EkoDmt
       Rails.logger.error e.message
       Rails.logger.error e.backtrace.join("\n")
 
-      { status: false, message: e.message }
+      { "status" => 1, "message" => e.message }
     end
 
     # ================= HELPER METHODS =================

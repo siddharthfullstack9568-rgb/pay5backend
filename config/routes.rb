@@ -481,6 +481,7 @@ Rails.application.routes.draw do
         post "dmts/update_dmt_transaction"
         post "dmts/benfisries_dmt_transaction"
         post "dmts/beneficiary_fetch"
+        post "dmts/bank_verify"
         post "dmts/beneficiary_list"
         get "dmts/all_beneficiary"
         post "dmts/user_onboard"
