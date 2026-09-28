@@ -796,12 +796,12 @@ def sender_details
     # --------------------------------------------------
     # CHECK CURRENT USER EKO USER CODE
     # --------------------------------------------------
-    if current_user.user_code.blank?
-      return render json: {
-        success: false,
-        message: "User code not found. Please contact support."
-      }, status: :unprocessable_entity
-    end
+    # if current_user.user_code.blank?
+    #   return render json: {
+    #     success: false,
+    #     message: "User code not found. Please contact support."
+    #   }, status: :unprocessable_entity
+    # end
 
     # --------------------------------------------------
     # SENDER MOBILE
