@@ -449,6 +449,24 @@ class Api::V1::Agent::DmtsController < Api::V1::Auth::BaseController
       }, status: :unprocessable_entity
     end
 
+    account_status = parsed.dig("data", "account_status")
+
+    if account_status.blank?
+      return render json: {
+        success: false,
+        message: "Bank account verification is still processing. Please try again in a moment.",
+        data: parsed["data"]
+      }, status: :unprocessable_entity
+    end
+
+    unless account_status == "VALID"
+      return render json: {
+        success: false,
+        message: "Bank account verification failed: #{parsed.dig('data', 'account_status_code') || account_status}",
+        data: parsed["data"]
+      }, status: :unprocessable_entity
+    end
+
     # 🔵 STEP 3: Wallet deduction (FINTECH SAFE)
     fee = 3.0
     wallet = current_user.wallet
@@ -745,223 +763,224 @@ def sender_details
 
 
   def dmt_transactions
-  required = %i[
-    receiver_mobile_number
-    account_number
-    ifsc_code
-    bank_name
-  ]
+    required = %i[
+      receiver_mobile_number
+      account_number
+      ifsc_code
+      bank_name
+    ]
 
-  missing = required.select { |p| params[p].blank? }
+    missing = required.select { |p| params[p].blank? }
 
-  if missing.any?
-    return render json: {
-      success: false,
-      message: "Missing: #{missing.join(', ')}"
-    }, status: :bad_request
-  end
+    if missing.any?
+      return render json: {
+        success: false,
+        message: "Missing: #{missing.join(', ')}"
+      }, status: :bad_request
+    end
 
-  # --------------------------------------------------
-  # FIND BANK
-  # --------------------------------------------------
-  bank = EkoBank.find_by(name: params[:bank_name])
+    # --------------------------------------------------
+    # FIND BANK
+    # --------------------------------------------------
+    bank = EkoBank.find_by("name ILIKE ?", params[:bank_name])
 
-  unless bank
-    return render json: {
-      success: false,
-      message: "Bank not found"
-    }, status: :unprocessable_entity
-  end
+    unless bank
+      return render json: {
+        success: false,
+        message: "Bank not found"
+      }, status: :unprocessable_entity
+    end
 
-  amount = params[:amount].to_f
+    amount = params[:amount].to_f
 
-  # --------------------------------------------------
-  # CHECK CURRENT USER EKO USER CODE
-  # --------------------------------------------------
-  if current_user.user_code.blank?
-    return render json: {
-      success: false,
-      message: "User code not found. Please contact support."
-    }, status: :unprocessable_entity
-  end
+    # --------------------------------------------------
+    # CHECK CURRENT USER EKO USER CODE
+    # --------------------------------------------------
+    if current_user.user_code.blank?
+      return render json: {
+        success: false,
+        message: "User code not found. Please contact support."
+      }, status: :unprocessable_entity
+    end
 
-  # --------------------------------------------------
-  # SENDER MOBILE
-  # --------------------------------------------------
-  sender_mobile = params[:sender_mobile_number]
+    # --------------------------------------------------
+    # SENDER MOBILE
+    # --------------------------------------------------
+    sender_mobile = params[:sender_mobile_number]
 
-  if sender_mobile.blank?
-    return render json: {
-      success: false,
-      message: "sender_mobile_number is required"
-    }, status: :bad_request
-  end
+    if sender_mobile.blank?
+      return render json: {
+        success: false,
+        message: "sender_mobile_number is required"
+      }, status: :bad_request
+    end
 
-  # --------------------------------------------------
-  # FIND SENDER USER
-  # --------------------------------------------------
-  user_check = User.find_by(
-    phone_number: sender_mobile
-  )
-
-  Rails.logger.info "========== USER CHECK =========="
-  Rails.logger.info user_check.inspect
-
-  unless user_check
-    return render json: {
-      success: false,
-      message: "Sender user not found with this mobile number"
-    }, status: :not_found
-  end
-
-  # --------------------------------------------------
-  # FIND / CREATE VENDOR USER
-  # --------------------------------------------------
-  vendor_user = VendorUser.find_or_initialize_by(
-    phone_number: user_check.phone_number
-  )
-
-  vendor_user.full_name =
-    params[:sender_full_name].presence ||
-    params[:receiver_name].presence ||
-    user_check.full_name
-
-  vendor_user.user_code = user_check.user_code
-
-  vendor_user.save!
-
-  Rails.logger.info "========== VENDOR USER =========="
-  Rails.logger.info vendor_user.inspect
-
-  # --------------------------------------------------
-  # EKO ADD RECIPIENT
-  # --------------------------------------------------
-  response = EkoDmt::AddRecipientService.call(
-    sender_mobile: vendor_user.phone_number,
-    initiator_id: "6268075916",
-    user_code: "20500001",
-    recipient_mobile: params[:receiver_mobile_number],
-    recipient_type: 3,
-    recipient_name: params[:receiver_name],
-    ifsc: params[:ifsc_code],
-    account: params[:account_number],
-    bank_id: bank.bank_id,
-    account_type: 1
-  )
-
-  Rails.logger.info "========== EKO ADD RECIPIENT RESPONSE =========="
-  Rails.logger.info response.inspect
-
-  # --------------------------------------------------
-  # CHECK EKO RESPONSE
-  # EKO STATUS 0 = SUCCESS
-  # --------------------------------------------------
-  status = response["status"] || response.dig("data", "status")
-
-  unless status.to_i == 0
-    return render json: {
-      success: false,
-      message: response["message"] ||
-               response.dig("data", "message") ||
-               "EKO recipient creation failed",
-      data: response
-    }, status: :unprocessable_entity
-  end
-
-  # --------------------------------------------------
-  # GET RECIPIENT ID
-  # --------------------------------------------------
-  recipient_id =
-    response.dig("data", "recipient_id") ||
-    response["recipient_id"]
-
-  unless recipient_id.present?
-    return render json: {
-      success: false,
-      message: "Recipient ID not received from EKO",
-      data: response
-    }, status: :unprocessable_entity
-  end
-
-  Rails.logger.info "========== RECIPIENT ID =========="
-  Rails.logger.info recipient_id
-
-  # --------------------------------------------------
-  # GENERATE TRANSACTION ID
-  # --------------------------------------------------
-  txn_id = "TXN#{Time.current.strftime('%Y%m%d%H%M%S%L')}"
-
-  # --------------------------------------------------
-  # CREATE DMT RECORD
-  # --------------------------------------------------
-  begin
-    dmt = Dmt.create!(
-      sender_full_name: vendor_user.full_name,
-      sender_mobile_number: vendor_user.phone_number,
-
-      receiver_name: params[:receiver_name],
-      receiver_mobile_number: params[:receiver_mobile_number],
-
-      account_number: params[:account_number],
-      confirm_account_number: params[:confirm_account_number],
-
-      ifsc_code: params[:ifsc_code],
-      bank_name: params[:bank_name],
-      branch_name: params[:branch_name],
-
-      user_id: current_user.id,
-      parent_id: current_user.parent_id,
-
-      amount: amount,
-
-      status: "recipient_added",
-      beneficiaries_status: true,
-
-      vendor_user_id: vendor_user.id,
-      recipient_id: recipient_id,
-
-      txn_id: txn_id
+    # --------------------------------------------------
+    # FIND SENDER USER
+    # --------------------------------------------------
+    user_check = User.find_by(
+      phone_number: sender_mobile
     )
 
-    Rails.logger.info "========== DMT CREATED SUCCESSFULLY =========="
-    Rails.logger.info dmt.inspect
+    Rails.logger.info "========== USER CHECK =========="
+    Rails.logger.info user_check.inspect
 
-    render json: {
-      success: true,
-      message: "Beneficiary added & DMT transaction created successfully",
-      data: {
-        dmt: dmt,
-        dmt_transaction: dmt,
-        vendor_user: vendor_user,
-        recipient_id: recipient_id
-      }
-    }, status: :created
+    unless user_check
+      return render json: {
+        success: false,
+        message: "Sender user not found with this mobile number"
+      }, status: :not_found
+    end
 
-  rescue ActiveRecord::RecordInvalid => e
+    # --------------------------------------------------
+    # FIND / CREATE VENDOR USER
+    # --------------------------------------------------
+    vendor_user = VendorUser.find_or_initialize_by(
+      phone_number: user_check.phone_number
+    )
 
-    Rails.logger.error "========== DMT VALIDATION ERROR =========="
+    vendor_user.full_name =
+      params[:sender_full_name].presence ||
+      params[:receiver_name].presence ||
+      user_check.full_name
+
+    vendor_user.user_code = user_check.user_code
+
+    vendor_user.save!
+
+    Rails.logger.info "========== VENDOR USER =========="
+    Rails.logger.info vendor_user.inspect
+
+    # --------------------------------------------------
+    # EKO ADD RECIPIENT
+    # --------------------------------------------------
+    response = EkoDmt::AddRecipientService.call(
+      sender_mobile: vendor_user.phone_number,
+      initiator_id: "6268075916",
+      user_code: "20500001",
+      recipient_mobile: params[:receiver_mobile_number],
+      recipient_type: 3,
+      recipient_name: params[:receiver_name],
+      ifsc: params[:ifsc_code],
+      account: params[:account_number],
+      bank_id: bank.bank_id,
+      account_type: 1
+    )
+
+    Rails.logger.info "========== EKO ADD RECIPIENT RESPONSE =========="
+    Rails.logger.info response.inspect
+
+    # --------------------------------------------------
+    # CHECK EKO RESPONSE
+    # EKO STATUS 0 = SUCCESS
+    # --------------------------------------------------
+    status = response["status"] || response.dig("data", "status")
+
+    unless status.to_i == 0
+      return render json: {
+        success: false,
+        message: response["message"] ||
+                 response.dig("data", "message") ||
+                 "EKO recipient creation failed",
+        data: response
+      }, status: :unprocessable_entity
+    end
+
+    # --------------------------------------------------
+    # GET RECIPIENT ID
+    # --------------------------------------------------
+    recipient_id =
+      response.dig("data", "recipient_id") ||
+      response["recipient_id"]
+
+    unless recipient_id.present?
+      return render json: {
+        success: false,
+        message: "Recipient ID not received from EKO",
+        data: response
+      }, status: :unprocessable_entity
+    end
+
+    Rails.logger.info "========== RECIPIENT ID =========="
+    Rails.logger.info recipient_id
+
+    # --------------------------------------------------
+    # GENERATE TRANSACTION ID
+    # --------------------------------------------------
+
+    txn_id = "TXN#{Time.current.strftime('%Y%m%d%H%M%S%L')}"
+
+    # --------------------------------------------------
+    # CREATE DMT RECORD
+    # --------------------------------------------------
+    begin
+      dmt = Dmt.create!(
+        sender_full_name: vendor_user.full_name,
+        sender_mobile_number: vendor_user.phone_number,
+
+        receiver_name: params[:receiver_name],
+        receiver_mobile_number: params[:receiver_mobile_number],
+
+        account_number: params[:account_number],
+        confirm_account_number: params[:confirm_account_number],
+
+        ifsc_code: params[:ifsc_code],
+        bank_name: params[:bank_name],
+        branch_name: params[:branch_name],
+
+        user_id: current_user.id,
+        parent_id: current_user.parent_id,
+
+        amount: amount,
+
+        status: "recipient_added",
+        beneficiaries_status: true,
+
+        vendor_user_id: vendor_user.id,
+        recipient_id: recipient_id,
+
+        txn_id: txn_id
+      )
+
+      Rails.logger.info "========== DMT CREATED SUCCESSFULLY =========="
+      Rails.logger.info dmt.inspect
+
+      render json: {
+        success: true,
+        message: "Beneficiary added & DMT transaction created successfully",
+        data: {
+          dmt: dmt,
+          dmt_transaction: dmt,
+          vendor_user: vendor_user,
+          recipient_id: recipient_id
+        }
+      }, status: :created
+
+    rescue ActiveRecord::RecordInvalid => e
+
+      Rails.logger.error "========== DMT VALIDATION ERROR =========="
+      Rails.logger.error e.message
+      Rails.logger.error e.record.errors.full_messages.inspect
+
+      render json: {
+        success: false,
+        message: "DMT transaction could not be created",
+        errors: e.record.errors.full_messages
+      }, status: :unprocessable_entity
+    end
+
+  rescue => e
+
+    Rails.logger.error "========== DMT TRANSACTION ERROR =========="
+    Rails.logger.error e.class.name
     Rails.logger.error e.message
-    Rails.logger.error e.record.errors.full_messages.inspect
+    Rails.logger.error e.backtrace.first(10).join("\n")
 
     render json: {
       success: false,
-      message: "DMT transaction could not be created",
-      errors: e.record.errors.full_messages
+      message: "Transaction failed: #{e.message}"
     }, status: :unprocessable_entity
   end
-
-rescue => e
-
-  Rails.logger.error "========== DMT TRANSACTION ERROR =========="
-  Rails.logger.error e.class.name
-  Rails.logger.error e.message
-  Rails.logger.error e.backtrace.first(10).join("\n")
-
-  render json: {
-    success: false,
-    message: "Transaction failed: #{e.message}"
-  }, status: :unprocessable_entity
-end
 
 
   def send_otp
