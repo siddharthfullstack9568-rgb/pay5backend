@@ -426,7 +426,23 @@ class Api::V1::Agent::DmtsController < Api::V1::Auth::BaseController
       }, status: :ok
     end
 
-    # 🔵 STEP 2: Call EKO only if not verified
+    # 🔵 STEP 2: Wallet must have enough balance BEFORE we hit EKO (paid API call)
+    fee = 3.0
+    wallet = current_user.wallet
+
+    return render json: {
+      success: false,
+      message: "Wallet not found"
+    }, status: :unprocessable_entity unless wallet
+
+    if wallet.balance.to_f < fee
+      return render json: {
+        success: false,
+        message: "Insufficient wallet balance for bank verification"
+      }, status: :unprocessable_entity
+    end
+
+    # 🔵 STEP 3: Call EKO only if not verified and wallet has sufficient balance
     response = EkoDmt::BankAccountVerifyService.new(
       ifsc: params[:ifsc].upcase,
       account_number: params[:account_number],
@@ -444,8 +460,7 @@ class Api::V1::Agent::DmtsController < Api::V1::Auth::BaseController
     unless parsed && parsed["status"] == 0
       return render json: {
         success: false,
-        message: parsed&.dig("message") || "EKO error",
-        raw_response: raw_body
+        message: parsed&.dig("message") || "EKO error"
       }, status: :unprocessable_entity
     end
 
@@ -467,22 +482,7 @@ class Api::V1::Agent::DmtsController < Api::V1::Auth::BaseController
       }, status: :unprocessable_entity
     end
 
-    # 🔵 STEP 3: Wallet deduction (FINTECH SAFE)
-    fee = 3.0
-    wallet = current_user.wallet
-
-    return render json: {
-      success: false,
-      message: "Wallet not found"
-    }, status: :unprocessable_entity unless wallet
-
-    if wallet.balance.to_f < fee
-      return render json: {
-        success: false,
-        message: "Insufficient wallet balance for bank verification"
-      }, status: :unprocessable_entity
-    end
-
+    # 🔵 STEP 4: Wallet deduction (FINTECH SAFE) — balance already confirmed in STEP 2
     txn_id = "BANKVERIFY#{Time.current.to_i}"
 
     ActiveRecord::Base.transaction do
