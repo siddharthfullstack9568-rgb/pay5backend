@@ -6,7 +6,7 @@ require "base64"
 
 module EkoDmt
   class FinoTransferService
-    p "==========FinoTransferService============="
+    p "==========FinoTransferService========ccc====="
     include HTTParty
 
     BASE_URL = "https://api.eko.in:25002/ekoicici/v3/customer/payment/dmt-fino"
@@ -49,19 +49,14 @@ module EkoDmt
 
       body = {
         initiator_id: initiator_id,
-        user_code: user_code,
         recipient_id: recipient_id,
         amount: amount,
-        timestamp: timestamp,
-        currency: currency,
         customer_id: customer_id,
+        otp: otp,
+        otp_ref_id: otp_ref_id,
         client_ref_id: client_ref_id,
         channel: channel,
-        latlong: latlong,
-        state: state,
-        recipient_id_type: recipient_id_type,
-        otp: otp,
-        otp_ref_id: otp_ref_id
+        state: state
       }
 
       # ================= LOG REQUEST =================

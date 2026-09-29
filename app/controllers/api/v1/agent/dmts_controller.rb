@@ -666,13 +666,16 @@ def sender_details
     )
 
     # 🔹 Safely extract status
-    status = resp.dig("data", "status") || resp[:status] || resp["status"]
+    status = resp.dig("data", "status") || resp["status"]
 
     # ❌ If EKO failed
     if status.to_i != 0
+      error_message = resp["message"] || resp.dig("data", "message")
+      error_detail  = resp.dig("data", "description")
+
       return render json: {
         success: false,
-        message: resp.dig("data", "message") || resp[:message] || "Money transfer failed"
+        message: [error_message, error_detail].compact.uniq.join(": ").presence || "Money transfer failed"
       }, status: :unprocessable_entity
     end
 
@@ -680,7 +683,7 @@ def sender_details
     render json: {
       success: true,
       message: "OTP sent successfully to Aadhaar-linked mobile number.",
-      transaction: resp[:data] || resp["data"]
+      transaction: resp["data"]
     }, status: :ok
   end
 
@@ -717,10 +720,15 @@ def sender_details
     Rails.logger.info "========== EKO OTP VERIFY RESPONSE =========="
     Rails.logger.info resp
 
-    if resp[:status] != 0
+    status = resp.dig("data", "status") || resp["status"]
+
+    if status.to_i != 0
+      error_message = resp["message"] || resp.dig("data", "message")
+      error_detail  = resp.dig("data", "description")
+
       return render json: {
         success: false,
-        message: resp[:message] || "OTP verification failed"
+        message: [error_message, error_detail].compact.uniq.join(": ").presence || "OTP verification failed"
       }, status: :unprocessable_entity
     end
 
@@ -728,7 +736,7 @@ def sender_details
     render json: {
       success: true,
       message: "OTP verified successfully",
-      transaction: resp[:data]
+      transaction: resp["data"]
     }, status: :ok
   end
 
@@ -777,6 +785,23 @@ def sender_details
         success: false,
         message: "Missing: #{missing.join(', ')}"
       }, status: :bad_request
+    end
+
+    # --------------------------------------------------
+    # BANK ACCOUNT MUST BE VERIFIED FIRST (else EKO fails/times out later while
+    # actually trying to send money to an account that was never confirmed valid)
+    # --------------------------------------------------
+    verified = Dmt.exists?(
+      account_number: params[:account_number],
+      ifsc_code: params[:ifsc_code],
+      bank_verify_status: true
+    )
+
+    unless verified
+      return render json: {
+        success: false,
+        message: "Please verify this bank account before adding it as a beneficiary"
+      }, status: :unprocessable_entity
     end
 
     # --------------------------------------------------
@@ -1040,9 +1065,11 @@ def sender_details
 
   # ❌ OTP / transfer failed
   if eko_status != 0
+    failure_message = eko_reason.presence || response["message"] || "Transaction failed"
+
     return render json: {
       success: false,
-      message: response["message"] || "Transaction failed"
+      message: failure_message
     }, status: :unprocessable_entity
   end
 

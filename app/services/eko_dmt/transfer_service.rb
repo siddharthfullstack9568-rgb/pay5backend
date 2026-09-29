@@ -6,17 +6,19 @@ require "base64"
 
 module EkoDmt
   class TransferService
+    "===============otp"
     include HTTParty
     # BASE_URL = "https://api.eko.in:25002/ekoicici/v3/customer/payment/dmt-fino/sender"
 
-    BASE_URL = "https://api.eko.in:25002/ekoicici/v2/customer/payment/dmt-fino"
+    BASE_URL = "https://api.eko.in:25002/ekoicici/v3/customer/payment/dmt-fino"
 
     def self.call(
         initiator_id:,
         user_code:,
         recipient_id:,
         amount:,
-        customer_id:
+        customer_id:,
+        client_ref_id: nil
       )
 
       timestamp = (Time.now.to_f * 1000).to_i.to_s
@@ -40,7 +42,7 @@ module EkoDmt
 
       body = {
         initiator_id: initiator_id,
-        user_code: user_code,
+        client_ref_id: client_ref_id.presence || "OTP#{Time.now.to_i}",
         recipient_id: recipient_id,
         amount: amount,
         customer_id: customer_id
