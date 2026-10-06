@@ -12,6 +12,12 @@
       <h4 class="text-xl font-bold text-fuchsia-700">
       <%= @balance %>
     </h4>
+
+    <!-- EKO Merchant Balance -->
+    <h4 class="text-lg font-semibold text-blue-600" title="EKO Balance">
+      EKO: <%= @eko_balance.present? ? "₹ #{@eko_balance}" : "Unavailable" %>
+    </h4>
+
     <a href="<%=admin_wallets_index_path(mode: "fund")%>" class="cursor-pointer bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-lg">My Wallet</a>
 
     <!-- Notification -->

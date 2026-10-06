@@ -7,9 +7,14 @@
   <!-- Right -->
   <div class="flex items-center gap-6 text-white">
 
-    <!-- Balance -->
+    <!-- Wallet Balance -->
     <h4 class="text-lg font-semibold text-green-400">
       ₹ <%= @balance.round(2) %>
+    </h4>
+
+    <!-- EKO Merchant Balance -->
+    <h4 class="text-lg font-semibold text-blue-400" title="EKO Balance">
+      EKO: <%= @eko_balance.present? ? "₹ #{@eko_balance}" : "Unavailable" %>
     </h4>
 
     <!-- Notification -->

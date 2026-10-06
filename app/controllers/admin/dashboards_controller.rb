@@ -4,37 +4,13 @@ class Admin::DashboardsController < Admin::BaseController
   #before_action :authenticate_user!
 
   def index
-    transactions = Transaction.where(user_id: current_user.id)
+    managed_user_ids = current_admin.children.pluck(:id)
 
-    # Calculate wallet balance dynamically
-    wallet_balance = Wallet.where(user_id: current_user.id).pluck(:balance).sum
-  
-    # Only include transactions that have a valid created_at
-    valid_transactions = transactions.where.not(created_at: nil)
-    commission_amount = TransactionCommission.where(user_id: current_user.id).pluck(:commission_amount).sum.round(2)
-
-    # Group transactions by month (based on created_at)
-    transaction_trend = valid_transactions
-      .group_by { |t| t.created_at.strftime("%b") }
-      .map do |month, trans|
-        {
-          month: month,
-          transactions: trans.count,
-          amount: trans.sum { |t| t.amount.to_f } # handle nil safely
-        }
-      end
-  
-    render json: {
-      total_balance: transactions.sum { |t| t.amount.to_f },
-      total_expends: commission_amount,
-      wallet: wallet_balance,
-      transaction_trend: transaction_trend.sort_by { |t| Date::ABBR_MONTHNAMES.index(t[:month]) }, # correct order
-      revenue_overview: [
-        { category: "BBPS", percent: 34 },
-        { category: "Insurance", percent: 31 },
-        { category: "Loans", percent: 23 }
-      ],
-      transactions: transactions.limit(10)
-    }
+    @total_users = managed_user_ids.size
+    @total_transcations = Transaction.where(user_id: managed_user_ids).count
+    @total_revenue = TransactionCommission.where(user_id: managed_user_ids).sum(:commission_amount).round(2)
+    @total_pending = Transaction.where(user_id: managed_user_ids, status: "PENDING").count
+    @transactions_graph = Transaction.where(user_id: managed_user_ids)
+    @transactions = Transaction.where(user_id: managed_user_ids).order(created_at: :desc).limit(20)
   end
 end
