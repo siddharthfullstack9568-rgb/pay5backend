@@ -1275,7 +1275,14 @@ def sender_details
       bank_name: params[:bank_name],
       account_number: params[:account_number],
       amount: amount,
-      status: "success",
+      status: "success"
+    )
+    Rails.logger.info("[DMT] dmt_transaction created id=#{dmt_transaction.id} txn_id=#{txn_id}")
+
+    # Update DMT record
+    dmt.update(
+      amount: main_amount,
+      transaction_status: true,
       fee: response.dig("data", "fee"),
       tid: response.dig("data", "tid"),
       tds: response.dig("data", "tds"),
@@ -1284,10 +1291,6 @@ def sender_details
       txstatus_desc: response.dig("data", "txstatus_desc"),
       collectable_amount: response.dig("data", "collectable_amount")
     )
-    Rails.logger.info("[DMT] dmt_transaction created id=#{dmt_transaction.id} txn_id=#{txn_id}")
-
-    # Update DMT record
-    dmt.update(amount: main_amount, transaction_status: true)
     Rails.logger.info("[DMT] dmt id=#{dmt.id} updated amount=#{main_amount} transaction_status=true")
   end
 
