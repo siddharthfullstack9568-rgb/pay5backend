@@ -788,23 +788,6 @@ def sender_details
     end
 
     # --------------------------------------------------
-    # BANK ACCOUNT MUST BE VERIFIED FIRST (else EKO fails/times out later while
-    # actually trying to send money to an account that was never confirmed valid)
-    # --------------------------------------------------
-    verified = Dmt.exists?(
-      account_number: params[:account_number],
-      ifsc_code: params[:ifsc_code],
-      bank_verify_status: true
-    )
-
-    unless verified
-      return render json: {
-        success: false,
-        message: "Please verify this bank account before adding it as a beneficiary"
-      }, status: :unprocessable_entity
-    end
-
-    # --------------------------------------------------
     # FIND BANK
     # --------------------------------------------------
     bank = EkoBank.find_by("name ILIKE ?", params[:bank_name])
