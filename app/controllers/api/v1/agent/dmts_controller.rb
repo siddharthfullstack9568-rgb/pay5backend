@@ -1022,39 +1022,39 @@ def sender_details
   vendor_user = User.where(phone_number: params[:customer_id])
   p "=======vendor_user==============="
   user_check = vendor_user.last
-  # EKO API CALL - DO NOT MODIFY
-  # response = EkoDmt::FinoTransferService.call(
-  #   initiator_id: "6268075916",
-  #   user_code: "20500001",
-  #   recipient_id: params[:recipient_id],
-  #   amount: params[:amount],
-  #   customer_id: user_check.phone_number,
-  #   otp: params[:otp],
-  #   otp_ref_id: params[:otp_ref_id],
-  #   latlong: params[:latlong] || "28.6139,77.2090",
-  #   client_ref_id: params[:client_ref_id] || "TXN#{Time.current.to_i}"
-  # )
+  EKO API CALL - DO NOT MODIFY
+  response = EkoDmt::FinoTransferService.call(
+    initiator_id: "6268075916",
+    user_code: "20500001",
+    recipient_id: params[:recipient_id],
+    amount: params[:amount],
+    customer_id: user_check.phone_number,
+    otp: params[:otp],
+    otp_ref_id: params[:otp_ref_id],
+    latlong: params[:latlong] || "28.6139,77.2090",
+    client_ref_id: params[:client_ref_id] || "TXN#{Time.current.to_i}"
+  )
 
-  # eko_reason = response.dig("data", "reason") || response["reason"]
+  eko_reason = response.dig("data", "reason") || response["reason"]
 
-  # if eko_reason == "OTP Verification failed"
-  #   return render json: {
-  #     success: false,
-  #     message: response["message"] || "OTP Verification failed"
-  #   }, status: :unprocessable_entity
-  # end
+  if eko_reason == "OTP Verification failed"
+    return render json: {
+      success: false,
+      message: response["message"] || "OTP Verification failed"
+    }, status: :unprocessable_entity
+  end
 
-  # eko_status = response.dig("data", "status") || response["status"]
+  eko_status = response.dig("data", "status") || response["status"]
 
-  # # ❌ OTP / transfer failed
-  # if eko_status != 0
-  #   failure_message = eko_reason.presence || response["message"] || "Transaction failed"
+  # ❌ OTP / transfer failed
+  if eko_status != 0
+    failure_message = eko_reason.presence || response["message"] || "Transaction failed"
 
-  #   return render json: {
-  #     success: false,
-  #     message: failure_message
-  #   }, status: :unprocessable_entity
-  # end
+    return render json: {
+      success: false,
+      message: failure_message
+    }, status: :unprocessable_entity
+  end
 
   amount = params[:amount].to_f
   Rails.logger.info("[DMT] amount=#{amount}")
