@@ -1022,7 +1022,7 @@ def sender_details
   vendor_user = User.where(phone_number: params[:customer_id])
   p "=======vendor_user==============="
   user_check = vendor_user.last
-  EKO API CALL - DO NOT MODIFY
+  # EKO API CALL - DO NOT MODIFY
   response = EkoDmt::FinoTransferService.call(
     initiator_id: "6268075916",
     user_code: "20500001",
